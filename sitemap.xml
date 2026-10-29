@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- After publishing, replace every https://YOUR-SITE-URL with the exact live website URL. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://YOUR-SITE-URL/</loc></url>
+  <url><loc>https://YOUR-SITE-URL/features.html</loc></url>
+  <url><loc>https://YOUR-SITE-URL/about.html</loc></url>
+  <url><loc>https://YOUR-SITE-URL/chat.html</loc></url>
+</urlset>

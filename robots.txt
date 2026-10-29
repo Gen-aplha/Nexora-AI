@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+# After publishing, replace YOUR-SITE-URL with your real GitHub Pages URL.
+# Sitemap: https://YOUR-SITE-URL/sitemap.xml
