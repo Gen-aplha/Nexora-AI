@@ -59,36 +59,35 @@ Check the release details and download the APK if one is available.
 
 Screenshots of the application will be added here.
 
-<!-- Add screenshots here when available -->🛠️ Technology Stack
+<!-- Add screenshots here when available --
 
-NEXORA AI uses modern web technologies:
+## 🛠️ Technology Stack
 
-Technology| Purpose
-HTML5| Application structure
-CSS3| User interface and styling
-JavaScript| Application functionality
-Cloudflare Workers| Backend services
-GitHub Pages| Website hosting
-GitHub Releases| Project release distribution
+| Technology | Purpose |
+|---|---|
+| HTML5 | Application structure |
+| CSS3 | User interface and styling |
+| JavaScript | Application functionality |
+| Cloudflare Workers | Backend services |
+| GitHub Pages | Website hosting |
+| GitHub Releases | Project releases |
 
-📂 Project Structure
+## 📂 Project Structure
 
-The repository contains the following main files:
-
+```text
 Nexora-AI/
-│
-├── index.html          # Main website
-├── chat.html           # AI chat application
-├── about.html          # About page
-├── features.html       # Features page
-├── config.js           # Application configuration
-├── site.css            # Website styling
-├── robots.txt          # Search engine crawling rules
-├── sitemap.xml         # Website sitemap
-├── ANDROID-SETUP.md    # Android setup instructions
-├── mayank-gupta.jpg    # Creator photograph
-└── README.md           # Project documentation
-
+├── index.html
+├── chat.html
+├── about.html
+├── features.html
+├── config.js
+├── site.css
+├── robots.txt
+├── sitemap.xml
+├── ANDROID-SETUP.md
+├── mayank-gupta.jpg
+└── README.md
+```
 🚀 How to Use
 
 1. Visit the "official NEXORA AI website" (https://gen-aplha.github.io/Nexora-AI/).
