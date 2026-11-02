@@ -156,6 +156,37 @@ textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
  .status{display:none}
 }
 
+
+/* Minimal ChatGPT-style composer: plus, message field, microphone and send */
+.composer-wrap{position:relative;padding:12px clamp(12px,4vw,50px) 16px}
+.composer{max-width:790px;min-height:64px;display:flex;align-items:flex-end;gap:9px;padding:9px 10px 9px 12px;border:1px solid #555;border-radius:28px;background:#303030;box-shadow:none}
+.composer:focus-within{border-color:#777}
+.composer textarea{min-width:0;min-height:42px;max-height:160px;padding:10px 2px;align-self:center;font-size:15px;line-height:1.45}
+.plus-btn,.voice-btn,.send{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.plus-btn{border:0;background:transparent;color:#e8e8e8;font-size:29px;font-weight:300;line-height:1}
+.plus-btn:hover,.voice-btn:hover{background:#414141}
+.voice-btn{background:transparent;border:0;color:#eee;font-size:21px}
+.send{border:0;background:#f2f2f2;color:#171717;font-size:27px;font-weight:600;box-shadow:none}
+.send:disabled{opacity:.45}
+.voice-language{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
+.composer-menu{position:absolute;z-index:20;bottom:88px;left:max(18px,calc((100% - 790px)/2));width:min(290px,calc(100vw - 36px));padding:8px;background:#292929;border:1px solid #484848;border-radius:17px;box-shadow:0 12px 35px #0008}
+.composer-menu[hidden]{display:none}
+.composer-menu-item{width:100%;display:flex;align-items:center;gap:13px;padding:12px 11px;border:0;border-radius:11px;background:transparent;color:#eee;text-align:left}
+.composer-menu-item:hover{background:#3a3a3a}
+.composer-menu-item>span:first-child{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:#414141;font-size:20px}
+.composer-menu-item strong,.composer-menu-item small{display:block}
+.composer-menu-item strong{font-size:13px;font-weight:600}
+.composer-menu-item small{margin-top:3px;color:#aaa;font-size:11px}
+.attachment-note,.composer-tools{display:none!important}
+.attachment-list{max-width:790px;margin:0 auto 8px}
+@media(max-width:680px){
+ .composer-wrap{padding:8px 12px 12px}
+ .composer{min-height:62px;border-radius:27px;padding:8px 9px 8px 10px;gap:5px}
+ .composer textarea{font-size:15px}
+ .plus-btn,.voice-btn,.send{width:40px;height:40px;flex-basis:40px}
+ .composer-menu{left:12px;bottom:82px}
+}
+
 </style>
 </head>
 <body>
@@ -215,20 +246,20 @@ textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
       </div>
     </section>
     <div class="composer-wrap">
-      <div class="composer-tools">
-        <button class="tool-btn" type="button" id="attachBtn">📎 Attach files</button>
-        <button class="tool-btn" type="button" id="generateImageBtn">🎨 Generate image</button>
-        <input type="file" id="attachmentInput" accept="image/jpeg,image/png,image/webp,.pdf,.txt,.md,.csv,.json" multiple hidden>
-      </div>
+      <input type="file" id="attachmentInput" accept="image/jpeg,image/png,image/webp,.pdf,.txt,.md,.csv,.json" multiple hidden>
       <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
-      <div class="attachment-note">Supported: JPG, PNG, WEBP, PDF, TXT, MD, CSV and JSON. Images are analyzed by AI; PDF text is extracted for questions.</div>
+      <div class="composer-menu" id="composerMenu" hidden>
+        <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Add photos & files</strong><small>Images, PDFs and documents</small></span></button>
+        <button class="composer-menu-item" type="button" id="generateImageBtn"><span>✧</span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
+      </div>
       <form class="composer" id="chatForm">
+        <button class="plus-btn" id="composerPlus" type="button" aria-label="Add photos, files or create an image" aria-expanded="false">＋</button>
         <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI" aria-label="Your message"></textarea>
         <select id="voiceLanguage" class="voice-language" aria-label="Voice recognition language" title="Voice language">
           <option value="en-IN">English IN</option><option value="hi-IN">हिन्दी</option><option value="en-US">English US</option><option value="mr-IN">मराठी</option>
         </select>
-        <button class="voice-btn" id="voiceBtn" type="button" aria-label="Start voice input" title="Speak your message">🎙️</button>
-        <button class="send" id="sendBtn" type="submit" aria-label="Send message">➤</button>
+        <button class="voice-btn" id="voiceBtn" type="button" aria-label="Start voice input" title="Speak your message">🎙</button>
+        <button class="send" id="sendBtn" type="submit" aria-label="Send message">↑</button>
       </form>
       <div class="voice-status" id="voiceStatus" aria-live="polite"></div>
       <div class="footnote">NEXORA AI can make mistakes. Check important information.</div>
@@ -264,6 +295,28 @@ let activeSessionId = null;
 // Voice input uses the browser's Web Speech API when available.
 // Recognition is local to the browser interface; the recognized text is only sent
 // to the existing Cloudflare backend after the user presses Send.
+const composerPlus = document.getElementById("composerPlus");
+const composerMenu = document.getElementById("composerMenu");
+composerPlus.addEventListener("click", () => {
+  const opening = composerMenu.hidden;
+  composerMenu.hidden = !opening;
+  composerPlus.setAttribute("aria-expanded", String(opening));
+});
+document.addEventListener("click", event => {
+  if (!composerMenu.hidden && !composerMenu.contains(event.target) && event.target !== composerPlus) {
+    composerMenu.hidden = true;
+    composerPlus.setAttribute("aria-expanded", "false");
+  }
+});
+document.getElementById("attachBtn").addEventListener("click", () => {
+  composerMenu.hidden = true;
+  composerPlus.setAttribute("aria-expanded", "false");
+});
+document.getElementById("generateImageBtn").addEventListener("click", () => {
+  composerMenu.hidden = true;
+  composerPlus.setAttribute("aria-expanded", "false");
+});
+
 const voiceBtn = document.getElementById("voiceBtn");
 const voiceLanguage = document.getElementById("voiceLanguage");
 const voiceStatus = document.getElementById("voiceStatus");
