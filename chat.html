@@ -96,6 +96,66 @@ textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;bord
 .user-attachment{display:block;margin-top:8px;font-size:12px;color:#f1eaff;opacity:.9}
 @media(max-width:680px){.composer-tools,.attachment-list,.attachment-note{margin-left:2px;margin-right:2px}.tool-btn{padding:8px 10px}}
 
+
+/* ChatGPT-inspired clean conversation layout (NEXORA branding retained) */
+:root{--bg:#212121;--panel:#171717;--panel2:#2f2f2f;--text:#ececec;--muted:#a1a1aa;--line:#3b3b3b;--accent:#8b78ff;--accent2:#a78bfa}
+body{background:var(--bg);color:var(--text)}
+.sidebar{background:var(--panel);border-right:1px solid #303030;padding:16px 12px}
+.brand{padding:4px 8px 20px}.brand-name{font-size:20px;letter-spacing:.3px}
+.new-chat{background:transparent;border:1px solid #454545;border-radius:12px;margin-bottom:12px;padding:11px 12px}
+.new-chat:hover,.nav-btn:hover,.history-item:hover{background:#292929;border-color:#4a4a4a}
+.nav-btn{border-radius:10px;padding:10px 12px}
+.history-heading{color:#999;padding-top:22px}
+.history-item{border-radius:9px;padding:9px 10px}
+.history-item.active{background:#303030;border-color:transparent}
+.history-tools button,.tool-btn{background:#252525;border-color:#454545;color:#ddd;border-radius:10px}
+.side-bottom{color:#858585}
+.topbar{height:58px;padding:8px 22px;background:rgba(33,33,33,.96);border-bottom:1px solid #343434}
+.topbrand .logo-mark{width:34px;height:34px}.topbrand h1{font-size:16px;font-weight:650}.topbrand p{font-size:11px;color:#a3a3a3}
+.status{font-size:11px;color:#b3b3b3}.dot{width:7px;height:7px}
+.chat{padding:30px 20px 26px;scroll-behavior:smooth}
+.welcome{max-width:720px;margin:13vh auto 0}
+.welcome .logo-mark{width:58px;height:58px}
+.welcome h2{font-size:clamp(27px,4vw,34px);font-weight:600;letter-spacing:-.8px}
+.gradient{background:none;color:inherit}
+.welcome p{color:#b4b4b4}
+.suggestions{gap:9px}.suggestion{background:#2b2b2b;border:1px solid #454545;border-radius:18px;color:#e5e5e5;padding:10px 14px}
+.suggestion:hover{background:#383838;border-color:#666}
+.message-row{max-width:790px;gap:13px;margin-bottom:26px}
+.message-row .logo-mark{width:30px;height:30px}
+.bubble-wrap{max-width:min(88%,720px)}
+.bubble{padding:0;line-height:1.72;border-radius:0;white-space:normal}
+.bot .bubble{background:transparent;border:0;border-radius:0}
+.user .bubble{background:#303030;border:1px solid #3d3d3d;border-radius:20px;padding:10px 16px}
+.user .meta,.bot .meta{display:none}
+.message-actions{gap:5px;margin-top:10px}
+.message-actions button{background:transparent;border:1px solid transparent;color:#aaa;border-radius:8px;padding:6px 8px;font-size:12px}
+.message-actions button:hover{background:#303030;color:#eee;border-color:#454545}
+.bubble pre{background:#111;border-color:#444}
+.composer-wrap{padding:12px 18px 16px;background:linear-gradient(transparent,var(--bg) 18%)}
+.composer{max-width:790px;border:1px solid #505050;border-radius:26px;background:#303030;box-shadow:none;padding:9px 10px 9px 17px;gap:8px}
+.composer:focus-within{border-color:#777}
+textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
+.send{width:40px;height:40px;border-radius:50%;background:#f1f1f1;color:#202020;box-shadow:none;font-size:19px}
+.send:disabled{background:#777;color:#222}
+.voice-btn{width:40px;height:40px;border-radius:50%;background:transparent;border-color:#555}
+.voice-language{background:#252525;border-color:#555;color:#ddd;border-radius:9px}
+.footnote{color:#858585}
+.typing i{background:#d4d4d4}
+.generated-image{border-color:#444}
+.attachment-chip{background:#292929;border-color:#4a4a4a}
+.history-search{background:#252525;border-color:#454545;color:#eee}
+.download-image{background:#292929;border-color:#555;color:#eee}
+@media(max-width:680px){
+ .sidebar{background:#171717}
+ .topbar{height:56px;padding:8px 12px}
+ .chat{padding:22px 13px}
+ .welcome{margin-top:10vh}
+ .composer-wrap{padding:8px 10px 12px}
+ .bubble-wrap{max-width:90%}
+ .status{display:none}
+}
+
 </style>
 </head>
 <body>
@@ -145,8 +205,8 @@ textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;bord
           <rect x="3" y="3" width="94" height="94" rx="28" fill="#24135a" stroke="#7042e8" stroke-opacity=".55"/>
           <path d="M24 72V28L76 72V28" fill="none" stroke="url(#ng3)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <h2>Meet your AI assistant</h2>
-        <p>Ask questions, explore ideas, learn something new, or get help with your next project.</p>
+        <h2>What can I help with?</h2>
+        <p>Ask anything, explore ideas, learn something new, or create something useful.</p>
         <div class="suggestions">
           <button class="suggestion">Explain AI simply</button>
           <button class="suggestion">Give me a project idea</button>
@@ -163,7 +223,7 @@ textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;bord
       <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
       <div class="attachment-note">Supported: JPG, PNG, WEBP, PDF, TXT, MD, CSV and JSON. Images are analyzed by AI; PDF text is extracted for questions.</div>
       <form class="composer" id="chatForm">
-        <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI..." aria-label="Your message"></textarea>
+        <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI" aria-label="Your message"></textarea>
         <select id="voiceLanguage" class="voice-language" aria-label="Voice recognition language" title="Voice language">
           <option value="en-IN">English IN</option><option value="hi-IN">हिन्दी</option><option value="en-US">English US</option><option value="mr-IN">मराठी</option>
         </select>
@@ -542,6 +602,35 @@ function addMessage(role, text, options = {}) {
   meta.className = "meta";
   meta.textContent = role === "user" ? "You" : "NEXORA AI";
   wrap.append(bubble, meta);
+  if (role === "user" && !options.typing && !String(text).includes("[Attachments:")) {
+    const actions = document.createElement("div");
+    actions.className = "message-actions";
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.textContent = "Edit";
+    edit.title = "Edit and resend this message";
+    edit.addEventListener("click", () => {
+      const session = currentSession();
+      if (!session || busy) return;
+      const messageIndex = session.messages.findIndex((item, index) =>
+        item.role === "user" && item.text === String(text) &&
+        index === session.messages.findIndex((candidate, j) => j >= 0 && candidate === item)
+      );
+      const lastMatchingIndex = session.messages.reduce((found, item, index) =>
+        item.role === "user" && item.text === String(text) ? index : found, -1);
+      const index = lastMatchingIndex >= 0 ? lastMatchingIndex : messageIndex;
+      if (index < 0) return;
+      const edited = window.prompt("Edit your message:", String(text));
+      if (edited === null || !edited.trim()) return;
+      session.messages.splice(index);
+      session.updatedAt = Date.now();
+      saveSessions();
+      renderSession(session);
+      sendMessage(edited.trim());
+    });
+    actions.appendChild(edit);
+    wrap.appendChild(actions);
+  }
   if (role === "bot" && !options.typing) {
     const actions = document.createElement("div");
     actions.className = "message-actions";
