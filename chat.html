@@ -169,6 +169,23 @@ textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
 .send{border:0;background:#f2f2f2;color:#171717;font-size:27px;font-weight:600;box-shadow:none}
 .send:disabled{opacity:.45}
 .voice-language{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
+.image-mode-panel{max-width:790px;margin:0 auto 10px;padding:13px 15px;background:#242424;border:1px solid #414141;border-radius:18px;color:#f4f4f4}
+.image-mode-panel[hidden]{display:none}
+.image-mode-heading{display:flex;align-items:center;gap:11px}
+.image-mode-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#383044;color:#d8b7ff;font-size:23px}
+.image-mode-heading strong,.image-mode-heading small{display:block}
+.image-mode-heading strong{font-size:14px;font-weight:650}
+.image-mode-heading small{margin-top:3px;color:#aaa;font-size:12px}
+.image-mode-close{margin-left:auto;width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:#bbb;font-size:24px;cursor:pointer}
+.image-mode-close:hover{background:#3b3b3b;color:#fff}
+.image-prompt-ideas{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0 47px}
+.image-prompt-chip{padding:7px 11px;border:1px solid #4a4a4a;border-radius:20px;background:#303030;color:#ddd;font-size:11px;cursor:pointer}
+.image-prompt-chip:hover{background:#414141}
+body[data-theme="light"] .image-mode-panel{background:#fff;border-color:#dedee5;color:#242424}
+body[data-theme="light"] .image-mode-heading small{color:#666}
+body[data-theme="light"] .image-mode-close{color:#666}
+body[data-theme="light"] .image-prompt-chip{background:#f5f5f8;border-color:#ddd;color:#333}
+body[data-theme="light"] .image-prompt-chip:hover{background:#e9e9ef}
 .composer-menu{position:absolute;z-index:20;bottom:88px;left:max(18px,calc((100% - 790px)/2));width:min(290px,calc(100vw - 36px));padding:8px;background:#292929;border:1px solid #484848;border-radius:17px;box-shadow:0 12px 35px #0008}
 .composer-menu[hidden]{display:none}
 .composer-menu-item{width:100%;display:flex;align-items:center;gap:13px;padding:12px 11px;border:0;border-radius:11px;background:transparent;color:#eee;text-align:left}
@@ -252,6 +269,18 @@ textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
         <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Add photos & files</strong><small>Images, PDFs and documents</small></span></button>
         <button class="composer-menu-item" type="button" id="generateImageBtn"><span>✧</span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
       </div>
+      <div class="image-mode-panel" id="imageModePanel" hidden>
+        <div class="image-mode-heading">
+          <span class="image-mode-icon">✧</span>
+          <div><strong>Create an image</strong><small>Describe what you want NEXORA AI to create</small></div>
+          <button type="button" class="image-mode-close" id="imageModeClose" aria-label="Exit image creation">×</button>
+        </div>
+        <div class="image-prompt-ideas" aria-label="Example image prompts">
+          <button type="button" class="image-prompt-chip" data-prompt="A cinematic fantasy castle floating above the clouds at sunset">Fantasy</button>
+          <button type="button" class="image-prompt-chip" data-prompt="A cute 3D robot mascot in a colorful futuristic studio">3D art</button>
+          <button type="button" class="image-prompt-chip" data-prompt="A peaceful anime-style city street in the rain at night">Anime</button>
+        </div>
+      </div>
       <form class="composer" id="chatForm">
         <button class="plus-btn" id="composerPlus" type="button" aria-label="Add photos, files or create an image" aria-expanded="false">＋</button>
         <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI" aria-label="Your message"></textarea>
@@ -315,6 +344,32 @@ document.getElementById("attachBtn").addEventListener("click", () => {
 document.getElementById("generateImageBtn").addEventListener("click", () => {
   composerMenu.hidden = true;
   composerPlus.setAttribute("aria-expanded", "false");
+});
+
+const imageModePanel = document.getElementById("imageModePanel");
+let imageMode = false;
+function setImageMode(enabled) {
+  imageMode = enabled;
+  imageModePanel.hidden = !enabled;
+  input.placeholder = enabled ? "Describe the image you want to create..." : "Message NEXORA AI";
+  if (!enabled) {
+    input.value = "";
+    input.style.height = "auto";
+  }
+}
+document.getElementById("generateImageBtn").addEventListener("click", () => {
+  setImageMode(true);
+  input.focus();
+});
+document.getElementById("imageModeClose").addEventListener("click", () => {
+  setImageMode(false);
+});
+document.querySelectorAll(".image-prompt-chip").forEach(button => {
+  button.addEventListener("click", () => {
+    input.value = button.dataset.prompt || "";
+    input.dispatchEvent(new Event("input", {bubbles:true}));
+    input.focus();
+  });
 });
 
 const voiceBtn = document.getElementById("voiceBtn");
@@ -883,6 +938,7 @@ async function generateImage() {
     return;
   }
   busy = true;
+  setImageMode(false);
   sendBtn.disabled = true;
   generateImageBtn.disabled = true;
   const session = ensureSession("Image: " + prompt);
@@ -922,7 +978,7 @@ async function generateImage() {
     input.focus();
   }
 }
-generateImageBtn.addEventListener("click", generateImage);
+// Image generation is started from the dedicated image-mode composer.
 
 function getImageGenerationPrompt(message) {
   const value = String(message || "").trim();
@@ -1019,7 +1075,8 @@ async function sendMessage(text) {
 }
 form.addEventListener("submit", event => {
   event.preventDefault();
-  sendMessage(input.value);
+  if (imageMode) generateImage();
+  else sendMessage(input.value);
 });
 input.addEventListener("input", () => {
   input.style.height = "auto";
