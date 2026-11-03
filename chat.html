@@ -449,7 +449,7 @@ body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;bor
   </div>
   <div class="account-overlay" id="accountOverlay" aria-hidden="true">
     <section class="account-panel" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
-      <div class="account-head"><div><h2 id="accountTitle">Your account</h2><p>Your profile details stay on this device</p></div><button type="button" id="closeAccountBtn" class="library-close" aria-label="Close account">×</button></div>
+      <div class="account-head"><div><h2 id="accountTitle">Your account</h2><p>Create an account or sign in from any device</p></div><button type="button" id="closeAccountBtn" class="library-close" aria-label="Close account">×</button></div>
       <form id="accountForm" class="account-form">
         <label id="accountNameLabel" for="accountName">Name</label><input id="accountName" type="text" maxlength="60" autocomplete="name" required placeholder="Enter your name">
         <label id="accountAgeLabel" for="accountAge">Age</label><input id="accountAge" type="number" min="1" max="120" inputmode="numeric" required placeholder="Enter your age">
@@ -1636,6 +1636,7 @@ document.getElementById("accountForm").addEventListener("submit",async e=>{e.pre
 document.getElementById("deleteAccountProfile").addEventListener("click",()=>{if(!accountProfile){document.getElementById("accountStatus").textContent="No saved profile to delete.";return;}if(!confirm("Delete your saved NEXORA profile from this device?"))return;localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);accountProfile=null;pendingAccountPicture="";renderAccountButton();document.getElementById("accountForm").reset();renderAccountPreview();document.getElementById("accountStatus").textContent="Saved profile deleted from this device.";});
 renderAccountButton();
 if(authToken){accountRequest({action:"me"}).then(data=>{accountProfile=data.user;renderAccountButton();localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");}).catch(()=>{authToken="";accountProfile=null;localStorage.removeItem(AUTH_TOKEN_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);if(sessions.length){localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");}else{showFirstLaunch();}});}
+else if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="guest"){}
 else if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="account"||accountProfile){showFirstLaunch();}
 else if(!localStorage.getItem(ONBOARDING_STORAGE_KEY)){if(sessions.length){localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");}else{showFirstLaunch();}}
 
