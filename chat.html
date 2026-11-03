@@ -181,7 +181,59 @@ textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
 .image-template-card{position:relative;min-height:210px;aspect-ratio:0.82;border:0;border-radius:21px;overflow:hidden;padding:14px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:#fff;cursor:pointer;background:linear-gradient(145deg,#e8e8ee,#b9bac4)}
 .image-template-card:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.62) 100%)}
 .image-template-card>span,.image-template-card>b{position:relative;z-index:1}
-.image-template-card>span{font-size:42px;font-weight:800;line-height:1.15;text-align:center;display:grid;place-items:center;flex:1;text-shadow:0 2px 8px #0002}
+.image-template-card>.template-art{display:block;flex:1;min-height:0;width:100%;position:relative;overflow:hidden;border-radius:14px;margin:0 0 12px;background:rgba(255,255,255,.18);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.template-art i{position:absolute;display:block}
+.template-art i:nth-child(1){width:58%;height:68%;left:21%;top:16%;border-radius:16px;background:linear-gradient(145deg,#fff9,#ffffff22);box-shadow:0 8px 22px #0002;transform:rotate(-7deg)}
+.template-art i:nth-child(2){width:35%;height:43%;left:32%;top:28%;border-radius:50%;background:linear-gradient(135deg,#fff,#ffffff44);box-shadow:0 4px 18px #0002}
+.template-art i:nth-child(3){width:72%;height:12%;left:14%;bottom:12%;border-radius:20px;background:#ffffffb8;box-shadow:0 2px 8px #0002}
+.template-stickers .template-art{background:linear-gradient(135deg,#ffda70,#ff9e8d 55%,#83c9a2)}
+.template-stickers .template-art i:nth-child(1){width:34%;height:38%;left:12%;top:17%;border-radius:14px;background:#fff5df;transform:rotate(-13deg)}
+.template-stickers .template-art i:nth-child(2){width:32%;height:35%;left:54%;top:37%;border-radius:50%;background:#fff2bd;transform:rotate(13deg)}
+.template-stickers .template-art i:nth-child(3){width:23%;height:24%;left:39%;top:13%;border-radius:9px;background:#d8f3df;transform:rotate(12deg)}
+.template-poster .template-art{background:linear-gradient(150deg,#173d68,#b77c42 58%,#f3d69a)}
+.template-poster .template-art i:nth-child(1){width:58%;height:78%;left:21%;top:10%;border:2px solid #f4dca5;border-radius:3px;background:linear-gradient(180deg,#183d63,#315b75 58%,#d7a65b);transform:none}
+.template-poster .template-art i:nth-child(2){width:40%;height:30%;left:30%;top:20%;border-radius:50% 50% 5px 5px;background:linear-gradient(135deg,#ffe8a8,#d48a43)}
+.template-poster .template-art i:nth-child(3){width:40%;height:4%;left:30%;bottom:22%;border-radius:0;background:#fff0c9}
+.template-diagram .template-art{background:linear-gradient(135deg,#f4f6dd,#b7d18e)}
+.template-diagram .template-art i:nth-child(1){width:20%;height:68%;left:40%;top:15%;border-radius:50% 50% 8px 8px;background:linear-gradient(90deg,#397b4c,#a9d58a);transform:none}
+.template-diagram .template-art i:nth-child(2){width:58%;height:36%;left:21%;top:20%;border-radius:70% 10% 70% 10%;background:linear-gradient(135deg,#5a9e56,#d7ed9e);transform:rotate(-28deg)}
+.template-diagram .template-art i:nth-child(3){width:68%;height:5%;left:16%;bottom:15%;background:#56834f}
+.template-map .template-art{background:linear-gradient(135deg,#d7bd8b,#9a815e)}
+.template-map .template-art i:nth-child(1){width:72%;height:72%;left:14%;top:12%;border:2px dashed #735a3c;border-radius:48% 38% 50% 35%;background:#e8d4a8;transform:rotate(-12deg)}
+.template-map .template-art i:nth-child(2){width:42%;height:5%;left:29%;top:48%;border-radius:10px;background:#9b7750;transform:rotate(35deg)}
+.template-map .template-art i:nth-child(3){width:5%;height:48%;left:52%;top:24%;border-radius:10px;background:#9b7750;transform:rotate(28deg)}
+.template-history .template-art{background:linear-gradient(135deg,#e7dcc5,#9b8267)}
+.template-history .template-art i:nth-child(1){width:72%;height:72%;left:14%;top:13%;border-radius:4px;background:#f5ecd9;transform:none}
+.template-history .template-art i:nth-child(2){width:5px;height:58%;left:48%;top:20%;border-radius:5px;background:#9d7953;transform:none}
+.template-history .template-art i:nth-child(3){width:54%;height:5px;left:23%;top:48%;border-radius:5px;background:#9d7953}
+.template-science .template-art{background:linear-gradient(135deg,#d7e8ed,#9484bf)}
+.template-science .template-art i:nth-child(1){width:58%;height:58%;left:21%;top:20%;border:8px dotted #fff;border-radius:50%;background:radial-gradient(circle,#e7b9c7 0 18%,#8cc5dc 19% 43%,#5c6f9f 44%);transform:none}
+.template-science .template-art i:nth-child(2){width:15%;height:15%;left:18%;top:18%;border-radius:50%;background:#f6d58c}
+.template-science .template-art i:nth-child(3){width:15%;height:15%;left:69%;top:66%;border-radius:50%;background:#b5e4bc}
+.template-landscape .template-art{background:linear-gradient(180deg,#8fc6df,#f1c58e 62%,#537d69)}
+.template-landscape .template-art i:nth-child(1){width:0;height:0;left:8%;top:20%;border-left:70px solid transparent;border-right:70px solid transparent;border-bottom:105px solid #486b70;border-radius:0;background:none;box-shadow:none;transform:none}
+.template-landscape .template-art i:nth-child(2){width:0;height:0;left:42%;top:32%;border-left:62px solid transparent;border-right:62px solid transparent;border-bottom:92px solid #718c7b;border-radius:0;background:none;box-shadow:none;transform:none}
+.template-landscape .template-art i:nth-child(3){width:100%;height:28%;left:0;bottom:0;border-radius:0;background:linear-gradient(180deg,#668b75,#315d50)}
+.template-statue .template-art{background:linear-gradient(135deg,#d7d0c4,#8e8174)}
+.template-statue .template-art i:nth-child(1){width:42%;height:60%;left:29%;top:14%;border-radius:48% 48% 12% 12%;background:linear-gradient(90deg,#a7a196,#f2eee4 50%,#bcb5a8);transform:none}
+.template-statue .template-art i:nth-child(2){width:62%;height:12%;left:19%;bottom:15%;border-radius:3px;background:#eee8dc;transform:none}
+.template-statue .template-art i:nth-child(3){width:48%;height:7%;left:26%;bottom:8%;border-radius:2px;background:#b4aa9b}
+.template-anime .template-art{background:linear-gradient(135deg,#f4a9c3,#7b8fd0)}
+.template-anime .template-art i:nth-child(1){width:54%;height:68%;left:23%;top:12%;border-radius:48% 48% 42% 42%;background:linear-gradient(135deg,#f5d7c5,#fff0df);transform:none}
+.template-anime .template-art i:nth-child(2){width:70%;height:30%;left:15%;top:9%;border-radius:60% 60% 15% 15%;background:#39375f;transform:rotate(-8deg)}
+.template-anime .template-art i:nth-child(3){width:36%;height:5%;left:32%;bottom:17%;border-radius:8px;background:#fff}
+.template-3d .template-art{background:linear-gradient(135deg,#b9a4ee,#78a8dc)}
+.template-3d .template-art i:nth-child(1){width:54%;height:58%;left:23%;top:18%;border-radius:25px;background:linear-gradient(135deg,#f4c8aa,#b87cba);transform:rotate(-8deg)}
+.template-3d .template-art i:nth-child(2){width:30%;height:30%;left:35%;top:29%;border-radius:50%;background:linear-gradient(135deg,#ffe1bd,#df9d9e)}
+.template-3d .template-art i:nth-child(3){width:64%;height:8%;left:18%;bottom:12%;border-radius:20px;background:#ffffffa8}
+.template-interior .template-art{background:linear-gradient(135deg,#c8b89f,#81988a)}
+.template-interior .template-art i:nth-child(1){width:70%;height:58%;left:15%;top:20%;border-radius:4px;background:linear-gradient(90deg,#eee4d4 0 48%,#b6c6b1 49%);transform:none}
+.template-interior .template-art i:nth-child(2){width:34%;height:25%;left:33%;top:48%;border-radius:12px 12px 4px 4px;background:#9b765f}
+.template-interior .template-art i:nth-child(3){width:15%;height:35%;left:70%;top:25%;border-radius:50% 50% 5px 5px;background:#557b60}
+.template-infographic .template-art{background:linear-gradient(135deg,#83bdc0,#477d9e)}
+.template-infographic .template-art i:nth-child(1){width:68%;height:72%;left:16%;top:13%;border-radius:9px;background:#f7f4e9;transform:none}
+.template-infographic .template-art i:nth-child(2){width:34%;height:34%;left:33%;top:24%;border-radius:50%;background:conic-gradient(#4d91a1 0 33%,#e6b65d 33% 66%,#8fb98b 66%)}
+.template-infographic .template-art i:nth-child(3){width:48%;height:5%;left:26%;bottom:22%;border-radius:4px;background:#7c9d9a}
 .image-template-card>b{font-size:15px;line-height:1.2;font-weight:750;text-shadow:0 1px 5px #0008}
 .template-stickers{background:linear-gradient(135deg,#ffda55,#ff9c61 48%,#8ecb91)}
 .template-poster{background:linear-gradient(145deg,#173d68,#e7b65b 60%,#fff0cb)}
@@ -306,18 +358,18 @@ body:has(.image-mode-panel:not([hidden])) .footnote{display:none}
         <div class="images-page-scroll">
           <h2>Create an image</h2>
           <div class="image-template-grid" id="imageTemplateGrid">
-            <button class="image-template-card template-stickers" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span>🐱 🌱 🧑‍🎨</span><b>Stickers</b></button>
-            <button class="image-template-card template-poster" data-prompt="A beautiful celebratory event poster with elegant typography, warm golden lighting and detailed festive artwork"><span>✦ 2026 ✦</span><b>Event poster</b></button>
-            <button class="image-template-card template-diagram" data-prompt="A clear educational infographic diagram about photosynthesis, labeled plant illustration, neat textbook layout"><span>🌿<br/>PHOTOSYNTHESIS</span><b>Photosynthesis diagram</b></button>
-            <button class="image-template-card template-map" data-prompt="An illustrated antique parchment map of an ancient fantasy city, intricate streets and landmarks"><span>🗺️</span><b>Map illustration</b></button>
-            <button class="image-template-card template-history" data-prompt="An elegant illustrated historical timeline infographic with dates, events and archival style artwork"><span>📜</span><b>History timeline</b></button>
-            <button class="image-template-card template-science" data-prompt="A detailed colorful educational plant cell diagram with clearly labeled organelles, textbook illustration"><span>🔬 🧬</span><b>Science diagram</b></button>
-            <button class="image-template-card template-landscape" data-prompt="A breathtaking cinematic mountain landscape at sunrise, misty valleys and dramatic natural light"><span>🏔️</span><b>Landscape</b></button>
-            <button class="image-template-card template-statue" data-prompt="A majestic classical marble statue in a beautiful museum gallery, dramatic soft lighting"><span>🏛️</span><b>Statue</b></button>
-            <button class="image-template-card template-anime" data-prompt="A colorful anime comic illustration with expressive characters, dynamic panel composition"><span>🎌</span><b>Anime comic</b></button>
-            <button class="image-template-card template-3d" data-prompt="A polished cute 3D character avatar, soft studio lighting, colorful background"><span>🧸</span><b>3D avatar</b></button>
-            <button class="image-template-card template-interior" data-prompt="A modern cozy interior design concept, warm natural materials, tasteful furniture and sunlight"><span>🛋️</span><b>Interior design</b></button>
-            <button class="image-template-card template-infographic" data-prompt="A modern clean infographic poster with clear visual hierarchy, icons and concise educational labels"><span>📊</span><b>Infographic poster</b></button>
+            <button class="image-template-card template-stickers" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Stickers</b></button>
+            <button class="image-template-card template-poster" data-prompt="A beautiful celebratory event poster with elegant typography, warm golden lighting and detailed festive artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Event poster</b></button>
+            <button class="image-template-card template-diagram" data-prompt="A clear educational infographic diagram about photosynthesis, labeled plant illustration, neat textbook layout"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Photosynthesis diagram</b></button>
+            <button class="image-template-card template-map" data-prompt="An illustrated antique parchment map of an ancient fantasy city, intricate streets and landmarks"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Map illustration</b></button>
+            <button class="image-template-card template-history" data-prompt="An elegant illustrated historical timeline infographic with dates, events and archival style artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>History timeline</b></button>
+            <button class="image-template-card template-science" data-prompt="A detailed colorful educational plant cell diagram with clearly labeled organelles, textbook illustration"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Science diagram</b></button>
+            <button class="image-template-card template-landscape" data-prompt="A breathtaking cinematic mountain landscape at sunrise, misty valleys and dramatic natural light"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Landscape</b></button>
+            <button class="image-template-card template-statue" data-prompt="A majestic classical marble statue in a beautiful museum gallery, dramatic soft lighting"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Statue</b></button>
+            <button class="image-template-card template-anime" data-prompt="A colorful anime comic illustration with expressive characters, dynamic panel composition"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Anime comic</b></button>
+            <button class="image-template-card template-3d" data-prompt="A polished cute 3D character avatar, soft studio lighting, colorful background"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>3D avatar</b></button>
+            <button class="image-template-card template-interior" data-prompt="A modern cozy interior design concept, warm natural materials, tasteful furniture and sunlight"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Interior design</b></button>
+            <button class="image-template-card template-infographic" data-prompt="A modern clean infographic poster with clear visual hierarchy, icons and concise educational labels"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Infographic poster</b></button>
           </div>
           <h2 class="my-images-heading">My images</h2>
           <div class="my-images-grid" id="myImagesGrid"><p class="my-images-empty">Your generated images will appear here.</p></div>
