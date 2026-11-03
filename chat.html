@@ -1453,7 +1453,8 @@ async function sendMessage(text) {
       } else if (videoFiles.length) {
         reply = "I received your video attachment" + (videoFiles.length > 1 ? "s" : "") + " and displayed " + (videoFiles.length > 1 ? "them" : "it") + " in the chat. Video analysis is not available yet, so I can't inspect its contents at this time.";
       } else {
-        const memoryContext=savedMemories.length?"\n\nUSER SAVED MEMORIES (use only when relevant):\n"+savedMemories.map(m=>"- "+m.text).join("\n"):"";\n        const data = await postBackend({action:"chat",message:message+memoryContext});
+        const memoryContext=savedMemories.length?"\n\nUSER SAVED MEMORIES (use only when relevant):\n"+savedMemories.map(m=>"- "+m.text).join("\n"):"";
+        const data = await postBackend({action:"chat",message:message+memoryContext});
         reply = data.reply;
       }
       if (videoFiles.length && (imageNotes.length || textFiles.length)) {
