@@ -458,7 +458,7 @@ body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;bor
         <label id="accountPictureLabel" for="accountPicture">Profile picture <span>(optional)</span></label><input id="accountPicture" type="file" accept="image/*">
         <div class="account-preview-wrap" id="accountPicturePreviewWrap"><img id="accountPreview" alt="Profile picture preview" hidden><span id="accountNoPicture">No picture selected</span></div>
         <div class="account-actions"><button type="submit" class="account-save" id="accountSubmitBtn">Create account</button><button type="button" id="removeAccountPicture" class="account-secondary">Remove picture</button></div>
-        <div class="account-social-actions"><button type="button" id="googleSignInBtn" class="account-secondary">Continue with Google</button><button type="button" id="githubSignInBtn" class="account-secondary">Continue with GitHub</button></div>
+        <div class="account-social-actions"><button type="button" id="googleSignInBtn" class="account-secondary">Continue with Google</button></div>
         <button type="button" id="accountModeToggle" class="account-secondary">Already have an account? Sign in</button>
         <button type="button" id="accountSignOut" class="account-secondary" hidden>Sign out</button>
         <button type="button" id="deleteAccountProfile" class="account-delete">Delete saved profile</button>
@@ -1330,25 +1330,24 @@ function setAccountMode(mode){
  document.getElementById("accountSubmitBtn").textContent=login?"Sign in":"Create account";
  document.getElementById("accountModeToggle").textContent=login?"New to NEXORA? Create an account":"Already have an account? Sign in";
 }
-async function signInWithSocial(provider){
+async function signInWithGoogle(){
  const status=document.getElementById("accountStatus");
- const buttons=[document.getElementById("googleSignInBtn"),document.getElementById("githubSignInBtn")];
+ const button=document.getElementById("googleSignInBtn");
  if(!supabaseClient){status.textContent="The account service could not load. Refresh the page and try again.";return;}
- buttons.forEach(button=>button.disabled=true);
- status.textContent="Connecting to "+(provider==="google"?"Google":"GitHub")+"…";
+ button.disabled=true;
+ status.textContent="Connecting to Google…";
  try{
    const {error}=await supabaseClient.auth.signInWithOAuth({
-     provider,
+     provider:"google",
      options:{redirectTo:SUPABASE_REDIRECT_URL}
    });
    if(error)throw error;
  }catch(error){
-   status.textContent=error.message||"Social sign-in could not start. Check the provider setup and try again.";
-   buttons.forEach(button=>button.disabled=false);
+   status.textContent=error.message||"Google sign-in could not start. Check the provider setup and try again.";
+   button.disabled=false;
  }
 }
-document.getElementById("googleSignInBtn").addEventListener("click",()=>signInWithSocial("google"));
-document.getElementById("githubSignInBtn").addEventListener("click",()=>signInWithSocial("github"));
+document.getElementById("googleSignInBtn").addEventListener("click",signInWithGoogle);
 async function postBackend(payload) {
   let response;
   try {
