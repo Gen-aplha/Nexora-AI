@@ -389,7 +389,7 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
 
 
 /* Local account profile */
-.account-overlay{display:none;position:fixed;z-index:30;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}.account-overlay.open{display:flex}.account-panel{width:min(100%,480px);max-height:90dvh;overflow:auto;background:#fff;color:#202124;border-radius:20px;padding:20px;box-shadow:0 20px 70px #0004}.account-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}.account-head h2{margin:0;font-size:23px}.account-head p{margin:5px 0 0;color:#777;font-size:13px}.account-form{display:flex;flex-direction:column;gap:8px}.account-form label{font-size:13px;font-weight:650;color:#333;margin-top:5px}.account-form label span{font-weight:400;color:#777}.account-form input:not([type=file]){width:100%;min-height:43px;border:1px solid #ddd;border-radius:10px;padding:10px 12px;background:#fff;color:#222;font:inherit}.account-form input[type=file]{width:100%;font-size:13px;color:#444}.account-preview-wrap{min-height:76px;display:flex;align-items:center;gap:12px;color:#888;font-size:12px}#accountPreview{width:68px;height:68px;border-radius:50%;object-fit:cover;border:1px solid #ddd}.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.account-save,.account-secondary,.account-delete{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-size:13px;cursor:pointer}.account-save{background:#25252d;color:#fff}.account-secondary{background:#eee;color:#333}.account-delete{background:transparent;color:#b42336;text-align:left;padding-left:0;margin-top:3px}.account-note{font-size:11px;line-height:1.5;color:#777;margin:8px 0 0}.account-status{font-size:12px;color:#28764d;min-height:16px;margin:0}body[data-theme="dark"] .account-panel{background:#202124;color:#f1f1f1}body[data-theme="dark"] .account-head p,body[data-theme="dark"] .account-note{color:#aaa}body[data-theme="dark"] .account-form label{color:#eee}body[data-theme="dark"] .account-form input:not([type=file]){background:#303238;border-color:#555;color:#fff}body[data-theme="dark"] .account-form input[type=file]{color:#ddd}body[data-theme="dark"] .account-secondary{background:#383a40;color:#eee}
+.account-overlay{display:none;position:fixed;z-index:30;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}.account-overlay.open{display:flex}.account-panel{width:min(100%,480px);max-height:90dvh;overflow:auto;background:#fff;color:#202124;border-radius:20px;padding:20px;box-shadow:0 20px 70px #0004}.account-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}.account-head h2{margin:0;font-size:23px}.account-head p{margin:5px 0 0;color:#777;font-size:13px}.account-form{display:flex;flex-direction:column;gap:8px}.account-form label{font-size:13px;font-weight:650;color:#333;margin-top:5px}.account-form label span{font-weight:400;color:#777}.account-form input:not([type=file]){width:100%;min-height:43px;border:1px solid #ddd;border-radius:10px;padding:10px 12px;background:#fff;color:#222;font:inherit}.account-form input[type=file]{width:100%;font-size:13px;color:#444}.account-preview-wrap{min-height:76px;display:flex;align-items:center;gap:12px;color:#888;font-size:12px}#accountPreview{width:68px;height:68px;border-radius:50%;object-fit:cover;border:1px solid #ddd}.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.account-save,.account-secondary,.account-delete{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-size:13px;cursor:pointer}.account-save{background:#25252d;color:#fff}.account-secondary{background:#eee;color:#333}.account-social-actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px}.account-social-actions button{width:100%;min-height:42px;font-weight:600}.account-delete{background:transparent;color:#b42336;text-align:left;padding-left:0;margin-top:3px}.account-note{font-size:11px;line-height:1.5;color:#777;margin:8px 0 0}.account-status{font-size:12px;color:#28764d;min-height:16px;margin:0}body[data-theme="dark"] .account-panel{background:#202124;color:#f1f1f1}body[data-theme="dark"] .account-head p,body[data-theme="dark"] .account-note{color:#aaa}body[data-theme="dark"] .account-form label{color:#eee}body[data-theme="dark"] .account-form input:not([type=file]){background:#303238;border-color:#555;color:#fff}body[data-theme="dark"] .account-form input[type=file]{color:#ddd}body[data-theme="dark"] .account-secondary{background:#383a40;color:#eee}
 
 /* First-launch choice screen */
 .first-launch-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(8,10,25,.72);backdrop-filter:blur(12px)}
@@ -458,6 +458,7 @@ body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;bor
         <label id="accountPictureLabel" for="accountPicture">Profile picture <span>(optional)</span></label><input id="accountPicture" type="file" accept="image/*">
         <div class="account-preview-wrap" id="accountPicturePreviewWrap"><img id="accountPreview" alt="Profile picture preview" hidden><span id="accountNoPicture">No picture selected</span></div>
         <div class="account-actions"><button type="submit" class="account-save" id="accountSubmitBtn">Create account</button><button type="button" id="removeAccountPicture" class="account-secondary">Remove picture</button></div>
+        <div class="account-social-actions"><button type="button" id="googleSignInBtn" class="account-secondary">Continue with Google</button><button type="button" id="githubSignInBtn" class="account-secondary">Continue with GitHub</button></div>
         <button type="button" id="accountModeToggle" class="account-secondary">Already have an account? Sign in</button>
         <button type="button" id="accountSignOut" class="account-secondary" hidden>Sign out</button>
         <button type="button" id="deleteAccountProfile" class="account-delete">Delete saved profile</button>
@@ -1329,6 +1330,25 @@ function setAccountMode(mode){
  document.getElementById("accountSubmitBtn").textContent=login?"Sign in":"Create account";
  document.getElementById("accountModeToggle").textContent=login?"New to NEXORA? Create an account":"Already have an account? Sign in";
 }
+async function signInWithSocial(provider){
+ const status=document.getElementById("accountStatus");
+ const buttons=[document.getElementById("googleSignInBtn"),document.getElementById("githubSignInBtn")];
+ if(!supabaseClient){status.textContent="The account service could not load. Refresh the page and try again.";return;}
+ buttons.forEach(button=>button.disabled=true);
+ status.textContent="Connecting to "+(provider==="google"?"Google":"GitHub")+"…";
+ try{
+   const {error}=await supabaseClient.auth.signInWithOAuth({
+     provider,
+     options:{redirectTo:SUPABASE_REDIRECT_URL}
+   });
+   if(error)throw error;
+ }catch(error){
+   status.textContent=error.message||"Social sign-in could not start. Check the provider setup and try again.";
+   buttons.forEach(button=>button.disabled=false);
+ }
+}
+document.getElementById("googleSignInBtn").addEventListener("click",()=>signInWithSocial("google"));
+document.getElementById("githubSignInBtn").addEventListener("click",()=>signInWithSocial("github"));
 async function postBackend(payload) {
   let response;
   try {
