@@ -366,6 +366,27 @@ body[data-theme="light"] #themeBtn{color:#555}
 .sidebar.open{transform:translateX(0)!important;visibility:visible!important;pointer-events:auto!important}
 .menu-btn{position:relative!important;z-index:10000!important;display:flex!important;align-items:center!important;justify-content:center!important;min-width:48px!important;min-height:48px!important;touch-action:manipulation!important;pointer-events:auto!important}
 }
+
+/* Refined compact navigation icons and spacing */
+.side-search{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid #e9e9ed!important;background:#fafafa!important;border-radius:12px!important;color:#555!important}
+.side-search svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.side-title{font-size:21px!important;letter-spacing:-.5px!important}
+.side-header{padding:2px 2px 13px!important}
+.side-primary{gap:1px!important}
+.side-link{gap:12px!important;padding:9px 8px!important;font-family:Inter,system-ui,sans-serif!important;font-size:15px!important;font-weight:550!important;letter-spacing:0!important;border-radius:9px!important;min-height:42px}
+.side-link:hover{background:#f5f5f7!important}
+.side-icon{width:22px!important;height:22px!important;flex:0 0 22px!important;display:grid!important;place-items:center!important;color:#707783!important;font-size:0!important}
+.side-icon svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.side-divider{margin:15px 0 3px!important}
+.side-chat-btn{gap:8px!important;padding:9px 16px!important;font-size:14px!important;font-weight:650!important}
+.side-chat-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.side-profile{width:38px!important;height:38px!important;font-size:18px!important}
+body[data-theme="light"] .sidebar{width:min(78vw,300px)!important;padding:15px 17px 12px!important}
+body[data-theme="light"] .history-heading{font-size:11px!important;padding:9px 0 6px!important}
+body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!important}
+.see-all-chats{font-size:14px!important;padding:10px 0!important}
+@media(max-width:680px){.sidebar{width:min(78vw,300px)!important}.side-link{font-size:15px!important;min-height:40px!important;padding:8px 7px!important}.side-icon svg{width:17px;height:17px}.side-title{font-size:20px!important}.side-chat-btn{padding:8px 14px!important;font-size:14px!important}}
+
 </style>
 </head>
 <body>
@@ -373,15 +394,15 @@ body[data-theme="light"] #themeBtn{color:#555}
   <aside class="sidebar" id="sidebar">
     <div class="side-header">
       <div class="side-title">NEXORA <span>AI</span></div>
-      <button class="side-search" id="sideSearchBtn" aria-label="Search chats" title="Search chats">⌕</button>
+      <button class="side-search" id="sideSearchBtn" aria-label="Search chats" title="Search chats"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 4 4"/></svg></button>
     </div>
     <div class="side-primary">
-      <button class="side-link" id="sideImagesBtn"><span class="side-icon">▧</span>Images</button>
-      <button class="side-link" id="libraryBtn"><span class="side-icon">▥</span>Library</button>
-      <button class="side-link" data-coming="Projects"><span class="side-icon">▱</span>Projects</button>
-      <button class="side-link" data-coming="Remote"><span class="side-icon">▣</span>Remote</button>
-      <button class="side-link" data-coming="Scheduled"><span class="side-icon">◷</span>Scheduled</button>
-      <button class="side-link" data-coming="Plugins"><span class="side-icon">⛭</span>Plugins</button>
+      <button class="side-link" id="sideImagesBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4.5 17 5-5 3.5 3 2.5-2 4 4"/></svg></span><span>Images</span></button>
+      <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
+      <button class="side-link" data-coming="Projects"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
+      <button class="side-link" data-coming="Remote"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="12" rx="2"/><path d="M8 20h8M12 16.5V20M8 9l2.5 2.5L8 14M13 14h3"/></svg></span><span>Remote</span></button>
+      <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
+      <button class="side-link" data-coming="Plugins"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5h6l.7 2.1 1.8 1.1 2.1-.5 1.5 2.6-1.4 1.7v2.1l1.4 1.7-1.5 2.6-2.1-.5-1.8 1.1-.7 2.1H9l-.7-2.1-1.8-1.1-2.1.5-1.5-2.6 1.4-1.7v-2.1l-1.4-1.7 1.5-2.6 2.1.5 1.8-1.1z"/><circle cx="12" cy="13" r="3"/></svg></span><span>Plugins</span></button>
     </div>
     <div class="side-divider"></div>
     <div class="history-heading">RECENT CHATS</div>
@@ -389,7 +410,7 @@ body[data-theme="light"] #themeBtn{color:#555}
     <div id="historyList" class="history-list"></div>
     <button class="see-all-chats" id="seeAllChatsBtn">See all…</button>
     <div class="side-footer">
-      <button class="side-chat-btn" id="sideNewChatBtn"><span>▰</span>Chat</button>
+      <button class="side-chat-btn" id="sideNewChatBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>New chat</span></button>
       <button class="side-profile" id="sideProfileBtn" aria-label="NEXORA profile" title="NEXORA AI">N</button>
     </div>
     <div class="history-tools">
