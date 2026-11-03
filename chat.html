@@ -1238,7 +1238,7 @@ async function sendMessage(text) {
   saveSessions();
   const userMessage = addMessage("user", shownText + (names ? "\n📎 " + names : ""));
   appendAttachmentPreviews(userMessage.bubble, files);
-  pendingAttachments.forEach(item => { if (item.kind === "video" && item.url) URL.revokeObjectURL(item.url); });
+  // Keep video object URLs alive so sent video previews remain playable in this open chat.
   pendingAttachments = [];
   renderAttachmentList();
   input.value = "";
