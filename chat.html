@@ -451,14 +451,17 @@ body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;bor
     <section class="account-panel" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
       <div class="account-head"><div><h2 id="accountTitle">Your account</h2><p>Your profile details stay on this device</p></div><button type="button" id="closeAccountBtn" class="library-close" aria-label="Close account">×</button></div>
       <form id="accountForm" class="account-form">
-        <label for="accountName">Name</label><input id="accountName" type="text" maxlength="60" autocomplete="name" required placeholder="Enter your name">
-        <label for="accountAge">Age</label><input id="accountAge" type="number" min="1" max="120" inputmode="numeric" required placeholder="Enter your age">
+        <label id="accountNameLabel" for="accountName">Name</label><input id="accountName" type="text" maxlength="60" autocomplete="name" required placeholder="Enter your name">
+        <label id="accountAgeLabel" for="accountAge">Age</label><input id="accountAge" type="number" min="1" max="120" inputmode="numeric" required placeholder="Enter your age">
         <label for="accountEmail">Email</label><input id="accountEmail" type="email" maxlength="254" autocomplete="email" required placeholder="Enter your email">
-        <label for="accountPicture">Profile picture <span>(optional)</span></label><input id="accountPicture" type="file" accept="image/*">
-        <div class="account-preview-wrap"><img id="accountPreview" alt="Profile picture preview" hidden><span id="accountNoPicture">No picture selected</span></div>
-        <div class="account-actions"><button type="submit" class="account-save">Save profile</button><button type="button" id="removeAccountPicture" class="account-secondary">Remove picture</button></div>
+        <label for="accountPassword">Password</label><input id="accountPassword" type="password" minlength="10" maxlength="128" autocomplete="new-password" required placeholder="Create a password (10+ characters)">
+        <label id="accountPictureLabel" for="accountPicture">Profile picture <span>(optional)</span></label><input id="accountPicture" type="file" accept="image/*">
+        <div class="account-preview-wrap" id="accountPicturePreviewWrap"><img id="accountPreview" alt="Profile picture preview" hidden><span id="accountNoPicture">No picture selected</span></div>
+        <div class="account-actions"><button type="submit" class="account-save" id="accountSubmitBtn">Create account</button><button type="button" id="removeAccountPicture" class="account-secondary">Remove picture</button></div>
+        <button type="button" id="accountModeToggle" class="account-secondary">Already have an account? Sign in</button>
+        <button type="button" id="accountSignOut" class="account-secondary" hidden>Sign out</button>
         <button type="button" id="deleteAccountProfile" class="account-delete">Delete saved profile</button>
-        <p class="account-note">This is a local profile, not an online sign-in. Your name, age, email and optional picture are saved only in this browser on this device. They are not sent to NEXORA's AI server.</p><p id="accountStatus" class="account-status" role="status"></p>
+        <p class="account-note">Your account details are stored securely on NEXORA's server. Passwords are hashed and are never stored as plain text. Use a unique password that you do not use elsewhere.</p><p id="accountStatus" class="account-status" role="status"></p>
       </form>
     </section>
   </div>
@@ -1301,6 +1304,24 @@ attachmentInput.addEventListener("change", async () => {
 function attachmentSummary(items) {
   return items.map(item => item.name).join(", ");
 }
+const AUTH_TOKEN_KEY="nexora_auth_token_v1";
+let authToken=localStorage.getItem(AUTH_TOKEN_KEY)||"";
+async function accountRequest(payload){
+ const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json",...(authToken?{"Authorization":"Bearer "+authToken}:{})},body:JSON.stringify(payload)});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok||data.error)throw new Error(data.error||("Request failed ("+response.status+")"));
+ return data;
+}
+function setAccountMode(mode){
+ const login=mode==="login";document.getElementById("accountForm").dataset.mode=mode;
+ for(const id of ["accountNameLabel","accountName","accountAgeLabel","accountAge","accountPictureLabel","accountPicture","accountPicturePreviewWrap","removeAccountPicture"])document.getElementById(id).hidden=login;
+ document.getElementById("accountName").required=!login;document.getElementById("accountAge").required=!login;
+ document.getElementById("accountPassword").autocomplete=login?"current-password":"new-password";
+ document.getElementById("accountPassword").placeholder=login?"Enter your password":"Create a password (10+ characters)";
+ document.getElementById("accountPassword").minLength=login?1:10;
+ document.getElementById("accountSubmitBtn").textContent=login?"Sign in":"Create account";
+ document.getElementById("accountModeToggle").textContent=login?"New to NEXORA? Create an account":"Already have an account? Sign in";
+}
 async function postBackend(payload) {
   let response;
   try {
@@ -1590,6 +1611,7 @@ document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("cl
 document.getElementById("sideNewChatBtn").addEventListener("click",()=>{startNewChat();sidebar.classList.remove("open");});
 document.getElementById("seeAllChatsBtn").addEventListener("click",()=>{historySearch.value="";renderHistory();historyList.style.maxHeight="52vh";historyList.scrollIntoView({block:"nearest"});});
 const ACCOUNT_STORAGE_KEY="nexora_account_profile_v1";
+let accountMode="register";
 const ONBOARDING_STORAGE_KEY="nexora_first_launch_choice_v1";
 const firstLaunchOverlay=document.getElementById("firstLaunchOverlay");
 function closeFirstLaunch(){firstLaunchOverlay.classList.remove("open");firstLaunchOverlay.setAttribute("aria-hidden","true");}
@@ -1601,17 +1623,20 @@ let accountProfile=loadAccountProfile(),pendingAccountPicture="";
 function loadAccountProfile(){try{const p=JSON.parse(localStorage.getItem(ACCOUNT_STORAGE_KEY)||"null");return p&&typeof p.name==="string"?p:null;}catch(e){return null;}}
 function renderAccountButton(){const b=document.getElementById("sideProfileBtn");if(!b)return;b.textContent="";b.style.backgroundImage="";if(accountProfile?.picture){b.style.backgroundImage="url("+JSON.stringify(accountProfile.picture)+")";b.style.backgroundSize="cover";b.style.backgroundPosition="center";}else{b.textContent=accountProfile?.name?.trim()?.charAt(0)?.toUpperCase()||"N";}}
 function renderAccountPreview(){const img=document.getElementById("accountPreview"),empty=document.getElementById("accountNoPicture");if(pendingAccountPicture){img.src=pendingAccountPicture;img.hidden=false;empty.hidden=true;}else{img.removeAttribute("src");img.hidden=true;empty.hidden=false;}}
-function openAccount(){const p=accountProfile||{};document.getElementById("accountName").value=p.name||"";document.getElementById("accountAge").value=p.age||"";document.getElementById("accountEmail").value=p.email||"";pendingAccountPicture=p.picture||"";document.getElementById("accountPicture").value="";renderAccountPreview();document.getElementById("accountStatus").textContent="";document.getElementById("accountOverlay").classList.add("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
+function openAccount(){const p=accountProfile||{};document.getElementById("accountName").value=p.name||"";document.getElementById("accountAge").value=p.age||"";document.getElementById("accountEmail").value=p.email||"";document.getElementById("accountPassword").value="";pendingAccountPicture=p.picture||"";document.getElementById("accountPicture").value="";renderAccountPreview();document.getElementById("accountStatus").textContent="";if(authToken&&accountProfile){accountMode="profile";setAccountMode("login");document.getElementById("accountEmail").value=accountProfile.email||"";document.getElementById("accountPassword").hidden=true;document.querySelector("label[for=accountPassword]").hidden=true;document.getElementById("accountSubmitBtn").hidden=true;document.getElementById("accountModeToggle").hidden=true;document.getElementById("accountSignOut").hidden=false;document.getElementById("accountStatus").textContent="Signed in as "+accountProfile.email;}else{accountMode="register";setAccountMode("register");document.getElementById("accountPassword").hidden=false;document.querySelector("label[for=accountPassword]").hidden=false;document.getElementById("accountSubmitBtn").hidden=false;document.getElementById("accountModeToggle").hidden=false;document.getElementById("accountSignOut").hidden=true;}document.getElementById("accountOverlay").classList.add("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
 function closeAccount(){document.getElementById("accountOverlay").classList.remove("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","true");if(!localStorage.getItem(ONBOARDING_STORAGE_KEY)&&!accountProfile)showFirstLaunch();}
+document.getElementById("accountModeToggle").addEventListener("click",()=>{accountMode=accountMode==="register"?"login":"register";setAccountMode(accountMode);document.getElementById("accountStatus").textContent="";document.getElementById("accountPassword").value="";});
+document.getElementById("accountSignOut").addEventListener("click",async()=>{try{await accountRequest({action:"logout"});}catch(e){}authToken="";accountProfile=null;localStorage.removeItem(AUTH_TOKEN_KEY);localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);renderAccountButton();closeAccount();showFirstLaunch();});
 document.getElementById("sideProfileBtn").addEventListener("click",openAccount);
 document.getElementById("closeAccountBtn").addEventListener("click",closeAccount);
 document.getElementById("accountOverlay").addEventListener("click",e=>{if(e.target.id==="accountOverlay")closeAccount();});
 document.getElementById("accountPicture").addEventListener("change",async e=>{const file=e.target.files?.[0];if(!file)return;if(!file.type.startsWith("image/")){alert("Please choose an image file.");e.target.value="";return;}try{const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});const image=new Image();image.src=data;await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;});const scale=Math.min(1,512/Math.max(image.naturalWidth,image.naturalHeight));const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);pendingAccountPicture=canvas.toDataURL("image/jpeg",.78);renderAccountPreview();}catch(err){alert("That picture could not be opened. Please try another image.");}});
 document.getElementById("removeAccountPicture").addEventListener("click",()=>{pendingAccountPicture="";document.getElementById("accountPicture").value="";renderAccountPreview();});
-document.getElementById("accountForm").addEventListener("submit",e=>{e.preventDefault();const name=document.getElementById("accountName").value.trim(),age=Number(document.getElementById("accountAge").value),email=document.getElementById("accountEmail").value.trim();if(!name||!Number.isInteger(age)||age<1||age>120||!email){document.getElementById("accountStatus").textContent="Please enter a valid name, age and email.";return;}accountProfile={name,age,email,picture:pendingAccountPicture};try{localStorage.setItem(ACCOUNT_STORAGE_KEY,JSON.stringify(accountProfile));localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");renderAccountButton();document.getElementById("accountStatus").textContent="Profile saved on this device.";closeAccount();closeFirstLaunch();}catch(err){document.getElementById("accountStatus").textContent="Could not save. Try a smaller picture or remove it.";}});
+document.getElementById("accountForm").addEventListener("submit",async e=>{e.preventDefault();const email=document.getElementById("accountEmail").value.trim().toLowerCase(),password=document.getElementById("accountPassword").value,status=document.getElementById("accountStatus");const mode=document.getElementById("accountForm").dataset.mode||"register";const payload=mode==="login"?{action:"login",email,password}:{action:"register",name:document.getElementById("accountName").value.trim(),age:Number(document.getElementById("accountAge").value),email,password,picture:pendingAccountPicture||null};if(mode==="register"&&password.length<10){status.textContent="Choose a password with at least 10 characters.";return;}status.textContent=mode==="login"?"Signing in…":"Creating your account…";document.getElementById("accountSubmitBtn").disabled=true;try{const data=await accountRequest(payload);authToken=data.token;localStorage.setItem(AUTH_TOKEN_KEY,authToken);accountProfile=data.user;localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");localStorage.removeItem(ACCOUNT_STORAGE_KEY);renderAccountButton();status.textContent=mode==="login"?"Signed in successfully.":"Your NEXORA account has been created.";closeAccount();closeFirstLaunch();}catch(err){status.textContent=err.message||"Could not complete account request. Try again.";}finally{document.getElementById("accountSubmitBtn").disabled=false;}});
 document.getElementById("deleteAccountProfile").addEventListener("click",()=>{if(!accountProfile){document.getElementById("accountStatus").textContent="No saved profile to delete.";return;}if(!confirm("Delete your saved NEXORA profile from this device?"))return;localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);accountProfile=null;pendingAccountPicture="";renderAccountButton();document.getElementById("accountForm").reset();renderAccountPreview();document.getElementById("accountStatus").textContent="Saved profile deleted from this device.";});
 renderAccountButton();
-if(accountProfile){localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");}else if(!localStorage.getItem(ONBOARDING_STORAGE_KEY)){if(sessions.length){localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");}else{showFirstLaunch();}}
+if(authToken){accountRequest({action:"me"}).then(data=>{accountProfile=data.user;renderAccountButton();localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");}).catch(()=>{authToken="";accountProfile=null;localStorage.removeItem(AUTH_TOKEN_KEY);if(!localStorage.getItem(ONBOARDING_STORAGE_KEY)&&!sessions.length)showFirstLaunch();});}
+else if(!localStorage.getItem(ONBOARDING_STORAGE_KEY)){if(sessions.length){localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");}else{showFirstLaunch();}}
 
 document.getElementById("exploreBtn")?.addEventListener("click", () => {
   sendMessage("What are some useful things you can help me with?");
