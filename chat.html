@@ -1739,6 +1739,12 @@ document.getElementById("accountResendVerification").addEventListener("click",as
  finally{button.disabled=false;}
 });
 document.getElementById("deleteAccountProfile").addEventListener("click",()=>{if(!accountProfile){document.getElementById("accountStatus").textContent="No saved profile to delete.";return;}if(!confirm("Delete your saved NEXORA profile from this device?"))return;localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);accountProfile=null;pendingAccountPicture="";renderAccountButton();document.getElementById("accountForm").reset();renderAccountPreview();document.getElementById("accountStatus").textContent="Saved profile deleted from this device.";});
+const authCallbackParams=new URLSearchParams(location.hash.startsWith("#")?location.hash.slice(1):"");
+const authCallbackError=authCallbackParams.get("error_description")||authCallbackParams.get("error");
+if(authCallbackError){
+ localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+ history.replaceState(null,"",location.pathname+location.search);
+}
 renderAccountButton();
 if(supabaseClient){
  supabaseClient.auth.getSession().then(({data})=>{
@@ -1756,6 +1762,10 @@ if(supabaseClient){
      renderAccountButton();
    }
  });
+}
+if(authCallbackError){
+ openAccount();
+ document.getElementById("accountStatus").textContent="Google sign-in did not finish: "+authCallbackError+". Please try again after the Google provider settings are corrected.";
 }
 if(authToken){accountRequest({action:"me"}).then(data=>{accountProfile=data.user;renderAccountButton();localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");}).catch(()=>{authToken="";accountProfile=null;localStorage.removeItem(AUTH_TOKEN_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);if(sessions.length){localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");}else{showFirstLaunch();}});}
 else if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="guest"){}
