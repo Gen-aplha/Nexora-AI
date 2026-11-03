@@ -448,22 +448,14 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
     <header class="topbar">
       <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" onclick="(function(b){var s=document.getElementById('sidebar');var o=s.classList.toggle('open');b.setAttribute('aria-expanded',String(o));b.setAttribute('aria-label',o?'Close menu':'Open menu');})(this)">☰</button>
       <div class="topbrand">
-        <svg class="logo-mark" viewBox="0 0 100 100" role="img" aria-label="NEXORA logo">
-          <defs><linearGradient id="ng2" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#287dff"/><stop offset=".52" stop-color="#9b45ff"/><stop offset="1" stop-color="#ed63ff"/></linearGradient></defs>
-          <rect x="3" y="3" width="94" height="94" rx="28" fill="#24135a" stroke="#7042e8" stroke-opacity=".55"/>
-          <path d="M24 72V28L76 72V28" fill="none" stroke="url(#ng2)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">
         <div><h1>NEXORA AI</h1><p>Your AI assistant</p></div>
       </div>
       <div class="status"><span class="dot"></span> Online</div>
     </header>
     <section class="chat" id="chat" aria-live="polite">
       <div class="welcome" id="welcome">
-        <svg class="logo-mark" viewBox="0 0 100 100" role="img" aria-label="NEXORA logo">
-          <defs><linearGradient id="ng3" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#287dff"/><stop offset=".52" stop-color="#9b45ff"/><stop offset="1" stop-color="#ed63ff"/></linearGradient></defs>
-          <rect x="3" y="3" width="94" height="94" rx="28" fill="#24135a" stroke="#7042e8" stroke-opacity=".55"/>
-          <path d="M24 72V28L76 72V28" fill="none" stroke="url(#ng3)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">
         <h2>What can I help with?</h2>
         <p>Ask anything, explore ideas, learn something new, or create something useful.</p>
         <div class="suggestions">
@@ -705,7 +697,7 @@ if (!SpeechRecognition) {
 }
 
 
-const logoSVG = `<svg class="logo-mark" viewBox="0 0 100 100" role="img" aria-label="NEXORA logo"><defs><linearGradient id="chatLogoGrad" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#287dff"/><stop offset=".52" stop-color="#9b45ff"/><stop offset="1" stop-color="#ed63ff"/></linearGradient></defs><rect x="3" y="3" width="94" height="94" rx="28" fill="#24135a" stroke="#7042e8" stroke-opacity=".55"/><path d="M24 72V28L76 72V28" fill="none" stroke="url(#chatLogoGrad)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const logoSVG = `<img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">`;
 
 function loadSessions() {
   try {
