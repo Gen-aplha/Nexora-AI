@@ -1359,6 +1359,10 @@ async function cartoonizeImage(dataURL) {
   }
   frame.data.set(output); ctx.putImageData(frame,0,0); return canvas.toDataURL('image/png');
 }
+const MEMORY_STORAGE_KEY = "nexora_saved_memories_v1";
+function loadSavedMemories(){try{const v=JSON.parse(localStorage.getItem(MEMORY_STORAGE_KEY)||"[]");return Array.isArray(v)?v.filter(x=>x&&typeof x.text==="string"):[];}catch(e){return [];}}
+let savedMemories=loadSavedMemories();
+
 async function sendMessage(text) {
   const message = text.trim();
   const files = pendingAttachments.slice();
@@ -1551,9 +1555,6 @@ document.getElementById("exploreBtn").addEventListener("click", () => {
   sidebar.classList.remove("open");
 });
 
-const MEMORY_STORAGE_KEY = "nexora_saved_memories_v1";
-function loadSavedMemories(){try{const v=JSON.parse(localStorage.getItem(MEMORY_STORAGE_KEY)||"[]");return Array.isArray(v)?v.filter(x=>x&&typeof x.text==="string"):[];}catch(e){return [];}}
-let savedMemories=loadSavedMemories();
 function persistMemories(){localStorage.setItem(MEMORY_STORAGE_KEY,JSON.stringify(savedMemories));}
 function renderMemories(){
  const list=document.getElementById("memoryList"); if(!list)return; list.innerHTML="";
