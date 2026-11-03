@@ -1665,12 +1665,12 @@ document.getElementById("accountForm").addEventListener("submit",async e=>{
      return;
    }
    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+   if(error&&/email_not_confirmed|email not confirmed/i.test((error.code||"")+" "+error.message)){
+     pendingVerificationEmail=email;
+     document.getElementById("accountResendVerification").hidden=false;
+     throw new Error("Please verify your email before signing in. Check your inbox or resend the verification email.");
+   }
    if(!error&&data.user){
-     if(!data.user.email_confirmed_at&&!data.user.confirmed_at){
-       pendingVerificationEmail=email;
-       document.getElementById("accountResendVerification").hidden=false;
-       throw new Error("Please verify your email before signing in. Check your inbox or resend the verification email.");
-     }
      supabaseSession=data.session;
      accountProfile={name:data.user.user_metadata?.name||email.split("@")[0],email};
      localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
