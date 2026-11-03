@@ -1508,7 +1508,7 @@ input.addEventListener("keydown", event => {
 document.querySelectorAll(".suggestion").forEach(button => {
   button.addEventListener("click", () => sendMessage(button.textContent));
 });
-document.getElementById("newChat").addEventListener("click", startNewChat);
+document.getElementById("newChat")?.addEventListener("click", startNewChat);
 const menuButton = document.getElementById("menuBtn");
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && sidebar.classList.contains("open")) {
@@ -1548,7 +1548,7 @@ document.getElementById("sideNewChatBtn").addEventListener("click",()=>{startNew
 document.getElementById("seeAllChatsBtn").addEventListener("click",()=>{historySearch.value="";renderHistory();historyList.style.maxHeight="52vh";historyList.scrollIntoView({block:"nearest"});});
 document.getElementById("sideProfileBtn").addEventListener("click",()=>alert("NEXORA AI profile settings are coming soon."));
 
-document.getElementById("exploreBtn").addEventListener("click", () => {
+document.getElementById("exploreBtn")?.addEventListener("click", () => {
   sendMessage("What are some useful things you can help me with?");
   sidebar.classList.remove("open");
 });
