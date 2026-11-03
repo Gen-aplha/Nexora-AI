@@ -166,6 +166,32 @@ textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
 }
 
 
+/* NEXORA light theme defaults and palette */
+body[data-theme="light"]{background:#f7f7fb;color:#20212a}
+body[data-theme="light"] .sidebar{background:#fff;border-color:#e5e5ec}
+body[data-theme="light"] .topbar{background:rgba(255,255,255,.96);border-color:#e7e7ed}
+body[data-theme="light"] .new-chat{border-color:#dedee8;color:#30313a}
+body[data-theme="light"] .nav-btn,body[data-theme="light"] .history-item{color:#555766}
+body[data-theme="light"] .nav-btn:hover,body[data-theme="light"] .history-item:hover,body[data-theme="light"] .history-item.active{background:#f0eff8;border-color:#e4e1f3;color:#242431}
+body[data-theme="light"] .history-heading,body[data-theme="light"] .side-bottom,body[data-theme="light"] .topbrand p,body[data-theme="light"] .status,body[data-theme="light"] .footnote{color:#777987}
+body[data-theme="light"] .suggestion,body[data-theme="light"] .tool-btn,body[data-theme="light"] .history-tools button,body[data-theme="light"] .attachment-chip,body[data-theme="light"] .history-search,body[data-theme="light"] .download-image{background:#fff;border-color:#dedee8;color:#30313a}
+body[data-theme="light"] .suggestion:hover,body[data-theme="light"] .tool-btn:hover{background:#f0eff8}
+body[data-theme="light"] .user .bubble{background:#eeeafc;border-color:#e2dcfa;color:#242331}
+body[data-theme="light"] .bot .bubble{color:#252630}
+body[data-theme="light"] .bubble pre{background:#f0f0f4;border-color:#dedee8;color:#24242b}
+body[data-theme="light"] .composer{background:#fff;border-color:#d6d6df}
+body[data-theme="light"] .composer textarea{color:#20212a}
+body[data-theme="light"] .composer textarea::placeholder{color:#858796}
+body[data-theme="light"] .plus-btn,body[data-theme="light"] .voice-btn{color:#343540}
+body[data-theme="light"] .plus-btn:hover,body[data-theme="light"] .voice-btn:hover{background:#eeeef3}
+body[data-theme="light"] .send{background:#24242b;color:#fff}
+body[data-theme="light"] .voice-language{background:#fff;border-color:#dedee8;color:#30313a}
+body[data-theme="light"] .composer-wrap{background:linear-gradient(transparent,#f7f7fb 18%)}
+body[data-theme="light"] .message-actions button{color:#666775}
+body[data-theme="light"] .message-actions button:hover{background:#eeeef3;color:#222}
+body[data-theme="light"] .attachment-preview{background:#eee}
+body[data-theme="light"] .attachment-note{color:#777987}
+
 /* Minimal ChatGPT-style composer: plus, message field, microphone and send */
 .composer-wrap{position:relative;padding:12px clamp(12px,4vw,50px) 16px}
 .composer{max-width:790px;min-height:64px;display:flex;align-items:flex-end;gap:9px;padding:9px 10px 9px 12px;border:1px solid #555;border-radius:28px;background:#303030;box-shadow:none}
@@ -1395,23 +1421,20 @@ document.getElementById("exploreBtn").addEventListener("click", () => {
   sendMessage("What are some useful things you can help me with?");
   sidebar.classList.remove("open");
 });
-document.getElementById("themeBtn").addEventListener("click", () => {
-  const light = document.body.dataset.theme !== "light";
+function setTheme(theme) {
+  const light = theme === "light";
   document.body.dataset.theme = light ? "light" : "dark";
-  if (light) {
-    document.body.style.setProperty("--bg", "#f3f4ff");
-    document.body.style.setProperty("--text", "#19152d");
-    document.body.style.setProperty("--muted", "#646b91");
-    document.body.style.setProperty("--panel2", "#e5e3ff");
-    document.body.style.background = "#f3f4ff";
-  } else {
-    document.body.style.setProperty("--bg", "#0c0e1d");
-    document.body.style.setProperty("--text", "#f5f6ff");
-    document.body.style.setProperty("--muted", "#9da5dc");
-    document.body.style.setProperty("--panel2", "#1b1f3a");
-    document.body.style.background = "radial-gradient(ellipse at 80% 0%,#1a1740 0%,transparent 38%),#0c0e1d";
-  }
+  document.body.style.setProperty("--bg", light ? "#f7f7fb" : "#0c0e1d");
+  document.body.style.setProperty("--text", light ? "#20212a" : "#f5f6ff");
+  document.body.style.setProperty("--muted", light ? "#777987" : "#9da5dc");
+  document.body.style.setProperty("--panel2", light ? "#eeeeF5" : "#1b1f3a");
+  document.body.style.background = light ? "#f7f7fb" : "radial-gradient(ellipse at 80% 0%,#1a1740 0%,transparent 38%),#0c0e1d";
+}
+document.getElementById("themeBtn").addEventListener("click", () => {
+  setTheme(document.body.dataset.theme === "light" ? "dark" : "light");
 });
+// Start every new visit in light mode.
+setTheme("light");
 
 // Restore the most recently used conversation on page load.
 renderHistory();
