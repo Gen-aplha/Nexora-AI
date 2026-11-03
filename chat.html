@@ -169,23 +169,50 @@ textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
 .send{border:0;background:#f2f2f2;color:#171717;font-size:27px;font-weight:600;box-shadow:none}
 .send:disabled{opacity:.45}
 .voice-language{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
-.image-mode-panel{max-width:790px;margin:0 auto 10px;padding:13px 15px;background:#242424;border:1px solid #414141;border-radius:18px;color:#f4f4f4}
+.image-mode-panel{position:fixed;inset:0;z-index:1000;background:#fff;color:#171717;display:flex;flex-direction:column;padding:0;overflow:hidden}
 .image-mode-panel[hidden]{display:none}
-.image-mode-heading{display:flex;align-items:center;gap:11px}
-.image-mode-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#383044;color:#d8b7ff;font-size:23px}
-.image-mode-heading strong,.image-mode-heading small{display:block}
-.image-mode-heading strong{font-size:14px;font-weight:650}
-.image-mode-heading small{margin-top:3px;color:#aaa;font-size:12px}
-.image-mode-close{margin-left:auto;width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:#bbb;font-size:24px;cursor:pointer}
-.image-mode-close:hover{background:#3b3b3b;color:#fff}
-.image-prompt-ideas{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0 47px}
-.image-prompt-chip{padding:7px 11px;border:1px solid #4a4a4a;border-radius:20px;background:#303030;color:#ddd;font-size:11px;cursor:pointer}
-.image-prompt-chip:hover{background:#414141}
-body[data-theme="light"] .image-mode-panel{background:#fff;border-color:#dedee5;color:#242424}
-body[data-theme="light"] .image-mode-heading small{color:#666}
-body[data-theme="light"] .image-mode-close{color:#666}
-body[data-theme="light"] .image-prompt-chip{background:#f5f5f8;border-color:#ddd;color:#333}
-body[data-theme="light"] .image-prompt-chip:hover{background:#e9e9ef}
+.images-page-header{height:66px;flex:0 0 66px;display:flex;align-items:center;gap:14px;padding:0 16px;border-bottom:1px solid #f0f0f0;background:#fff}
+.images-page-header>strong{font-size:18px;font-weight:700}
+.images-header-spacer{flex:1}
+.images-back{width:40px;height:40px;border:0;border-radius:50%;background:#f5f5f5;color:#222;font-size:27px;line-height:1;cursor:pointer}
+.images-page-scroll{overflow-y:auto;overscroll-behavior:contain;flex:1;padding:18px 16px 112px}
+.images-page-scroll h2{font-size:19px;font-weight:750;margin:4px 0 17px}
+.image-template-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.image-template-card{position:relative;min-height:210px;aspect-ratio:0.82;border:0;border-radius:21px;overflow:hidden;padding:14px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:#fff;cursor:pointer;background:linear-gradient(145deg,#e8e8ee,#b9bac4)}
+.image-template-card:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.62) 100%)}
+.image-template-card>span,.image-template-card>b{position:relative;z-index:1}
+.image-template-card>span{font-size:42px;font-weight:800;line-height:1.15;text-align:center;display:grid;place-items:center;flex:1;text-shadow:0 2px 8px #0002}
+.image-template-card>b{font-size:15px;line-height:1.2;font-weight:750;text-shadow:0 1px 5px #0008}
+.template-stickers{background:linear-gradient(135deg,#ffda55,#ff9c61 48%,#8ecb91)}
+.template-poster{background:linear-gradient(145deg,#173d68,#e7b65b 60%,#fff0cb)}
+.template-diagram{background:linear-gradient(145deg,#f5f7e9,#9dbd77);color:#173c2d}
+.template-map{background:linear-gradient(145deg,#c7a87b,#77634d)}
+.template-history{background:linear-gradient(145deg,#e9dfc8,#8e7760)}
+.template-science{background:linear-gradient(145deg,#d7e7ed,#8171b0)}
+.template-landscape{background:linear-gradient(145deg,#8db7d0,#345b57)}
+.template-statue{background:linear-gradient(145deg,#d9d0c1,#786e61)}
+.template-anime{background:linear-gradient(145deg,#f4a3bd,#657fc4)}
+.template-3d{background:linear-gradient(145deg,#b7a2ed,#6c94d4)}
+.template-interior{background:linear-gradient(145deg,#c6b69f,#788c7d)}
+.template-infographic{background:linear-gradient(145deg,#7cb7bb,#3c6f95)}
+.my-images-heading{margin-top:25px!important}
+.my-images-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.my-image-thumb{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;background:#eee;cursor:pointer}
+.my-images-empty{grid-column:1/-1;color:#888;font-size:13px;padding:8px 0}
+body:has(.image-mode-panel:not([hidden])) .composer-wrap{position:static}
+body:has(.image-mode-panel:not([hidden])) .composer{position:fixed;z-index:1002;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));width:auto;max-width:none;margin:0;background:#fff;border:1px solid #ececec;border-radius:28px;box-shadow:0 3px 18px #0001;color:#222}
+body:has(.image-mode-panel:not([hidden])) .composer textarea{color:#222}
+body:has(.image-mode-panel:not([hidden])) .composer textarea::placeholder{color:#888}
+body:has(.image-mode-panel:not([hidden])) .plus-btn{font-size:0}
+body:has(.image-mode-panel:not([hidden])) .plus-btn:before{content:"▧";font-size:23px}
+body:has(.image-mode-panel:not([hidden])) .plus-btn{color:#333}
+body:has(.image-mode-panel:not([hidden])) .voice-btn{color:#333}
+body:has(.image-mode-panel:not([hidden])) .send{background:#e9e9e9;color:#777}
+body:has(.image-mode-panel:not([hidden])) .voice-status,
+body:has(.image-mode-panel:not([hidden])) .footnote{display:none}
+@media(max-width:480px){.images-page-scroll{padding:16px 16px 110px}.image-template-grid{gap:12px}.image-template-card{min-height:185px;border-radius:19px}.image-template-card>b{font-size:14px}}
+@media(min-width:700px){.image-template-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.image-template-card{min-height:240px}}
+
 .composer-menu{position:absolute;z-index:20;bottom:88px;left:max(18px,calc((100% - 790px)/2));width:min(290px,calc(100vw - 36px));padding:8px;background:#292929;border:1px solid #484848;border-radius:17px;box-shadow:0 12px 35px #0008}
 .composer-menu[hidden]{display:none}
 .composer-menu-item{width:100%;display:flex;align-items:center;gap:13px;padding:12px 11px;border:0;border-radius:11px;background:transparent;color:#eee;text-align:left}
@@ -269,18 +296,31 @@ body[data-theme="light"] .image-prompt-chip:hover{background:#e9e9ef}
         <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Add photos & files</strong><small>Images, PDFs and documents</small></span></button>
         <button class="composer-menu-item" type="button" id="generateImageBtn"><span>✧</span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
       </div>
-      <div class="image-mode-panel" id="imageModePanel" hidden>
-        <div class="image-mode-heading">
-          <span class="image-mode-icon">✧</span>
-          <div><strong>Create an image</strong><small>Describe what you want NEXORA AI to create</small></div>
-          <button type="button" class="image-mode-close" id="imageModeClose" aria-label="Exit image creation">×</button>
+      <section class="image-mode-panel" id="imageModePanel" hidden aria-label="Image creation">
+        <header class="images-page-header">
+          <button type="button" class="images-back" id="imageModeClose" aria-label="Back to chat">←</button>
+          <strong>Images</strong><span class="images-header-spacer"></span>
+        </header>
+        <div class="images-page-scroll">
+          <h2>Create an image</h2>
+          <div class="image-template-grid" id="imageTemplateGrid">
+            <button class="image-template-card template-stickers" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span>🐱 🌱 🧑‍🎨</span><b>Stickers</b></button>
+            <button class="image-template-card template-poster" data-prompt="A beautiful celebratory event poster with elegant typography, warm golden lighting and detailed festive artwork"><span>✦ 2026 ✦</span><b>Event poster</b></button>
+            <button class="image-template-card template-diagram" data-prompt="A clear educational infographic diagram about photosynthesis, labeled plant illustration, neat textbook layout"><span>🌿<br/>PHOTOSYNTHESIS</span><b>Photosynthesis diagram</b></button>
+            <button class="image-template-card template-map" data-prompt="An illustrated antique parchment map of an ancient fantasy city, intricate streets and landmarks"><span>🗺️</span><b>Map illustration</b></button>
+            <button class="image-template-card template-history" data-prompt="An elegant illustrated historical timeline infographic with dates, events and archival style artwork"><span>📜</span><b>History timeline</b></button>
+            <button class="image-template-card template-science" data-prompt="A detailed colorful educational plant cell diagram with clearly labeled organelles, textbook illustration"><span>🔬 🧬</span><b>Science diagram</b></button>
+            <button class="image-template-card template-landscape" data-prompt="A breathtaking cinematic mountain landscape at sunrise, misty valleys and dramatic natural light"><span>🏔️</span><b>Landscape</b></button>
+            <button class="image-template-card template-statue" data-prompt="A majestic classical marble statue in a beautiful museum gallery, dramatic soft lighting"><span>🏛️</span><b>Statue</b></button>
+            <button class="image-template-card template-anime" data-prompt="A colorful anime comic illustration with expressive characters, dynamic panel composition"><span>🎌</span><b>Anime comic</b></button>
+            <button class="image-template-card template-3d" data-prompt="A polished cute 3D character avatar, soft studio lighting, colorful background"><span>🧸</span><b>3D avatar</b></button>
+            <button class="image-template-card template-interior" data-prompt="A modern cozy interior design concept, warm natural materials, tasteful furniture and sunlight"><span>🛋️</span><b>Interior design</b></button>
+            <button class="image-template-card template-infographic" data-prompt="A modern clean infographic poster with clear visual hierarchy, icons and concise educational labels"><span>📊</span><b>Infographic poster</b></button>
+          </div>
+          <h2 class="my-images-heading">My images</h2>
+          <div class="my-images-grid" id="myImagesGrid"><p class="my-images-empty">Your generated images will appear here.</p></div>
         </div>
-        <div class="image-prompt-ideas" aria-label="Example image prompts">
-          <button type="button" class="image-prompt-chip" data-prompt="A cinematic fantasy castle floating above the clouds at sunset">Fantasy</button>
-          <button type="button" class="image-prompt-chip" data-prompt="A cute 3D robot mascot in a colorful futuristic studio">3D art</button>
-          <button type="button" class="image-prompt-chip" data-prompt="A peaceful anime-style city street in the rain at night">Anime</button>
-        </div>
-      </div>
+      </section>
       <form class="composer" id="chatForm">
         <button class="plus-btn" id="composerPlus" type="button" aria-label="Add photos, files or create an image" aria-expanded="false">＋</button>
         <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI" aria-label="Your message"></textarea>
@@ -327,6 +367,7 @@ let activeSessionId = null;
 const composerPlus = document.getElementById("composerPlus");
 const composerMenu = document.getElementById("composerMenu");
 composerPlus.addEventListener("click", () => {
+  if (imageMode) { attachmentInput.click(); return; }
   const opening = composerMenu.hidden;
   composerMenu.hidden = !opening;
   composerPlus.setAttribute("aria-expanded", String(opening));
@@ -347,12 +388,16 @@ document.getElementById("generateImageBtn").addEventListener("click", () => {
 });
 
 const imageModePanel = document.getElementById("imageModePanel");
+const myImagesGrid = document.getElementById("myImagesGrid");
 let imageMode = false;
 function setImageMode(enabled) {
   imageMode = enabled;
   imageModePanel.hidden = !enabled;
-  input.placeholder = enabled ? "Describe the image you want to create..." : "Message NEXORA AI";
-  if (!enabled) {
+  document.body.classList.toggle("image-mode-open", enabled);
+  input.placeholder = enabled ? "Describe an image" : "Message NEXORA AI";
+  composerPlus.setAttribute("aria-label", enabled ? "Add a reference image" : "Add photos, files or create an image");
+  if (enabled) renderMyImages();
+  else {
     input.value = "";
     input.style.height = "auto";
   }
@@ -361,16 +406,50 @@ document.getElementById("generateImageBtn").addEventListener("click", () => {
   setImageMode(true);
   input.focus();
 });
-document.getElementById("imageModeClose").addEventListener("click", () => {
-  setImageMode(false);
+document.getElementById("imageModeClose").addEventListener("click", () => setImageMode(false));
+document.getElementById("imageTemplateGrid").addEventListener("click", event => {
+  const card = event.target.closest("[data-prompt]");
+  if (!card) return;
+  input.value = card.dataset.prompt || "";
+  input.dispatchEvent(new Event("input", {bubbles:true}));
+  input.focus();
 });
-document.querySelectorAll(".image-prompt-chip").forEach(button => {
-  button.addEventListener("click", () => {
-    input.value = button.dataset.prompt || "";
-    input.dispatchEvent(new Event("input", {bubbles:true}));
-    input.focus();
-  });
-});
+async function renderMyImages() {
+  myImagesGrid.innerHTML = "";
+  const imageItems = [];
+  for (const session of sessions) {
+    for (const message of (session.messages || [])) {
+      if (message.imageId) imageItems.push({id:message.imageId,created:session.updatedAt || 0});
+    }
+  }
+  const unique = [...new Map(imageItems.map(item => [item.id,item])).values()].reverse().slice(0,30);
+  if (!unique.length) {
+    myImagesGrid.innerHTML = '<p class="my-images-empty">Your generated images will appear here.</p>';
+    return;
+  }
+  for (const item of unique) {
+    try {
+      const src = await getGeneratedImage(item.id);
+      if (!src) continue;
+      const img = document.createElement("img");
+      img.className = "my-image-thumb";
+      img.src = src;
+      img.alt = "Previously generated image";
+      img.loading = "lazy";
+      img.addEventListener("click", () => {
+        const preview = window.open();
+        if (preview) {
+          const image = preview.document.createElement("img");
+          image.src = src; image.style.cssText = "max-width:100%;height:auto;display:block;margin:auto";
+          preview.document.body.style.cssText = "margin:0;min-height:100vh;display:grid;place-items:center;background:#111";
+          preview.document.body.appendChild(image);
+        }
+      });
+      myImagesGrid.appendChild(img);
+    } catch (error) { /* Keep the gallery usable if local image storage is unavailable. */ }
+  }
+  if (!myImagesGrid.children.length) myImagesGrid.innerHTML = '<p class="my-images-empty">No saved images found on this device yet.</p>';
+}
 
 const voiceBtn = document.getElementById("voiceBtn");
 const voiceLanguage = document.getElementById("voiceLanguage");
@@ -963,6 +1042,7 @@ async function generateImage() {
     try {
       const imageId = await saveGeneratedImage(data.image);
       session.messages.push({role:"bot",text:captionText,imageId});
+      renderMyImages();
     } catch (storageError) {
       session.messages.push({role:"bot",text:captionText + "\n[Image could not be saved in chat history on this browser.]"});
     }
