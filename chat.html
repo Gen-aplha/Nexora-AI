@@ -1066,6 +1066,35 @@ function readFileAsDataURL(file) {
     reader.readAsDataURL(file);
   });
 }
+// Downsize phone photos before sending them to the vision service.
+async function prepareImageForVision(file) {
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+    const maxSide = 1600;
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    const ctx = canvas.getContext("2d", {alpha:false});
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    let quality = 0.82;
+    let data = canvas.toDataURL("image/jpeg", quality);
+    while (data.length > 1800000 && quality > 0.48) {
+      quality -= 0.1;
+      data = canvas.toDataURL("image/jpeg", quality);
+    }
+    if (data.length > 2200000) throw new Error("This photo is too detailed to send. Please choose a smaller image.");
+    return data;
+  } catch (error) {
+    if (error && error.message) throw error;
+    throw new Error("This photo format could not be prepared. Try saving it as JPG and upload again.");
+  } finally {
+    if (bitmap) bitmap.close();
+  }
+}
 async function extractPdfText(file) {
   if (!window.pdfjsLib) throw new Error("PDF reader could not load. Check your internet connection and try again.");
   window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -1109,9 +1138,9 @@ attachmentInput.addEventListener("change", async () => {
   for (const file of files) {
     try {
       const ext = fileExtension(file.name);
-      if (IMAGE_TYPES.includes(file.type)) {
-        if (file.size > MAX_IMAGE_BYTES) throw new Error(file.name + " is too large. Each image must be 3.5 MB or smaller.");
-        const data = await readFileAsDataURL(file);
+      if (IMAGE_TYPES.includes(file.type) || (file.type.startsWith("image/") && ["jpg","jpeg","png","webp"].includes(ext))) {
+        if (file.size > 15 * 1024 * 1024) throw new Error(file.name + " is too large. Choose an image under 15 MB.");
+        const data = await prepareImageForVision(file);
         pendingAttachments.push({kind:"image",name:file.name,data});
       } else if (file.type.startsWith("video/")) {
         if (file.size > 50 * 1024 * 1024) throw new Error(file.name + " is too large. Video previews are limited to 50 MB.");
@@ -1140,13 +1169,24 @@ function attachmentSummary(items) {
   return items.map(item => item.name).join(", ");
 }
 async function postBackend(payload) {
-  const response = await fetch(API_URL, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || "Server error (" + response.status + ").");
+  let response;
+  try {
+    response = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+  } catch (networkError) {
+    throw new Error("Could not reach the NEXORA AI server. Check your internet connection and try again.");
+  }
+  const raw = await response.text();
+  let data = {};
+  try { data = raw ? JSON.parse(raw) : {}; }
+  catch { data = {error: raw.slice(0,180) || "The server returned an unreadable response."}; }
+  if (!response.ok) {
+    const detail = data.error || ("HTTP " + response.status);
+    throw new Error("AI server error: " + detail);
+  }
   if (data && data.error) throw new Error(data.error);
   return data;
 }
@@ -1254,6 +1294,10 @@ async function sendMessage(text) {
       const videoFiles = files.filter(item => item.kind === "video");
       const fileText = textFiles.map(item => "\n\n--- FILE: " + item.name + " ---\n" + item.text).join("").slice(0,MAX_TEXT_CHARS);
       let imageNotes = [];
+      const editIntent = imageFiles.length && /\b(edit|change|replace|remove|erase|add|modify|retouch|redraw|transform)\b/i.test(message);
+      if (editIntent) {
+        throw new Error("I can inspect and describe uploaded images, but image editing is not connected to NEXORA AI yet. I haven't changed your original photo. The image-editing service must be added to the backend before this request can work.");
+      }
       for (const imageFile of imageFiles) {
         const result = await postBackend({
           action:"analyze_image",
