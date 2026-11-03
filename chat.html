@@ -355,7 +355,7 @@ body:has(.image-mode-panel:not([hidden])) .footnote{display:none}
       <input type="file" id="filesInput" accept=".pdf,.txt,.md,.csv,.json" multiple hidden>
       <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
       <div class="composer-menu" id="composerMenu" hidden>
-        <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Photos</strong><small>Choose photos from your device</small></span></button>
+        <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Photos and videos</strong><small>Choose photos or videos from your device</small></span></button>
         <button class="composer-menu-item" type="button" id="filesBtn"><span>📄</span><span><strong>Files</strong><small>PDFs and documents</small></span></button>
         <button class="composer-menu-item" type="button" id="generateImageBtn"><span>✧</span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
       </div>
@@ -1218,11 +1218,6 @@ async function sendMessage(text) {
   const message = text.trim();
   const files = pendingAttachments.slice();
   if ((!message && !files.length) || busy) return;
-  if (files.some(item => item.kind === "video")) {
-    alert("Video preview is available, but NEXORA AI cannot analyse videos yet. Remove the video or choose a photo to continue.");
-    return;
-  }
-
   // Route clear image-generation requests to the image model instead of chat.
   // Users can type naturally and press Send, or use the Generate image button.
   if (!files.length) {
@@ -1256,6 +1251,7 @@ async function sendMessage(text) {
     } else {
       const textFiles = files.filter(item => item.kind === "text");
       const imageFiles = files.filter(item => item.kind === "image");
+      const videoFiles = files.filter(item => item.kind === "video");
       const fileText = textFiles.map(item => "\n\n--- FILE: " + item.name + " ---\n" + item.text).join("").slice(0,MAX_TEXT_CHARS);
       let imageNotes = [];
       for (const imageFile of imageFiles) {
@@ -1280,9 +1276,14 @@ async function sendMessage(text) {
           fileText:combinedText
         });
         reply = data.reply;
+      } else if (videoFiles.length) {
+        reply = "I received your video attachment" + (videoFiles.length > 1 ? "s" : "") + " and displayed " + (videoFiles.length > 1 ? "them" : "it") + " in the chat. Video analysis is not available yet, so I can't inspect its contents at this time.";
       } else {
         const data = await postBackend({action:"chat",message});
         reply = data.reply;
+      }
+      if (videoFiles.length && (imageNotes.length || textFiles.length)) {
+        reply += "\n\nI also received your video attachment" + (videoFiles.length > 1 ? "s" : "") + ", but video analysis is not available yet.";
       }
       if (!reply) throw new Error("The AI returned an empty reply.");
       typing.bubble.innerHTML = renderMarkdown(reply);
