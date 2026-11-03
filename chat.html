@@ -387,6 +387,9 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
 .see-all-chats{font-size:14px!important;padding:10px 0!important}
 @media(max-width:680px){.sidebar{width:min(78vw,300px)!important}.side-link{font-size:15px!important;min-height:40px!important;padding:8px 7px!important}.side-icon svg{width:17px;height:17px}.side-title{font-size:20px!important}.side-chat-btn{padding:8px 14px!important;font-size:14px!important}}
 
+
+/* Local account profile */
+.account-overlay{display:none;position:fixed;z-index:30;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}.account-overlay.open{display:flex}.account-panel{width:min(100%,480px);max-height:90dvh;overflow:auto;background:#fff;color:#202124;border-radius:20px;padding:20px;box-shadow:0 20px 70px #0004}.account-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}.account-head h2{margin:0;font-size:23px}.account-head p{margin:5px 0 0;color:#777;font-size:13px}.account-form{display:flex;flex-direction:column;gap:8px}.account-form label{font-size:13px;font-weight:650;color:#333;margin-top:5px}.account-form label span{font-weight:400;color:#777}.account-form input:not([type=file]){width:100%;min-height:43px;border:1px solid #ddd;border-radius:10px;padding:10px 12px;background:#fff;color:#222;font:inherit}.account-form input[type=file]{width:100%;font-size:13px;color:#444}.account-preview-wrap{min-height:76px;display:flex;align-items:center;gap:12px;color:#888;font-size:12px}#accountPreview{width:68px;height:68px;border-radius:50%;object-fit:cover;border:1px solid #ddd}.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.account-save,.account-secondary,.account-delete{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-size:13px;cursor:pointer}.account-save{background:#25252d;color:#fff}.account-secondary{background:#eee;color:#333}.account-delete{background:transparent;color:#b42336;text-align:left;padding-left:0;margin-top:3px}.account-note{font-size:11px;line-height:1.5;color:#777;margin:8px 0 0}.account-status{font-size:12px;color:#28764d;min-height:16px;margin:0}body[data-theme="dark"] .account-panel{background:#202124;color:#f1f1f1}body[data-theme="dark"] .account-head p,body[data-theme="dark"] .account-note{color:#aaa}body[data-theme="dark"] .account-form label{color:#eee}body[data-theme="dark"] .account-form input:not([type=file]){background:#303238;border-color:#555;color:#fff}body[data-theme="dark"] .account-form input[type=file]{color:#ddd}body[data-theme="dark"] .account-secondary{background:#383a40;color:#eee}
 </style>
 </head>
 <body>
@@ -400,7 +403,6 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
       <button class="side-link" id="sideImagesBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4.5 17 5-5 3.5 3 2.5-2 4 4"/></svg></span><span>Images</span></button>
       <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
       <button class="side-link" data-coming="Projects"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
-      <button class="side-link" data-coming="Remote"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="12" rx="2"/><path d="M8 20h8M12 16.5V20M8 9l2.5 2.5L8 14M13 14h3"/></svg></span><span>Remote</span></button>
       <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
       <button class="side-link" data-coming="Plugins"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5h6l.7 2.1 1.8 1.1 2.1-.5 1.5 2.6-1.4 1.7v2.1l1.4 1.7-1.5 2.6-2.1-.5-1.8 1.1-.7 2.1H9l-.7-2.1-1.8-1.1-2.1.5-1.5-2.6 1.4-1.7v-2.1l-1.4-1.7 1.5-2.6 2.1.5 1.8-1.1z"/><circle cx="12" cy="13" r="3"/></svg></span><span>Plugins</span></button>
     </div>
@@ -426,6 +428,21 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
       <div class="library-actions"><button id="addMemoryBtn" class="add-memory-btn">＋ Save a memory</button></div>
       <div id="memoryList" class="memory-list"></div>
       <p class="library-note">Memories are stored in this browser on this device. They are included with your future text chats on this device only.</p>
+    </section>
+  </div>
+  <div class="account-overlay" id="accountOverlay" aria-hidden="true">
+    <section class="account-panel" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+      <div class="account-head"><div><h2 id="accountTitle">Your account</h2><p>Your profile details stay on this device</p></div><button type="button" id="closeAccountBtn" class="library-close" aria-label="Close account">×</button></div>
+      <form id="accountForm" class="account-form">
+        <label for="accountName">Name</label><input id="accountName" type="text" maxlength="60" autocomplete="name" required placeholder="Enter your name">
+        <label for="accountAge">Age</label><input id="accountAge" type="number" min="1" max="120" inputmode="numeric" required placeholder="Enter your age">
+        <label for="accountEmail">Email</label><input id="accountEmail" type="email" maxlength="254" autocomplete="email" required placeholder="Enter your email">
+        <label for="accountPicture">Profile picture <span>(optional)</span></label><input id="accountPicture" type="file" accept="image/*">
+        <div class="account-preview-wrap"><img id="accountPreview" alt="Profile picture preview" hidden><span id="accountNoPicture">No picture selected</span></div>
+        <div class="account-actions"><button type="submit" class="account-save">Save profile</button><button type="button" id="removeAccountPicture" class="account-secondary">Remove picture</button></div>
+        <button type="button" id="deleteAccountProfile" class="account-delete">Delete saved profile</button>
+        <p class="account-note">This is a local profile, not an online sign-in. Your name, age, email and optional picture are saved only in this browser on this device. They are not sent to NEXORA's AI server.</p><p id="accountStatus" class="account-status" role="status"></p>
+      </form>
     </section>
   </div>
   <main class="main">
@@ -1557,8 +1574,6 @@ document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("cl
  if(feature==="Projects"){
    const name=prompt("What project would you like to work on?");
    if(name&&name.trim())sendMessage("Help me create and manage this project: "+name.trim()+". Start with a clear plan and milestones.");
- }else if(feature==="Remote"){
-   window.open("https://github.com/gen-aplha/Nexora-AI","_blank","noopener");
  }else if(feature==="Scheduled"){
    sendMessage("Help me create a practical schedule or study timetable. Ask me for the task, date and time, then format a reminder plan I can save.");
  }else if(feature==="Plugins"){
@@ -1567,7 +1582,21 @@ document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("cl
 }));
 document.getElementById("sideNewChatBtn").addEventListener("click",()=>{startNewChat();sidebar.classList.remove("open");});
 document.getElementById("seeAllChatsBtn").addEventListener("click",()=>{historySearch.value="";renderHistory();historyList.style.maxHeight="52vh";historyList.scrollIntoView({block:"nearest"});});
-document.getElementById("sideProfileBtn").addEventListener("click",()=>alert("NEXORA AI profile settings are coming soon."));
+const ACCOUNT_STORAGE_KEY="nexora_account_profile_v1";
+let accountProfile=loadAccountProfile(),pendingAccountPicture="";
+function loadAccountProfile(){try{const p=JSON.parse(localStorage.getItem(ACCOUNT_STORAGE_KEY)||"null");return p&&typeof p.name==="string"?p:null;}catch(e){return null;}}
+function renderAccountButton(){const b=document.getElementById("sideProfileBtn");if(!b)return;b.textContent="";b.style.backgroundImage="";if(accountProfile?.picture){b.style.backgroundImage="url("+JSON.stringify(accountProfile.picture)+")";b.style.backgroundSize="cover";b.style.backgroundPosition="center";}else{b.textContent=accountProfile?.name?.trim()?.charAt(0)?.toUpperCase()||"N";}}
+function renderAccountPreview(){const img=document.getElementById("accountPreview"),empty=document.getElementById("accountNoPicture");if(pendingAccountPicture){img.src=pendingAccountPicture;img.hidden=false;empty.hidden=true;}else{img.removeAttribute("src");img.hidden=true;empty.hidden=false;}}
+function openAccount(){const p=accountProfile||{};document.getElementById("accountName").value=p.name||"";document.getElementById("accountAge").value=p.age||"";document.getElementById("accountEmail").value=p.email||"";pendingAccountPicture=p.picture||"";document.getElementById("accountPicture").value="";renderAccountPreview();document.getElementById("accountStatus").textContent="";document.getElementById("accountOverlay").classList.add("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
+function closeAccount(){document.getElementById("accountOverlay").classList.remove("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","true");}
+document.getElementById("sideProfileBtn").addEventListener("click",openAccount);
+document.getElementById("closeAccountBtn").addEventListener("click",closeAccount);
+document.getElementById("accountOverlay").addEventListener("click",e=>{if(e.target.id==="accountOverlay")closeAccount();});
+document.getElementById("accountPicture").addEventListener("change",async e=>{const file=e.target.files?.[0];if(!file)return;if(!file.type.startsWith("image/")){alert("Please choose an image file.");e.target.value="";return;}try{const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});const image=new Image();image.src=data;await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;});const scale=Math.min(1,512/Math.max(image.naturalWidth,image.naturalHeight));const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);pendingAccountPicture=canvas.toDataURL("image/jpeg",.78);renderAccountPreview();}catch(err){alert("That picture could not be opened. Please try another image.");}});
+document.getElementById("removeAccountPicture").addEventListener("click",()=>{pendingAccountPicture="";document.getElementById("accountPicture").value="";renderAccountPreview();});
+document.getElementById("accountForm").addEventListener("submit",e=>{e.preventDefault();const name=document.getElementById("accountName").value.trim(),age=Number(document.getElementById("accountAge").value),email=document.getElementById("accountEmail").value.trim();if(!name||!Number.isInteger(age)||age<1||age>120||!email){document.getElementById("accountStatus").textContent="Please enter a valid name, age and email.";return;}accountProfile={name,age,email,picture:pendingAccountPicture};try{localStorage.setItem(ACCOUNT_STORAGE_KEY,JSON.stringify(accountProfile));renderAccountButton();document.getElementById("accountStatus").textContent="Profile saved on this device.";}catch(err){document.getElementById("accountStatus").textContent="Could not save. Try a smaller picture or remove it.";}}});
+document.getElementById("deleteAccountProfile").addEventListener("click",()=>{if(!accountProfile){document.getElementById("accountStatus").textContent="No saved profile to delete.";return;}if(!confirm("Delete your saved NEXORA profile from this device?"))return;localStorage.removeItem(ACCOUNT_STORAGE_KEY);accountProfile=null;pendingAccountPicture="";renderAccountButton();document.getElementById("accountForm").reset();renderAccountPreview();document.getElementById("accountStatus").textContent="Saved profile deleted from this device.";});
+renderAccountButton();
 
 document.getElementById("exploreBtn")?.addEventListener("click", () => {
   sendMessage("What are some useful things you can help me with?");
