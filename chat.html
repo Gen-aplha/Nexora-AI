@@ -461,7 +461,7 @@ body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;bor
         <button type="button" id="accountModeToggle" class="account-secondary">Already have an account? Sign in</button>
         <button type="button" id="accountSignOut" class="account-secondary" hidden>Sign out</button>
         <button type="button" id="deleteAccountProfile" class="account-delete">Delete saved profile</button>
-        <p class="account-note">Your account details are stored securely on NEXORA's server. Passwords are hashed and are never stored as plain text. Use a unique password that you do not use elsewhere.</p><p id="accountStatus" class="account-status" role="status"></p>
+        <p class="account-note">Your account details are stored securely on NEXORA's server. Passwords are hashed and are never stored as plain text. Use a unique password that you do not use elsewhere.</p><p id="accountStatus" class="account-status" role="status"></p><button type="button" id="accountResendVerification" class="account-secondary" hidden>Resend verification email</button>
       </form>
     </section>
   </div>
@@ -536,6 +536,7 @@ body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;bor
   </main>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const API_URL = "https://nexora-ai-backend-v2.mayankhindubro.workers.dev";
 const CREATOR_IMAGE_URL = "https://gen-aplha.github.io/Nexora-AI/mayank-gupta.jpg";
@@ -1306,6 +1307,12 @@ function attachmentSummary(items) {
 }
 const AUTH_TOKEN_KEY="nexora_auth_token_v1";
 let authToken=localStorage.getItem(AUTH_TOKEN_KEY)||"";
+const SUPABASE_URL="https://jtwzxboewbzyuhlrfwnf.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_EXZz3Lkvb9bB1I9huTQTeQ_rd6IMX2C";
+const SUPABASE_REDIRECT_URL="https://gen-aplha.github.io/Nexora-AI/chat.html";
+const supabaseClient=window.supabase?.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let supabaseSession=null;
+let pendingVerificationEmail="";
 async function accountRequest(payload){
  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json",...(authToken?{"Authorization":"Bearer "+authToken}:{})},body:JSON.stringify(payload)});
  const data=await response.json().catch(()=>({}));
@@ -1623,18 +1630,108 @@ let accountProfile=loadAccountProfile(),pendingAccountPicture="";
 function loadAccountProfile(){try{const p=JSON.parse(localStorage.getItem(ACCOUNT_STORAGE_KEY)||"null");return p&&typeof p.name==="string"?p:null;}catch(e){return null;}}
 function renderAccountButton(){const b=document.getElementById("sideProfileBtn");if(!b)return;b.textContent="";b.style.backgroundImage="";if(accountProfile?.picture){b.style.backgroundImage="url("+JSON.stringify(accountProfile.picture)+")";b.style.backgroundSize="cover";b.style.backgroundPosition="center";}else{b.textContent=accountProfile?.name?.trim()?.charAt(0)?.toUpperCase()||"N";}}
 function renderAccountPreview(){const img=document.getElementById("accountPreview"),empty=document.getElementById("accountNoPicture");if(pendingAccountPicture){img.src=pendingAccountPicture;img.hidden=false;empty.hidden=true;}else{img.removeAttribute("src");img.hidden=true;empty.hidden=false;}}
-function openAccount(){const p=accountProfile||{};document.getElementById("accountName").value=p.name||"";document.getElementById("accountAge").value=p.age||"";document.getElementById("accountEmail").value=p.email||"";document.getElementById("accountPassword").value="";pendingAccountPicture=p.picture||"";document.getElementById("accountPicture").value="";renderAccountPreview();document.getElementById("accountStatus").textContent="";if(authToken&&accountProfile){accountMode="profile";setAccountMode("login");document.getElementById("accountEmail").value=accountProfile.email||"";document.getElementById("accountPassword").hidden=true;document.querySelector("label[for=accountPassword]").hidden=true;document.getElementById("accountSubmitBtn").hidden=true;document.getElementById("accountModeToggle").hidden=true;document.getElementById("accountSignOut").hidden=false;document.getElementById("deleteAccountProfile").hidden=true;document.getElementById("accountStatus").textContent="Signed in as "+accountProfile.email;}else{accountMode="register";setAccountMode("register");document.getElementById("accountPassword").hidden=false;document.querySelector("label[for=accountPassword]").hidden=false;document.getElementById("accountSubmitBtn").hidden=false;document.getElementById("accountModeToggle").hidden=false;document.getElementById("accountSignOut").hidden=true;document.getElementById("deleteAccountProfile").hidden=false;}document.getElementById("accountOverlay").classList.add("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
+function openAccount(){const p=accountProfile||{};document.getElementById("accountName").value=p.name||"";document.getElementById("accountAge").value=p.age||"";document.getElementById("accountEmail").value=p.email||"";document.getElementById("accountPassword").value="";pendingAccountPicture=p.picture||"";document.getElementById("accountPicture").value="";renderAccountPreview();document.getElementById("accountStatus").textContent="";if((supabaseSession||authToken)&&accountProfile){accountMode="profile";setAccountMode("login");document.getElementById("accountEmail").value=accountProfile.email||"";document.getElementById("accountPassword").hidden=true;document.querySelector("label[for=accountPassword]").hidden=true;document.getElementById("accountSubmitBtn").hidden=true;document.getElementById("accountModeToggle").hidden=true;document.getElementById("accountSignOut").hidden=false;document.getElementById("deleteAccountProfile").hidden=true;document.getElementById("accountStatus").textContent="Signed in as "+accountProfile.email;}else{accountMode="register";setAccountMode("register");document.getElementById("accountPassword").hidden=false;document.querySelector("label[for=accountPassword]").hidden=false;document.getElementById("accountSubmitBtn").hidden=false;document.getElementById("accountModeToggle").hidden=false;document.getElementById("accountSignOut").hidden=true;document.getElementById("deleteAccountProfile").hidden=false;}document.getElementById("accountOverlay").classList.add("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
 function closeAccount(){document.getElementById("accountOverlay").classList.remove("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","true");if(!authToken&&localStorage.getItem(ONBOARDING_STORAGE_KEY)!=="guest")showFirstLaunch();}
 document.getElementById("accountModeToggle").addEventListener("click",()=>{accountMode=accountMode==="register"?"login":"register";setAccountMode(accountMode);document.getElementById("accountStatus").textContent="";document.getElementById("accountPassword").value="";});
-document.getElementById("accountSignOut").addEventListener("click",async()=>{try{await accountRequest({action:"logout"});}catch(e){}authToken="";accountProfile=null;localStorage.removeItem(AUTH_TOKEN_KEY);localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);renderAccountButton();closeAccount();showFirstLaunch();});
+document.getElementById("accountSignOut").addEventListener("click",async()=>{try{await accountRequest({action:"logout"});}catch(e){}try{await supabaseClient?.auth.signOut();}catch(e){}supabaseSession=null;authToken="";accountProfile=null;localStorage.removeItem(AUTH_TOKEN_KEY);localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);renderAccountButton();closeAccount();showFirstLaunch();});
 document.getElementById("sideProfileBtn").addEventListener("click",openAccount);
 document.getElementById("closeAccountBtn").addEventListener("click",closeAccount);
 document.getElementById("accountOverlay").addEventListener("click",e=>{if(e.target.id==="accountOverlay")closeAccount();});
 document.getElementById("accountPicture").addEventListener("change",async e=>{const file=e.target.files?.[0];if(!file)return;if(!file.type.startsWith("image/")){alert("Please choose an image file.");e.target.value="";return;}try{const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});const image=new Image();image.src=data;await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;});const scale=Math.min(1,512/Math.max(image.naturalWidth,image.naturalHeight));const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);pendingAccountPicture=canvas.toDataURL("image/jpeg",.78);renderAccountPreview();}catch(err){alert("That picture could not be opened. Please try another image.");}});
 document.getElementById("removeAccountPicture").addEventListener("click",()=>{pendingAccountPicture="";document.getElementById("accountPicture").value="";renderAccountPreview();});
-document.getElementById("accountForm").addEventListener("submit",async e=>{e.preventDefault();const email=document.getElementById("accountEmail").value.trim().toLowerCase(),password=document.getElementById("accountPassword").value,status=document.getElementById("accountStatus");const mode=document.getElementById("accountForm").dataset.mode||"register";const payload=mode==="login"?{action:"login",email,password}:{action:"register",name:document.getElementById("accountName").value.trim(),age:Number(document.getElementById("accountAge").value),email,password,picture:pendingAccountPicture||null};if(mode==="register"&&password.length<10){status.textContent="Choose a password with at least 10 characters.";return;}status.textContent=mode==="login"?"Signing in…":"Creating your account…";document.getElementById("accountSubmitBtn").disabled=true;try{const data=await accountRequest(payload);authToken=data.token;localStorage.setItem(AUTH_TOKEN_KEY,authToken);accountProfile=data.user;localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");localStorage.removeItem(ACCOUNT_STORAGE_KEY);renderAccountButton();status.textContent=mode==="login"?"Signed in successfully.":"Your NEXORA account has been created.";closeAccount();closeFirstLaunch();}catch(err){status.textContent=err.message||"Could not complete account request. Try again.";}finally{document.getElementById("accountSubmitBtn").disabled=false;}});
+document.getElementById("accountForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const email=document.getElementById("accountEmail").value.trim().toLowerCase();
+ const password=document.getElementById("accountPassword").value;
+ const status=document.getElementById("accountStatus");
+ const mode=document.getElementById("accountForm").dataset.mode||"register";
+ const name=document.getElementById("accountName").value.trim();
+ if(mode==="register"&&password.length<10){status.textContent="Choose a password with at least 10 characters.";return;}
+ status.textContent=mode==="login"?"Signing in…":"Creating your account…";
+ document.getElementById("accountSubmitBtn").disabled=true;
+ document.getElementById("accountResendVerification").hidden=true;
+ try{
+   if(!supabaseClient)throw new Error("The account service could not load. Refresh the page and try again.");
+   if(mode==="register"){
+     const {data,error}=await supabaseClient.auth.signUp({
+       email,password,
+       options:{emailRedirectTo:SUPABASE_REDIRECT_URL,data:{name}}
+     });
+     if(error)throw error;
+     pendingVerificationEmail=email;
+     document.getElementById("accountResendVerification").hidden=false;
+     status.textContent="Almost done! We sent a verification link to "+email+". Open that email and tap Confirm email, then return here and sign in. Check Spam/Junk if it isn't in your inbox.";
+     document.getElementById("accountPassword").value="";
+     return;
+   }
+   const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+   if(!error&&data.user){
+     if(!data.user.email_confirmed_at&&!data.user.confirmed_at){
+       pendingVerificationEmail=email;
+       document.getElementById("accountResendVerification").hidden=false;
+       throw new Error("Please verify your email before signing in. Check your inbox or resend the verification email.");
+     }
+     supabaseSession=data.session;
+     accountProfile={name:data.user.user_metadata?.name||email.split("@")[0],email};
+     localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
+     localStorage.removeItem(ACCOUNT_STORAGE_KEY);
+     renderAccountButton();
+     status.textContent="Signed in successfully.";
+     closeAccount();closeFirstLaunch();
+     return;
+   }
+   // Existing NEXORA users can still sign in with their original Cloudflare account.
+   const legacy=await accountRequest({action:"login",email,password});
+   authToken=legacy.token;
+   localStorage.setItem(AUTH_TOKEN_KEY,authToken);
+   accountProfile=legacy.user;
+   localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
+   localStorage.removeItem(ACCOUNT_STORAGE_KEY);
+   renderAccountButton();
+   status.textContent="Signed in successfully.";
+   closeAccount();closeFirstLaunch();
+ }catch(err){
+   const message=err.message||"Could not complete account request. Try again.";
+   if(mode==="login"&&/email_not_confirmed|Email not confirmed/i.test(message)){
+     pendingVerificationEmail=email;
+     document.getElementById("accountResendVerification").hidden=false;
+     status.textContent="Please verify your email before signing in. Tap Resend verification email if needed.";
+   }else status.textContent=message;
+ }finally{
+   document.getElementById("accountSubmitBtn").disabled=false;
+ }
+});
+document.getElementById("accountResendVerification").addEventListener("click",async()=>{
+ const email=pendingVerificationEmail||document.getElementById("accountEmail").value.trim().toLowerCase();
+ if(!email){document.getElementById("accountStatus").textContent="Enter your email address first.";return;}
+ const button=document.getElementById("accountResendVerification");
+ button.disabled=true;
+ try{
+   const {error}=await supabaseClient.auth.resend({type:"signup",email,options:{emailRedirectTo:SUPABASE_REDIRECT_URL}});
+   if(error)throw error;
+   document.getElementById("accountStatus").textContent="A new verification email has been requested. Check your inbox and Spam/Junk folder.";
+ }catch(err){document.getElementById("accountStatus").textContent=err.message||"Could not resend the email. Please wait a little and try again.";}
+ finally{button.disabled=false;}
+});
 document.getElementById("deleteAccountProfile").addEventListener("click",()=>{if(!accountProfile){document.getElementById("accountStatus").textContent="No saved profile to delete.";return;}if(!confirm("Delete your saved NEXORA profile from this device?"))return;localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);accountProfile=null;pendingAccountPicture="";renderAccountButton();document.getElementById("accountForm").reset();renderAccountPreview();document.getElementById("accountStatus").textContent="Saved profile deleted from this device.";});
 renderAccountButton();
+if(supabaseClient){
+ supabaseClient.auth.getSession().then(({data})=>{
+   supabaseSession=data.session;
+   if(supabaseSession?.user){
+     accountProfile={name:supabaseSession.user.user_metadata?.name||supabaseSession.user.email?.split("@")[0]||"NEXORA user",email:supabaseSession.user.email};
+     localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
+     renderAccountButton();
+   }
+ }).catch(()=>{});
+ supabaseClient.auth.onAuthStateChange((_event,session)=>{
+   supabaseSession=session;
+   if(session?.user){
+     accountProfile={name:session.user.user_metadata?.name||session.user.email?.split("@")[0]||"NEXORA user",email:session.user.email};
+     renderAccountButton();
+   }
+ });
+}
 if(authToken){accountRequest({action:"me"}).then(data=>{accountProfile=data.user;renderAccountButton();localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");}).catch(()=>{authToken="";accountProfile=null;localStorage.removeItem(AUTH_TOKEN_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);if(sessions.length){localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");}else{showFirstLaunch();}});}
 else if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="guest"){}
 else if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="account"||accountProfile){showFirstLaunch();}
