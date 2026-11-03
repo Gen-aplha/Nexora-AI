@@ -404,7 +404,6 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
       <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
       <button class="side-link" data-coming="Projects"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
       <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
-      <button class="side-link" data-coming="Plugins"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5h6l.7 2.1 1.8 1.1 2.1-.5 1.5 2.6-1.4 1.7v2.1l1.4 1.7-1.5 2.6-2.1-.5-1.8 1.1-.7 2.1H9l-.7-2.1-1.8-1.1-2.1.5-1.5-2.6 1.4-1.7v-2.1l-1.4-1.7 1.5-2.6 2.1.5 1.8-1.1z"/><circle cx="12" cy="13" r="3"/></svg></span><span>Plugins</span></button>
     </div>
     <div class="side-divider"></div>
     <div class="history-heading">RECENT CHATS</div>
@@ -1576,8 +1575,6 @@ document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("cl
    if(name&&name.trim())sendMessage("Help me create and manage this project: "+name.trim()+". Start with a clear plan and milestones.");
  }else if(feature==="Scheduled"){
    sendMessage("Help me create a practical schedule or study timetable. Ask me for the task, date and time, then format a reminder plan I can save.");
- }else if(feature==="Plugins"){
-   sendMessage("Show me the features currently available in NEXORA AI and explain how to use each one.");
  }
 }));
 document.getElementById("sideNewChatBtn").addEventListener("click",()=>{startNewChat();sidebar.classList.remove("open");});
