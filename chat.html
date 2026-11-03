@@ -342,11 +342,11 @@ body:has(.image-mode-panel:not([hidden])) .footnote{display:none}
       </div>
     </section>
     <div class="composer-wrap">
-      <input type="file" id="attachmentInput" accept="image/*,video/*" multiple hidden>
+      <input type="file" id="attachmentInput" accept="image/*" multiple hidden>
       <input type="file" id="filesInput" accept=".pdf,.txt,.md,.csv,.json" multiple hidden>
       <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
       <div class="composer-menu" id="composerMenu" hidden>
-        <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Photos and videos</strong><small>Choose media from your device</small></span></button>
+        <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Photos</strong><small>Choose photos from your device</small></span></button>
         <button class="composer-menu-item" type="button" id="filesBtn"><span>📄</span><span><strong>Files</strong><small>PDFs and documents</small></span></button>
         <button class="composer-menu-item" type="button" id="generateImageBtn"><span>✧</span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
       </div>
@@ -1083,6 +1083,7 @@ async function postBackend(payload) {
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || "Server error (" + response.status + ").");
+  if (data && data.error) throw new Error(data.error);
   return data;
 }
 async function generateImage() {
@@ -1193,11 +1194,15 @@ async function sendMessage(text) {
           message:message || "Describe this image and answer any relevant questions.",
           image:imageFile.data
         });
-        if (!result.reply) throw new Error(result.error || "Could not analyze " + imageFile.name);
+        if (!result.reply) throw new Error("The image service did not return an analysis for " + imageFile.name + ".");
         imageNotes.push("Analysis of " + imageFile.name + ":\n" + result.reply);
       }
       let reply;
-      if (textFiles.length || imageNotes.length) {
+      if (imageNotes.length && !textFiles.length) {
+        // The vision model has already answered the image question. Avoid a
+        // second Worker request that can fail or discard the vision response.
+        reply = imageNotes.join("\n\n");
+      } else if (textFiles.length || imageNotes.length) {
         const combinedText = fileText + (imageNotes.length ? "\n\nIMAGE ANALYSIS RESULTS:\n" + imageNotes.join("\n\n") : "");
         const data = await postBackend({
           action:"attachment",
