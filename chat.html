@@ -1294,11 +1294,31 @@ async function sendMessage(text) {
       const videoFiles = files.filter(item => item.kind === "video");
       const fileText = textFiles.map(item => "\n\n--- FILE: " + item.name + " ---\n" + item.text).join("").slice(0,MAX_TEXT_CHARS);
       let imageNotes = [];
-      const editIntent = imageFiles.length && /\b(edit|change|replace|remove|erase|add|modify|retouch|redraw|transform)\b/i.test(message);
+      const editIntent = imageFiles.length && /\b(edit|change|replace|remove|erase|add|modify|retouch|redraw|transform|make .*background|turn .*into|convert .*into|cartoon|enhance)\b/i.test(message);
       if (editIntent) {
-        throw new Error("I can inspect and describe uploaded images, but image editing is not connected to NEXORA AI yet. I haven't changed your original photo. The image-editing service must be added to the backend before this request can work.");
+        if (imageFiles.length > 1) throw new Error("Please attach one image at a time for editing.");
+        const edited = await postBackend({action:"edit_image",prompt:message,image:imageFiles[0].data});
+        if (!edited.image) throw new Error("The image editor returned no edited image.");
+        const captionText = edited.reply || "Your edited image is ready!";
+        typing.bubble.innerHTML = "";
+        const caption = document.createElement("p"); caption.textContent = captionText;
+        const img = document.createElement("img");
+        img.className = "generated-image"; img.alt = "Image edited by NEXORA AI"; img.src = edited.image;
+        const download = document.createElement("a");
+        download.className = "download-image"; download.textContent = "⬇ Open / download edited image";
+        download.href = edited.image; download.target = "_blank"; download.rel = "noopener";
+        typing.bubble.append(caption,img,download);
+        try {
+          const imageId = await saveGeneratedImage(edited.image);
+          session.messages.push({role:"bot",text:captionText,imageId});
+          renderMyImages();
+        } catch (storageError) {
+          session.messages.push({role:"bot",text:captionText});
+        }
+        reply = null;
       }
       for (const imageFile of imageFiles) {
+        if (editIntent) break;
         const result = await postBackend({
           action:"analyze_image",
           message:message || "Describe this image and answer any relevant questions.",
@@ -1308,7 +1328,9 @@ async function sendMessage(text) {
         imageNotes.push("Analysis of " + imageFile.name + ":\n" + result.reply);
       }
       let reply;
-      if (imageNotes.length && !textFiles.length) {
+      if (editIntent) {
+        // The edited image was already rendered above.
+      } else if (imageNotes.length && !textFiles.length) {
         // The vision model has already answered the image question. Avoid a
         // second Worker request that can fail or discard the vision response.
         reply = imageNotes.join("\n\n");
@@ -1329,9 +1351,10 @@ async function sendMessage(text) {
       if (videoFiles.length && (imageNotes.length || textFiles.length)) {
         reply += "\n\nI also received your video attachment" + (videoFiles.length > 1 ? "s" : "") + ", but video analysis is not available yet.";
       }
-      if (!reply) throw new Error("The AI returned an empty reply.");
-      typing.bubble.innerHTML = renderMarkdown(reply);
-      session.messages.push({role:"bot",text:reply});
+      if (reply) {
+        typing.bubble.innerHTML = renderMarkdown(reply);
+        session.messages.push({role:"bot",text:reply});
+      }
     }
   } catch (error) {
     const errorText = "I couldn't process your message. " + (error.message || "Please try again.");
