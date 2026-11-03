@@ -67,6 +67,11 @@ button{cursor:pointer}
 .topbrand{display:flex;align-items:center;gap:12px}.topbrand .logo-mark{width:49px;height:49px}
 .topbrand h1{font-size:19px;margin:0 0 3px}.topbrand p{margin:0;color:var(--muted);font-size:13px}
 .status{margin-left:auto;color:var(--good);font-size:13px;display:flex;align-items:center;gap:8px}.dot{height:8px;width:8px;background:var(--good);border-radius:50%;box-shadow:0 0 10px var(--good)}
+.plus-top-link{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 13px;border:1px solid rgba(173,139,255,.48);border-radius:999px;background:linear-gradient(110deg,rgba(109,60,255,.2),rgba(193,60,255,.13));color:#d9caff;text-decoration:none;font-size:12px;font-weight:800;letter-spacing:.35px;white-space:nowrap;box-shadow:0 4px 18px rgba(109,60,255,.13);transition:transform .18s ease,border-color .18s ease,background .18s ease}
+.plus-top-link:hover{transform:translateY(-1px);border-color:#bd9dff;background:linear-gradient(110deg,rgba(109,60,255,.34),rgba(193,60,255,.23))}
+.plus-top-icon{font-size:17px;line-height:1;color:#e2c9ff}
+.topbar .status{margin-left:0}
+@media(max-width:560px){.topbar{gap:8px;padding:10px 12px}.topbrand{gap:8px}.topbrand .logo-mark{width:42px;height:42px}.topbrand h1{font-size:16px}.topbrand p{font-size:11px}.plus-top-link{padding:8px 10px;font-size:10px;gap:5px}.topbar .status{display:none}}
 .chat{flex:1;overflow-y:auto;padding:28px clamp(16px,5vw,70px) 24px;scroll-behavior:smooth}
 .welcome{max-width:680px;margin:12vh auto 0;text-align:center}.welcome .logo-mark{width:78px;height:78px;margin:0 auto 15px}.welcome h2{font-size:clamp(27px,4vw,38px);margin:0 0 10px;letter-spacing:-.7px}.gradient{background:linear-gradient(90deg,#77d9ff,#a77bff,#e05cff);-webkit-background-clip:text;background-clip:text;color:transparent}.welcome p{color:var(--muted);line-height:1.65;margin:0 auto 24px;max-width:460px}
 .suggestions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.suggestion{background:rgba(28,31,60,.8);border:1px solid var(--line);border-radius:14px;color:#dfe1ff;padding:10px 13px;font-size:13px}.suggestion:hover{border-color:#8b61ff;background:#252047}
@@ -438,7 +443,6 @@ body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;bor
       <button type="button" id="clearChatsBtn">✕ Clear all chats</button>
       <input type="file" id="importChatsFile" accept="application/json,.json" hidden>
     </div>
-    <a class="nav-btn" href="plus.html" style="text-decoration:none"><span class="nav-icon">♛</span> NEXORA PLUS</a>
     <button class="nav-btn" id="themeBtn"><span class="nav-icon">☾</span> Toggle theme</button>
   </aside>  <div class="library-overlay" id="libraryOverlay" aria-hidden="true">
     <section class="library-panel" role="dialog" aria-modal="true" aria-labelledby="libraryTitle">
@@ -474,6 +478,7 @@ body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;bor
         <img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">
         <div><h1>NEXORA AI</h1><p>Your AI assistant</p></div>
       </div>
+      <a class="plus-top-link" href="plus.html" aria-label="Explore NEXORA PLUS"><span class="plus-top-icon" aria-hidden="true">✦</span><span>NEXORA PLUS</span></a>
       <div class="status"><span class="dot"></span> Online</div>
     </header>
     <section class="chat" id="chat" aria-live="polite">
