@@ -1495,7 +1495,8 @@ document.querySelectorAll(".suggestion").forEach(button => {
   button.addEventListener("click", () => sendMessage(button.textContent));
 });
 document.getElementById("newChat").addEventListener("click", startNewChat);
-document.getElementById("menuBtn").addEventListener("click", () => sidebar.classList.toggle("open"));\n
+document.getElementById("menuBtn").addEventListener("click", () => sidebar.classList.toggle("open"));
+
 document.getElementById("libraryBtn").addEventListener("click",openLibrary);
 document.getElementById("closeLibraryBtn").addEventListener("click",closeLibrary);
 document.getElementById("libraryOverlay").addEventListener("click",e=>{if(e.target.id==="libraryOverlay")closeLibrary();});
@@ -1555,7 +1556,7 @@ function setTheme(theme) {
 document.getElementById("themeBtn").addEventListener("click", () => {
   setTheme(document.body.dataset.theme === "light" ? "dark" : "light");
 });
-// Start every new visit in light mode.
+// Keep the requested light appearance on every visit.
 setTheme("light");
 
 // Restore the most recently used conversation on page load.
