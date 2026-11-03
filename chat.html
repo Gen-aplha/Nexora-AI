@@ -87,6 +87,15 @@ textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;bord
 .attachment-chip{display:flex;align-items:center;gap:7px;max-width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-size:12px}
 .attachment-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
 .attachment-chip button{border:0;background:transparent;color:#ff9db2;font-size:16px;padding:0 2px}
+.attachment-preview-grid{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
+.attachment-preview{position:relative;width:112px;height:112px;flex:0 0 112px;overflow:hidden;border:1px solid #555;border-radius:14px;background:#252525}
+.attachment-preview img,.attachment-preview video{display:block;width:100%;height:100%;object-fit:cover;background:#111}
+.attachment-preview video{object-fit:contain}
+.attachment-preview .preview-remove{position:absolute;right:5px;top:5px;width:25px;height:25px;border:0;border-radius:50%;background:#111d;color:#fff;font-size:18px;line-height:1}
+.attachment-preview .preview-name{position:absolute;left:0;right:0;bottom:0;padding:15px 6px 5px;background:linear-gradient(transparent,#000c);color:#fff;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.message-attachment-previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.message-attachment-previews .attachment-preview{width:150px;height:150px;flex-basis:150px}
+@media(max-width:420px){.attachment-preview{width:96px;height:96px;flex-basis:96px}.message-attachment-previews .attachment-preview{width:125px;height:125px;flex-basis:125px}}
 .attachment-note{max-width:930px;margin:0 auto 7px;color:var(--muted);font-size:10px;line-height:1.4}
 .generated-image{display:block;width:min(100%,520px);height:auto;border-radius:12px;margin-top:10px;border:1px solid var(--line)}
 .history-search{width:100%;margin:0 0 8px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-size:12px;outline:none}
@@ -342,7 +351,7 @@ body:has(.image-mode-panel:not([hidden])) .footnote{display:none}
       </div>
     </section>
     <div class="composer-wrap">
-      <input type="file" id="attachmentInput" accept="image/*" multiple hidden>
+      <input type="file" id="attachmentInput" accept="image/*,video/*" multiple hidden>
       <input type="file" id="filesInput" accept=".pdf,.txt,.md,.csv,.json" multiple hidden>
       <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
       <div class="composer-menu" id="composerMenu" hidden>
@@ -977,13 +986,66 @@ const IMAGE_TYPES = ["image/jpeg","image/png","image/webp"];
 function fileExtension(name) {
   return String(name).split(".").pop().toLowerCase();
 }
+function makeAttachmentPreview(item, removable = false, onRemove = null) {
+  const card = document.createElement("div");
+  card.className = "attachment-preview";
+  const media = document.createElement(item.kind === "video" ? "video" : "img");
+  if (item.kind === "video") {
+    media.src = item.url;
+    media.controls = true;
+    media.preload = "metadata";
+    media.playsInline = true;
+    media.setAttribute("aria-label", "Video preview: " + item.name);
+  } else {
+    media.src = item.data;
+    media.alt = "Image preview: " + item.name;
+  }
+  card.appendChild(media);
+  const name = document.createElement("div");
+  name.className = "preview-name";
+  name.textContent = item.name;
+  card.appendChild(name);
+  if (removable) {
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "preview-remove";
+    remove.textContent = "×";
+    remove.setAttribute("aria-label", "Remove " + item.name);
+    remove.addEventListener("click", onRemove);
+    card.appendChild(remove);
+  }
+  return card;
+}
+function appendAttachmentPreviews(target, items) {
+  const visualItems = items.filter(item => item.kind === "image" || item.kind === "video");
+  if (!visualItems.length) return;
+  const grid = document.createElement("div");
+  grid.className = "message-attachment-previews";
+  visualItems.forEach(item => grid.appendChild(makeAttachmentPreview(item)));
+  target.appendChild(grid);
+}
 function renderAttachmentList() {
   attachmentList.innerHTML = "";
+  const visualItems = pendingAttachments.filter(item => item.kind === "image" || item.kind === "video");
+  if (visualItems.length) {
+    const grid = document.createElement("div");
+    grid.className = "attachment-preview-grid";
+    visualItems.forEach(item => {
+      const index = pendingAttachments.indexOf(item);
+      grid.appendChild(makeAttachmentPreview(item, true, () => {
+        if (item.kind === "video" && item.url) URL.revokeObjectURL(item.url);
+        pendingAttachments.splice(index, 1);
+        renderAttachmentList();
+      }));
+    });
+    attachmentList.appendChild(grid);
+  }
   pendingAttachments.forEach((item, index) => {
+    if (item.kind === "image" || item.kind === "video") return;
     const chip = document.createElement("div");
     chip.className = "attachment-chip";
     const label = document.createElement("span");
-    label.textContent = (item.kind === "image" ? "🖼️ " : item.kind === "pdf" ? "📄 " : "📎 ") + item.name;
+    label.textContent = (item.kind === "pdf" ? "📄 " : "📎 ") + item.name;
     const remove = document.createElement("button");
     remove.type = "button";
     remove.textContent = "×";
@@ -1051,6 +1113,9 @@ attachmentInput.addEventListener("change", async () => {
         if (file.size > MAX_IMAGE_BYTES) throw new Error(file.name + " is too large. Each image must be 3.5 MB or smaller.");
         const data = await readFileAsDataURL(file);
         pendingAttachments.push({kind:"image",name:file.name,data});
+      } else if (file.type.startsWith("video/")) {
+        if (file.size > 50 * 1024 * 1024) throw new Error(file.name + " is too large. Video previews are limited to 50 MB.");
+        pendingAttachments.push({kind:"video",name:file.name,file,url:URL.createObjectURL(file)});
       } else if (file.type === "application/pdf" || ext === "pdf") {
         if (file.size > 12 * 1024 * 1024) throw new Error(file.name + " is too large. PDFs must be 12 MB or smaller.");
         const text = await extractPdfText(file);
@@ -1062,8 +1127,7 @@ attachmentInput.addEventListener("change", async () => {
         if (!text.trim()) throw new Error(file.name + " is empty.");
         pendingAttachments.push({kind:"text",name:file.name,text:text.slice(0,MAX_TEXT_CHARS)});
       } else {
-        if (file.type.startsWith("video/")) throw new Error("Video selection is available, but NEXORA AI cannot analyse videos yet. Please choose a photo instead.");
-        throw new Error(file.name + " is not supported. Choose a photo, PDF, TXT, MD, CSV or JSON file.");
+        throw new Error(file.name + " is not supported. Choose a photo, video, PDF, TXT, MD, CSV or JSON file.");
       }
     } catch (error) {
       alert(error.message || "Could not add this file.");
@@ -1154,6 +1218,10 @@ async function sendMessage(text) {
   const message = text.trim();
   const files = pendingAttachments.slice();
   if ((!message && !files.length) || busy) return;
+  if (files.some(item => item.kind === "video")) {
+    alert("Video preview is available, but NEXORA AI cannot analyse videos yet. Remove the video or choose a photo to continue.");
+    return;
+  }
 
   // Route clear image-generation requests to the image model instead of chat.
   // Users can type naturally and press Send, or use the Generate image button.
@@ -1173,7 +1241,9 @@ async function sendMessage(text) {
   session.messages.push({role:"user",text:shownText + (names ? "\n[Attachments: " + names + "]" : "")});
   session.updatedAt = Date.now();
   saveSessions();
-  addMessage("user", shownText + (names ? "\n📎 " + names : ""));
+  const userMessage = addMessage("user", shownText + (names ? "\n📎 " + names : ""));
+  appendAttachmentPreviews(userMessage.bubble, files);
+  pendingAttachments.forEach(item => { if (item.kind === "video" && item.url) URL.revokeObjectURL(item.url); });
   pendingAttachments = [];
   renderAttachmentList();
   input.value = "";
