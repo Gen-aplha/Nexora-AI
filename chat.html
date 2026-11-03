@@ -290,10 +290,12 @@ body:has(.image-mode-panel:not([hidden])) .footnote{display:none}
       </div>
     </section>
     <div class="composer-wrap">
-      <input type="file" id="attachmentInput" accept="image/jpeg,image/png,image/webp,.pdf,.txt,.md,.csv,.json" multiple hidden>
+      <input type="file" id="attachmentInput" accept="image/*,video/*" multiple hidden>
+      <input type="file" id="filesInput" accept=".pdf,.txt,.md,.csv,.json" multiple hidden>
       <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
       <div class="composer-menu" id="composerMenu" hidden>
-        <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Add photos & files</strong><small>Images, PDFs and documents</small></span></button>
+        <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Photos and videos</strong><small>Choose media from your device</small></span></button>
+        <button class="composer-menu-item" type="button" id="filesBtn"><span>📄</span><span><strong>Files</strong><small>PDFs and documents</small></span></button>
         <button class="composer-menu-item" type="button" id="generateImageBtn"><span>✧</span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
       </div>
       <section class="image-mode-panel" id="imageModePanel" hidden aria-label="Image creation">
@@ -967,7 +969,27 @@ async function extractPdfText(file) {
   if (pdf.numPages > pagesToRead) result += "\n[Only the first 40 pages were read.]";
   return result.slice(0, MAX_TEXT_CHARS);
 }
-attachBtn.addEventListener("click", () => attachmentInput.click());
+const filesInput = document.getElementById("filesInput");
+attachBtn.addEventListener("click", () => {
+  composerMenu.hidden = true;
+  composerPlus.setAttribute("aria-expanded", "false");
+  attachmentInput.click();
+});
+document.getElementById("filesBtn").addEventListener("click", () => {
+  composerMenu.hidden = true;
+  composerPlus.setAttribute("aria-expanded", "false");
+  filesInput.click();
+});
+filesInput.addEventListener("change", () => {
+  const chosen = Array.from(filesInput.files || []);
+  if (chosen.length) {
+    const transfer = new DataTransfer();
+    chosen.forEach(file => transfer.items.add(file));
+    attachmentInput.files = transfer.files;
+    attachmentInput.dispatchEvent(new Event("change", {bubbles:true}));
+  }
+  filesInput.value = "";
+});
 attachmentInput.addEventListener("change", async () => {
   const files = Array.from(attachmentInput.files || []);
   for (const file of files) {
@@ -988,7 +1010,8 @@ attachmentInput.addEventListener("change", async () => {
         if (!text.trim()) throw new Error(file.name + " is empty.");
         pendingAttachments.push({kind:"text",name:file.name,text:text.slice(0,MAX_TEXT_CHARS)});
       } else {
-        throw new Error(file.name + " is not supported. Choose an image, PDF, TXT, MD, CSV or JSON file.");
+        if (file.type.startsWith("video/")) throw new Error("Video selection is available, but NEXORA AI cannot analyse videos yet. Please choose a photo instead.");
+        throw new Error(file.name + " is not supported. Choose a photo, PDF, TXT, MD, CSV or JSON file.");
       }
     } catch (error) {
       alert(error.message || "Could not add this file.");
