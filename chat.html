@@ -360,6 +360,12 @@ body[data-theme="light"] #themeBtn{color:#555}
 .memory-empty{padding:20px 0;color:#777;text-align:center}
 .library-note{border-top:1px solid #eee;padding-top:12px;color:#777;font-size:12px;line-height:1.5}
 @media(max-width:680px){body[data-theme="light"] .sidebar{width:min(80vw, 340px);padding:18px 22px 12px}.side-footer{padding-bottom:8px}.history-tools{margin-top:8px}}
+/* Reliable mobile drawer: keep it above chat and reveal it on touch. */
+@media(max-width:680px){
+.sidebar{position:fixed!important;top:0!important;bottom:0!important;left:0!important;right:auto!important;width:min(82vw,340px)!important;height:100dvh!important;z-index:9998!important;transform:translateX(-110%)!important;visibility:hidden!important;transition:transform .22s ease,visibility .22s ease!important;pointer-events:none!important;background:#fff!important;overflow-y:auto!important}
+.sidebar.open{transform:translateX(0)!important;visibility:visible!important;pointer-events:auto!important}
+.menu-btn{position:relative!important;z-index:10000!important;display:flex!important;align-items:center!important;justify-content:center!important;min-width:48px!important;min-height:48px!important;touch-action:manipulation!important;pointer-events:auto!important}
+}
 </style>
 </head>
 <body>
@@ -403,7 +409,7 @@ body[data-theme="light"] #themeBtn{color:#555}
   </div>
   <main class="main">
     <header class="topbar">
-      <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" onclick="(function(b){var s=document.getElementById('sidebar');var o=s.classList.toggle('open');b.setAttribute('aria-expanded',String(o));b.setAttribute('aria-label',o?'Close menu':'Open menu');})(this)">☰</button>
       <div class="topbrand">
         <svg class="logo-mark" viewBox="0 0 100 100" role="img" aria-label="NEXORA logo">
           <defs><linearGradient id="ng2" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#287dff"/><stop offset=".52" stop-color="#9b45ff"/><stop offset="1" stop-color="#ed63ff"/></linearGradient></defs>
@@ -1504,14 +1510,6 @@ document.querySelectorAll(".suggestion").forEach(button => {
 });
 document.getElementById("newChat").addEventListener("click", startNewChat);
 const menuButton = document.getElementById("menuBtn");
-menuButton.setAttribute("aria-expanded","false");
-menuButton.addEventListener("click", (event) => {
-  event.preventDefault();
-  event.stopPropagation();
-  const isOpen = sidebar.classList.toggle("open");
-  menuButton.setAttribute("aria-expanded", String(isOpen));
-  menuButton.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
-});
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && sidebar.classList.contains("open")) {
     sidebar.classList.remove("open");
