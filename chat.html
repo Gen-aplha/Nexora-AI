@@ -1508,7 +1508,20 @@ document.getElementById("addMemoryBtn").addEventListener("click",()=>{
 });
 document.getElementById("sideSearchBtn").addEventListener("click",()=>{sidebar.classList.remove("open");historySearch.focus();historySearch.scrollIntoView({block:"nearest"});});
 document.getElementById("sideImagesBtn").addEventListener("click",()=>{sidebar.classList.remove("open");const imageButton=document.getElementById("generateImageBtn");if(imageButton)imageButton.click();else alert("Open the Images tool from the chat composer.");});
-document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("click",()=>alert(btn.dataset.coming+" is not available in NEXORA AI yet.")));
+document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("click",()=>{
+ const feature=btn.dataset.coming;
+ sidebar.classList.remove("open");
+ if(feature==="Projects"){
+   const name=prompt("What project would you like to work on?");
+   if(name&&name.trim())sendMessage("Help me create and manage this project: "+name.trim()+". Start with a clear plan and milestones.");
+ }else if(feature==="Remote"){
+   window.open("https://github.com/gen-aplha/Nexora-AI","_blank","noopener");
+ }else if(feature==="Scheduled"){
+   sendMessage("Help me create a practical schedule or study timetable. Ask me for the task, date and time, then format a reminder plan I can save.");
+ }else if(feature==="Plugins"){
+   sendMessage("Show me the features currently available in NEXORA AI and explain how to use each one.");
+ }
+}));
 document.getElementById("sideNewChatBtn").addEventListener("click",()=>{startNewChat();sidebar.classList.remove("open");});
 document.getElementById("seeAllChatsBtn").addEventListener("click",()=>{historySearch.value="";renderHistory();historyList.style.maxHeight="52vh";historyList.scrollIntoView({block:"nearest"});});
 document.getElementById("sideProfileBtn").addEventListener("click",()=>alert("NEXORA AI profile settings are coming soon."));
@@ -1529,7 +1542,8 @@ function renderMemories(){
 }
 function openLibrary(){renderMemories();document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
 function closeLibrary(){document.getElementById("libraryOverlay").classList.remove("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","true");}
-\nfunction setTheme(theme) {
+
+function setTheme(theme) {
   const light = theme === "light";
   document.body.dataset.theme = light ? "light" : "dark";
   document.body.style.setProperty("--bg", light ? "#f7f7fb" : "#0c0e1d");
