@@ -1315,7 +1315,7 @@ async function sendMessage(text) {
         } catch (storageError) {
           session.messages.push({role:"bot",text:captionText});
         }
-        reply = null;
+        // The edited image has already been rendered above; no chat text reply is needed.
       }
       for (const imageFile of imageFiles) {
         if (editIntent) break;
