@@ -319,35 +319,85 @@ body:has(.image-mode-panel:not([hidden])) .footnote{display:none}
  .composer-menu{left:12px;bottom:82px}
 }
 
+
+/* ChatGPT-inspired mobile navigation and local Library */
+.side-header{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 20px}
+.side-title{font-family:Georgia,serif;font-size:25px;font-weight:800;letter-spacing:-.7px;color:#171717}
+.side-title span{color:#555}
+.side-search{width:48px;height:48px;border:0;border-radius:50%;background:#f7f7f7;color:#111;font-size:30px;line-height:1}
+.side-primary{display:flex;flex-direction:column;gap:2px}
+.side-link{display:flex;align-items:center;gap:15px;width:100%;padding:12px 7px;border:0;background:transparent;color:#171717;text-align:left;font-family:Georgia,serif;font-weight:700;font-size:19px;border-radius:10px}
+.side-link:active{background:#eee}
+.side-icon{width:33px;text-align:center;font-family:Arial,sans-serif;font-size:26px;font-weight:400}
+.side-divider{height:1px;background:#e2e2e2;margin:24px 0 4px}
+body[data-theme="light"] .sidebar{width: min(82vw, 340px);padding:18px 22px 14px;background:#fff;border:0;box-shadow:18px 0 50px #0001}
+body[data-theme="light"] .history-heading{font-family:Georgia,serif;font-size:13px;letter-spacing:.3px;color:#777;padding:12px 0 8px}
+body[data-theme="light"] .history-search{border:0;background:#f4f4f4;color:#222;padding:10px 12px}
+body[data-theme="light"] .history-list{max-height:34vh;gap:1px}
+body[data-theme="light"] .history-item{font-family:Georgia,serif;font-weight:650;font-size:16px;color:#181818;padding:11px 2px;border-radius:0}
+body[data-theme="light"] .history-item.active{background:#e9e9e9;color:#111}
+.see-all-chats{border:0;background:transparent;color:#888;font-family:Georgia,serif;font-weight:700;font-size:17px;text-align:left;padding:14px 0}
+.side-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding:14px 0 2px}
+.side-chat-btn{display:flex;align-items:center;gap:12px;border:0;border-radius:30px;background:#3567e8;color:#fff;padding:13px 23px;font-size:18px;font-weight:700}
+.side-profile{width:48px;height:48px;border:2px solid #eee;border-radius:50%;background:#24135a;color:#fff;font-weight:800;font-size:22px}
+body[data-theme="light"] .history-tools{padding:8px 0}
+body[data-theme="light"] .history-tools button{background:#f6f6f6;color:#555;border-color:#e5e5e5}
+body[data-theme="light"] #themeBtn{color:#555}
+.library-overlay{display:none;position:fixed;z-index:20;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}
+.library-overlay.open{display:flex}
+.library-panel{width:min(100%,560px);max-height:85dvh;overflow:auto;background:#fff;color:#202124;border-radius:20px;padding:20px;box-shadow:0 20px 70px #0004}
+.library-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.library-head h2{margin:0;font-size:24px}.library-head p{margin:5px 0 0;color:#777;font-size:13px}
+.library-close{border:0;background:#f0f0f0;border-radius:50%;width:36px;height:36px;font-size:24px;color:#222}
+.library-actions{margin:18px 0}
+.add-memory-btn{border:0;border-radius:12px;background:#3567e8;color:#fff;padding:11px 15px;font-weight:700}
+.memory-card{padding:13px 0;border-top:1px solid #e8e8e8}
+.memory-card strong{display:block;margin-bottom:5px}.memory-card p{margin:0;color:#555;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.5}
+.memory-card button{margin:9px 8px 0 0;border:1px solid #ddd;background:#fafafa;border-radius:8px;padding:6px 10px;color:#444}
+.memory-empty{padding:20px 0;color:#777;text-align:center}
+.library-note{border-top:1px solid #eee;padding-top:12px;color:#777;font-size:12px;line-height:1.5}
+@media(max-width:680px){body[data-theme="light"] .sidebar{width:min(80vw, 340px);padding:18px 22px 12px}.side-footer{padding-bottom:8px}.history-tools{margin-top:8px}}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <svg class="logo-mark" viewBox="0 0 100 100" role="img" aria-label="NEXORA logo">
-        <defs><linearGradient id="ng1" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#287dff"/><stop offset=".52" stop-color="#9b45ff"/><stop offset="1" stop-color="#ed63ff"/></linearGradient></defs>
-        <rect x="3" y="3" width="94" height="94" rx="28" fill="#24135a" stroke="#7042e8" stroke-opacity=".55"/>
-        <path d="M24 72V28L76 72V28" fill="none" stroke="url(#ng1)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M24 28L76 72" fill="none" stroke="#7c54ff" stroke-width="7" stroke-linecap="round" opacity=".45"/>
-      </svg>
-      <div class="brand-name">NEXORA <span>AI</span></div>
+    <div class="side-header">
+      <div class="side-title">NEXORA <span>AI</span></div>
+      <button class="side-search" id="sideSearchBtn" aria-label="Search chats" title="Search chats">⌕</button>
     </div>
-    <button class="new-chat" id="newChat"><span class="nav-icon">＋</span> New chat</button>
-    <button class="nav-btn active"><span class="nav-icon">▤</span> Chat</button>
+    <div class="side-primary">
+      <button class="side-link" id="sideImagesBtn"><span class="side-icon">▧</span>Images</button>
+      <button class="side-link" id="libraryBtn"><span class="side-icon">▥</span>Library</button>
+      <button class="side-link" data-coming="Projects"><span class="side-icon">▱</span>Projects</button>
+      <button class="side-link" data-coming="Remote"><span class="side-icon">▣</span>Remote</button>
+      <button class="side-link" data-coming="Scheduled"><span class="side-icon">◷</span>Scheduled</button>
+      <button class="side-link" data-coming="Plugins"><span class="side-icon">⛭</span>Plugins</button>
+    </div>
+    <div class="side-divider"></div>
     <div class="history-heading">RECENT CHATS</div>
     <input id="historySearch" class="history-search" type="search" placeholder="Search chats..." aria-label="Search conversations">
     <div id="historyList" class="history-list"></div>
+    <button class="see-all-chats" id="seeAllChatsBtn">See all…</button>
+    <div class="side-footer">
+      <button class="side-chat-btn" id="sideNewChatBtn"><span>▰</span>Chat</button>
+      <button class="side-profile" id="sideProfileBtn" aria-label="NEXORA profile" title="NEXORA AI">N</button>
+    </div>
     <div class="history-tools">
       <button type="button" id="exportChatsBtn">⇩ Export chats</button>
       <button type="button" id="importChatsBtn">⇧ Import chats</button>
       <button type="button" id="clearChatsBtn">✕ Clear all chats</button>
       <input type="file" id="importChatsFile" accept="application/json,.json" hidden>
     </div>
-    <button class="nav-btn" id="exploreBtn"><span class="nav-icon">✧</span> Explore</button>
     <button class="nav-btn" id="themeBtn"><span class="nav-icon">☾</span> Toggle theme</button>
-    <div class="side-bottom">Smarter Conversations.<br>A Brighter Tomorrow. <span style="color:#c34cff">♥</span><br><small>Powered by NEXORA AI</small></div>
-  </aside>
+  </aside>  <div class="library-overlay" id="libraryOverlay" aria-hidden="true">
+    <section class="library-panel" role="dialog" aria-modal="true" aria-labelledby="libraryTitle">
+      <div class="library-head"><div><h2 id="libraryTitle">Library</h2><p>Saved memories and notes on this device</p></div><button id="closeLibraryBtn" class="library-close" aria-label="Close library">×</button></div>
+      <div class="library-actions"><button id="addMemoryBtn" class="add-memory-btn">＋ Save a memory</button></div>
+      <div id="memoryList" class="memory-list"></div>
+      <p class="library-note">Memories are stored in this browser on this device. They are included with your future text chats on this device only.</p>
+    </section>
+  </div>
   <main class="main">
     <header class="topbar">
       <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
@@ -1400,7 +1450,7 @@ async function sendMessage(text) {
       } else if (videoFiles.length) {
         reply = "I received your video attachment" + (videoFiles.length > 1 ? "s" : "") + " and displayed " + (videoFiles.length > 1 ? "them" : "it") + " in the chat. Video analysis is not available yet, so I can't inspect its contents at this time.";
       } else {
-        const data = await postBackend({action:"chat",message});
+        const memoryContext=savedMemories.length?"\n\nUSER SAVED MEMORIES (use only when relevant):\n"+savedMemories.map(m=>"- "+m.text).join("\n"):"";\n        const data = await postBackend({action:"chat",message:message+memoryContext});
         reply = data.reply;
       }
       if (videoFiles.length && (imageNotes.length || textFiles.length)) {
@@ -1445,12 +1495,41 @@ document.querySelectorAll(".suggestion").forEach(button => {
   button.addEventListener("click", () => sendMessage(button.textContent));
 });
 document.getElementById("newChat").addEventListener("click", startNewChat);
-document.getElementById("menuBtn").addEventListener("click", () => sidebar.classList.toggle("open"));
+document.getElementById("menuBtn").addEventListener("click", () => sidebar.classList.toggle("open"));\n
+document.getElementById("libraryBtn").addEventListener("click",openLibrary);
+document.getElementById("closeLibraryBtn").addEventListener("click",closeLibrary);
+document.getElementById("libraryOverlay").addEventListener("click",e=>{if(e.target.id==="libraryOverlay")closeLibrary();});
+document.getElementById("addMemoryBtn").addEventListener("click",()=>{
+ const text=prompt("What should NEXORA remember? Example: I prefer short, step-by-step explanations.");
+ if(!text||!text.trim())return;
+ const title=prompt("Give this memory a short title (optional):","Saved memory");
+ savedMemories.unshift({id:makeId(),title:(title||"Saved memory").trim(),text:text.trim(),createdAt:Date.now()});
+ persistMemories();renderMemories();
+});
+document.getElementById("sideSearchBtn").addEventListener("click",()=>{sidebar.classList.remove("open");historySearch.focus();historySearch.scrollIntoView({block:"nearest"});});
+document.getElementById("sideImagesBtn").addEventListener("click",()=>{sidebar.classList.remove("open");const imageButton=document.getElementById("generateImageBtn");if(imageButton)imageButton.click();else alert("Open the Images tool from the chat composer.");});
+document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("click",()=>alert(btn.dataset.coming+" is not available in NEXORA AI yet.")));
+document.getElementById("sideNewChatBtn").addEventListener("click",()=>{startNewChat();sidebar.classList.remove("open");});
+document.getElementById("seeAllChatsBtn").addEventListener("click",()=>{historySearch.value="";renderHistory();historyList.style.maxHeight="52vh";historyList.scrollIntoView({block:"nearest"});});
+document.getElementById("sideProfileBtn").addEventListener("click",()=>alert("NEXORA AI profile settings are coming soon."));
+
 document.getElementById("exploreBtn").addEventListener("click", () => {
   sendMessage("What are some useful things you can help me with?");
   sidebar.classList.remove("open");
 });
-function setTheme(theme) {
+
+const MEMORY_STORAGE_KEY = "nexora_saved_memories_v1";
+function loadSavedMemories(){try{const v=JSON.parse(localStorage.getItem(MEMORY_STORAGE_KEY)||"[]");return Array.isArray(v)?v.filter(x=>x&&typeof x.text==="string"):[];}catch(e){return [];}}
+let savedMemories=loadSavedMemories();
+function persistMemories(){localStorage.setItem(MEMORY_STORAGE_KEY,JSON.stringify(savedMemories));}
+function renderMemories(){
+ const list=document.getElementById("memoryList"); if(!list)return; list.innerHTML="";
+ if(!savedMemories.length){const empty=document.createElement("div");empty.className="memory-empty";empty.textContent="No saved memories yet. Save a preference or detail you want NEXORA to remember.";list.appendChild(empty);return;}
+ savedMemories.forEach((item,index)=>{const card=document.createElement("article");card.className="memory-card";const title=document.createElement("strong");title.textContent=item.title||"Saved memory";const body=document.createElement("p");body.textContent=item.text;const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>{const next=prompt("Edit this memory",item.text);if(next&&next.trim()){item.text=next.trim();persistMemories();renderMemories();}};const remove=document.createElement("button");remove.textContent="Delete";remove.onclick=()=>{if(confirm("Delete this saved memory?")){savedMemories.splice(index,1);persistMemories();renderMemories();}};card.append(title,body,edit,remove);list.appendChild(card);});
+}
+function openLibrary(){renderMemories();document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
+function closeLibrary(){document.getElementById("libraryOverlay").classList.remove("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","true");}
+\nfunction setTheme(theme) {
   const light = theme === "light";
   document.body.dataset.theme = light ? "light" : "dark";
   document.body.style.setProperty("--bg", light ? "#f7f7fb" : "#0c0e1d");
