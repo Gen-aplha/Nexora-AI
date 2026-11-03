@@ -168,6 +168,9 @@ textarea{color:#eee;min-height:40px}textarea::placeholder{color:#aaa}
 
 /* NEXORA light theme defaults and palette */
 body[data-theme="light"]{background:#f7f7fb;color:#20212a}
+body[data-theme="light"] .sidebar{background:#fff!important;color:#20212a;border-color:#e5e5ec}
+body[data-theme="light"] .menu-btn{display:block!important;color:#000!important;background:#fff!important;border:1px solid #d8d8df!important;position:relative;z-index:20;cursor:pointer;touch-action:manipulation}
+@media(max-width:680px){body[data-theme="light"] .sidebar{background:#fff!important}}
 body[data-theme="light"] .menu-btn{color:#000;background:#fff;border-color:#d8d8df}
 body[data-theme="light"] .sidebar{background:#fff;border-color:#e5e5ec}
 body[data-theme="light"] .topbar{background:rgba(255,255,255,.96);border-color:#e7e7ed}
@@ -1495,7 +1498,22 @@ document.querySelectorAll(".suggestion").forEach(button => {
   button.addEventListener("click", () => sendMessage(button.textContent));
 });
 document.getElementById("newChat").addEventListener("click", startNewChat);
-document.getElementById("menuBtn").addEventListener("click", () => sidebar.classList.toggle("open"));
+const menuButton = document.getElementById("menuBtn");
+menuButton.setAttribute("aria-expanded","false");
+menuButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  const isOpen = sidebar.classList.toggle("open");
+  menuButton.setAttribute("aria-expanded", String(isOpen));
+  menuButton.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && sidebar.classList.contains("open")) {
+    sidebar.classList.remove("open");
+    menuButton.setAttribute("aria-expanded","false");
+    menuButton.setAttribute("aria-label","Open menu");
+  }
+});
 
 document.getElementById("libraryBtn").addEventListener("click",openLibrary);
 document.getElementById("closeLibraryBtn").addEventListener("click",closeLibrary);
@@ -1556,8 +1574,9 @@ function setTheme(theme) {
 document.getElementById("themeBtn").addEventListener("click", () => {
   setTheme(document.body.dataset.theme === "light" ? "dark" : "light");
 });
-// Keep the requested light appearance on every visit.
+// Always start in the requested light theme.
 setTheme("light");
+document.body.dataset.theme = "light";
 
 // Restore the most recently used conversation on page load.
 renderHistory();
