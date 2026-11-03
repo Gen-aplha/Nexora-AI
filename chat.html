@@ -1672,3 +1672,6 @@ if (sessions.length) {
 </script>
 </body>
 </html>
+
+/* Let the supplied dark-backed logo blend into the light UI; preserve its original look in dark mode. */
+body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
