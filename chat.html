@@ -564,6 +564,25 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
 .composer:focus-within{border-color:#555!important;box-shadow:none!important;outline:none!important}
 .composer textarea:focus{outline:none!important;box-shadow:none!important}
 body[data-theme="light"] .composer:focus-within{border-color:#d6d6df!important;box-shadow:none!important}
+
+/* Personalization panel */
+.personalization-overlay{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.58);backdrop-filter:blur(5px)}
+.personalization-overlay.open{display:flex}
+.personalization-panel{width:min(100%,480px);max-height:min(88dvh,720px);overflow:auto;padding:22px;border:1px solid var(--line);border-radius:20px;background:var(--panel);color:var(--text);box-shadow:0 24px 80px #0007}
+.personalization-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:22px}
+.personalization-head h2{margin:0;font-size:21px}.personalization-head p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.personalization-close{width:34px;height:34px;border:0;border-radius:10px;background:var(--panel2);color:var(--text);font-size:23px}
+.personalization-label{display:block;margin:15px 0 7px;font-size:13px;font-weight:650}
+.personalization-control{display:block;width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);font:inherit;font-size:14px}
+.personalization-textarea{resize:vertical;min-height:110px;line-height:1.5}
+.personalization-hint{margin:9px 0;color:var(--muted);font-size:11px}
+.personalization-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+.personalization-actions button{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-weight:600}
+#savePersonalizationBtn{background:#7055db;border-color:#7055db;color:white}
+body[data-theme="light"] .personalization-panel{background:#fff;color:#20212a}
+body[data-theme="light"] .personalization-control{background:#f7f7fb;color:#20212a;border-color:#dedee8}
+@media(max-width:520px){.personalization-panel{padding:18px;border-radius:16px}.personalization-actions button{flex:1}}
+
 </style>
 </head>
 <body>
@@ -586,6 +605,7 @@ body[data-theme="light"] .composer:focus-within{border-color:#d6d6df!important;b
       <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
       <button class="side-link" data-coming="Projects"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
       <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
+      <button class="side-link" id="personalizationBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
     </div>
     <div class="side-divider"></div>
     <div class="history-heading">RECENT CHATS</div>
@@ -1968,7 +1988,10 @@ async function sendMessage(text) {
         reply = "I received your video attachment" + (videoFiles.length > 1 ? "s" : "") + " and displayed " + (videoFiles.length > 1 ? "them" : "it") + " in the chat. Video analysis is not available yet, so I can't inspect its contents at this time.";
       } else {
         const memoryContext=savedMemories.length?"\n\nUSER SAVED MEMORIES (use only when relevant):\n"+savedMemories.map(m=>"- "+m.text).join("\n"):"";
-        reply = await streamBackend({action:"chat",message:message+memoryContext},
+        const prefs=readPersonalization();
+        const toneGuidance={friendly:"Use a friendly, encouraging tone.",professional:"Use a professional, clear tone.",concise:"Keep answers short and concise unless detail is necessary.",detailed:"Explain thoroughly with helpful examples.",balanced:"Use a balanced, natural tone."};
+        const preferenceContext="\n\nUSER PERSONALIZATION PREFERENCES (follow when relevant):\n"+(toneGuidance[prefs.tone]||toneGuidance.balanced)+(prefs.language&&prefs.language!=="auto"?" Reply in "+prefs.language+" unless the user requests another language.":" Match the language used by the user.")+(prefs.instructions?"\nCustom instructions: "+prefs.instructions:"");
+        reply = await streamBackend({action:"chat",message:message+memoryContext+preferenceContext},
           partial => { typing.bubble.textContent = partial; });
       }
       if (videoFiles.length && (imageNotes.length || textFiles.length)) {
@@ -2053,6 +2076,22 @@ document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("cl
    sendMessage("Help me create a practical schedule or study timetable. Ask me for the task, date and time, then format a reminder plan I can save.");
  }
 }));
+
+const PERSONALIZATION_KEY="nexora_personalization_v1";
+const personalizationOverlay=document.getElementById("personalizationOverlay");
+const personalizationTone=document.getElementById("personalizationTone");
+const personalizationLanguage=document.getElementById("personalizationLanguage");
+const personalizationInstructions=document.getElementById("personalizationInstructions");
+function readPersonalization(){try{const value=JSON.parse(localStorage.getItem(PERSONALIZATION_KEY)||"{}");return value&&typeof value==="object"?value:{};}catch(_){return {};}}
+function loadPersonalizationForm(){const p=readPersonalization();personalizationTone.value=p.tone||"balanced";personalizationLanguage.value=p.language||"auto";personalizationInstructions.value=typeof p.instructions==="string"?p.instructions:"";}
+function openPersonalization(){loadPersonalizationForm();personalizationOverlay.classList.add("open");personalizationOverlay.setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
+function closePersonalization(){personalizationOverlay.classList.remove("open");personalizationOverlay.setAttribute("aria-hidden","true");}
+document.getElementById("personalizationBtn").addEventListener("click",openPersonalization);
+document.getElementById("closePersonalizationBtn").addEventListener("click",closePersonalization);
+personalizationOverlay.addEventListener("click",event=>{if(event.target===personalizationOverlay)closePersonalization();});
+document.getElementById("savePersonalizationBtn").addEventListener("click",()=>{const p={tone:personalizationTone.value,language:personalizationLanguage.value,instructions:personalizationInstructions.value.trim()};localStorage.setItem(PERSONALIZATION_KEY,JSON.stringify(p));closePersonalization();const note="Your personalization preferences have been saved on this device.";if(typeof showToast==="function")showToast(note);});
+document.getElementById("resetPersonalizationBtn").addEventListener("click",()=>{localStorage.removeItem(PERSONALIZATION_KEY);loadPersonalizationForm();});
+
 document.getElementById("sideNewChatBtn").addEventListener("click",()=>{startNewChat();sidebar.classList.remove("open");});
 document.getElementById("seeAllChatsBtn").addEventListener("click",()=>{historySearch.value="";renderHistory();historyList.style.maxHeight="52vh";historyList.scrollIntoView({block:"nearest"});});
 const ACCOUNT_STORAGE_KEY="nexora_account_profile_v1";
@@ -2305,6 +2344,21 @@ if (sessions.length) {
   showWelcome();
 }
 </script>
+ 
+<div class="personalization-overlay" id="personalizationOverlay" aria-hidden="true">
+  <section class="personalization-panel" role="dialog" aria-modal="true" aria-labelledby="personalizationTitle">
+    <div class="personalization-head"><div><h2 id="personalizationTitle">Personalization</h2><p>Make NEXORA AI respond the way you prefer.</p></div><button type="button" id="closePersonalizationBtn" class="personalization-close" aria-label="Close personalization">×</button></div>
+    <label class="personalization-label" for="personalizationTone">Response style</label>
+    <select id="personalizationTone" class="personalization-control"><option value="balanced">Balanced</option><option value="friendly">Friendly</option><option value="professional">Professional</option><option value="concise">Short and concise</option><option value="detailed">Detailed and explanatory</option></select>
+    <label class="personalization-label" for="personalizationLanguage">Preferred language</label>
+    <select id="personalizationLanguage" class="personalization-control"><option value="auto">Automatic / match my message</option><option value="English">English</option><option value="Hindi">Hindi</option><option value="Marathi">Marathi</option></select>
+    <label class="personalization-label" for="personalizationInstructions">Custom instructions</label>
+    <textarea id="personalizationInstructions" class="personalization-control personalization-textarea" rows="5" maxlength="1200" placeholder="Example: Explain difficult topics in simple words and use examples."></textarea>
+    <p class="personalization-hint">These preferences are saved only in this browser on this device.</p>
+    <div class="personalization-actions"><button type="button" id="resetPersonalizationBtn">Reset</button><button type="button" id="savePersonalizationBtn">Save preferences</button></div>
+  </section>
+</div>
+
 </body>
 </html>
 
