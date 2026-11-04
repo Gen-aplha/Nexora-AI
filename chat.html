@@ -414,6 +414,18 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
 .account-menu-avatar{width:44px;height:44px;flex:0 0 44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#7655e8,#a477ff);color:#fff;font-size:18px;font-weight:750;overflow:hidden;background-size:cover;background-position:center}
 .account-menu-identity{display:grid;gap:2px;min-width:0}.account-menu-identity strong{font-size:14px;overflow-wrap:anywhere}.account-menu-identity span{font-size:12px;color:#777;overflow-wrap:anywhere}
 
+
+.plugins-nav-count{margin-left:auto;padding:2px 7px;border-radius:20px;background:#eeeafc;color:#6546c8;font:600 10px Arial,sans-serif}
+.plugins-overlay{display:none;position:fixed;z-index:2500;inset:0;background:rgba(7,6,15,.68);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:14px}.plugins-overlay.open{display:flex}
+.plugins-panel{width:min(100%,820px);max-height:91dvh;overflow:auto;border:1px solid #ded8f2;border-radius:22px;padding:22px;background:#fbfaff;color:#242232;box-shadow:0 24px 90px #0006}
+.plugins-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.plugins-eyebrow{margin:0 0 6px;color:#7955d6;font-size:10px;font-weight:800;letter-spacing:1.5px}.plugins-header h2{margin:0;font-size:25px}.plugins-header p:last-child{margin:7px 0 0;color:#777487;font-size:13px}
+.plugins-search-wrap{display:flex;align-items:center;gap:10px;margin:18px 0 12px;padding:0 13px;min-height:44px;border:1px solid #e2deed;border-radius:12px;background:#fff;color:#766b93}.plugins-search-wrap input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#292638;font:inherit}
+.plugins-categories{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}.plugins-filter{border:1px solid #e3dfed;border-radius:30px;padding:7px 13px;background:#fff;color:#625d70;font-size:12px}.plugins-filter.active{background:#251b43;border-color:#251b43;color:white}
+.plugins-featured{display:flex;align-items:center;gap:14px;padding:17px;margin-bottom:17px;border-radius:16px;background:radial-gradient(circle at 85% 20%,#7451c7 0,transparent 35%),linear-gradient(110deg,#171127,#33205a);color:#fff}.plugins-featured-art{width:54px;height:54px;display:grid;place-items:center;border-radius:15px;background:#ffffff1c;color:#d7c4ff;font-size:30px}.plugins-featured span{display:block;color:#c8b3ff;font-size:9px;font-weight:800;letter-spacing:1.3px}.plugins-featured strong{display:block;margin:4px 0;font-size:17px}.plugins-featured p{margin:0;color:#d2cce0;font-size:12px}
+.plugins-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.plugin-card{min-width:0;padding:14px;border:1px solid #e7e3ef;border-radius:15px;background:#fff}.plugin-card[hidden]{display:none}.plugin-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.plugin-card-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;font-size:19px;font-weight:700}.plugin-card-icon.web{background:#eee9ff;color:#7651d2}.plugin-card-icon.docs{background:#e8f1ff;color:#3874c8}.plugin-card-icon.calc{background:#e6f7ef;color:#27865a}.plugin-card-icon.weather{background:#fff3d9;color:#b47b16}.plugin-card-icon.translate{background:#fceafa;color:#b34e9a}.plugin-card-icon.code{background:#e8eef2;color:#405d70}.plugin-card-icon.voice{background:#fce9e9;color:#bd5555}.plugin-status{font-size:10px;color:#8064bc;background:#f1edfa;border-radius:20px;padding:5px 8px}.plugin-card h3{margin:12px 0 5px;font-size:14px}.plugin-card p{min-height:48px;margin:0;color:#777487;font-size:11px;line-height:1.5}.plugin-card small{display:block;margin-top:11px;color:#9a94a8;font-size:9px;letter-spacing:1px;font-weight:750}.plugin-card button{width:100%;margin-top:10px;min-height:36px;border:1px solid #e6e1ef;border-radius:9px;background:#f7f5fb;color:#827c8d;font-size:11px;font-weight:650}.plugins-footnote{margin:16px 2px 0;color:#858091;font-size:10px;line-height:1.5}
+body[data-theme="dark"] .plugins-panel{background:#1d1a27;color:#f3efff;border-color:#42365c}body[data-theme="dark"] .plugins-header p:last-child,body[data-theme="dark"] .plugin-card p,body[data-theme="dark"] .plugins-footnote{color:#aaa3b8}body[data-theme="dark"] .plugins-search-wrap,body[data-theme="dark"] .plugin-card,body[data-theme="dark"] .plugins-filter{background:#292533;border-color:#40394e;color:#eee}body[data-theme="dark"] .plugins-search-wrap input{color:#fff}body[data-theme="dark"] .plugins-filter.active{background:#6c4bb5;border-color:#6c4bb5}body[data-theme="dark"] .plugin-card button{background:#34303f;border-color:#494254;color:#c9c2d5}
+@media(max-width:560px){.plugins-panel{padding:16px;border-radius:18px}.plugins-header h2{font-size:21px}.plugins-grid{grid-template-columns:1fr}.plugin-card p{min-height:0}.plugins-featured{padding:13px}.plugins-featured strong{font-size:15px}}
+
 .account-info-overlay{display:none;position:fixed;z-index:3100;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}.account-info-overlay.open{display:flex}.account-info-panel{width:min(100%,460px);max-height:85dvh;overflow:auto;background:#fff;color:#222;border-radius:18px;padding:20px;box-shadow:0 20px 70px #0004}.account-info-panel p{font-size:14px;line-height:1.6;color:#555}.account-info-actions{display:grid;gap:9px}.account-info-actions button{min-height:46px;padding:10px 13px;border:1px solid #ddd;border-radius:10px;background:#f7f7f8;color:#222;text-align:left;font:inherit}body[data-theme="dark"] .account-info-panel{background:#202124;color:#f1f1f1}body[data-theme="dark"] .account-info-panel p{color:#ccc}body[data-theme="dark"] .account-info-actions button{background:#303238;border-color:#555;color:#eee}
 .account-centre-menu{display:flex;flex-direction:column;gap:2px;padding:0 0 8px}
 .account-centre-menu[hidden]{display:none!important}
@@ -690,6 +702,7 @@ body.voice-wip-open{overflow:hidden}
     <div class="side-primary">
       <button class="side-link" id="sideImagesBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4.5 17 5-5 3.5 3 2.5-2 4 4"/></svg></span><span>Images</span></button>
       <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
+      <button class="side-link" id="pluginsBtn" type="button"><span class="side-icon">⌘</span><span>Plugins</span><span class="plugins-nav-count">7</span></button>
       <button class="side-link" data-coming="Projects"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
       <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
       <button class="side-link" id="personalizationBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
@@ -710,7 +723,25 @@ body.voice-wip-open{overflow:hidden}
       <input type="file" id="importChatsFile" accept="application/json,.json" hidden>
     </div>
     <button class="nav-btn" id="themeBtn"><span class="nav-icon">☾</span> Toggle theme</button>
-  </aside>  <div class="library-overlay" id="libraryOverlay" aria-hidden="true">
+  </aside>  <div class="plugins-overlay" id="pluginsOverlay" aria-hidden="true">
+    <section class="plugins-panel" role="dialog" aria-modal="true" aria-labelledby="pluginsTitle">
+      <header class="plugins-header"><div><p class="plugins-eyebrow">NEXORA AI ECOSYSTEM</p><h2 id="pluginsTitle">Plugin marketplace</h2><p>Discover tools that can extend what NEXORA AI can do.</p></div><button type="button" class="library-close" id="closePluginsBtn" aria-label="Close plugins">×</button></header>
+      <div class="plugins-search-wrap"><span>⌕</span><input id="pluginsSearch" type="search" placeholder="Search plugins..." aria-label="Search plugins"></div>
+      <div class="plugins-categories" role="group" aria-label="Filter plugins"><button type="button" class="plugins-filter active" data-plugin-filter="All">All</button><button type="button" class="plugins-filter" data-plugin-filter="Productivity">Productivity</button><button type="button" class="plugins-filter" data-plugin-filter="Learning">Learning</button><button type="button" class="plugins-filter" data-plugin-filter="Creative">Creative</button></div>
+      <div class="plugins-featured"><div class="plugins-featured-art">✦</div><div><span>COMING TO NEXORA</span><strong>Your AI, with more superpowers.</strong><p>Connect useful tools directly to your conversations.</p></div></div>
+      <div class="plugins-grid" id="pluginsGrid">
+        <article class="plugin-card" data-category="Productivity" data-search="web search internet news websites"><div class="plugin-card-top"><span class="plugin-card-icon web">⌕</span><span class="plugin-status">Planned</span></div><h3>Web Search</h3><p>Find current information and useful websites from across the internet.</p><small>PRODUCTIVITY</small><button type="button" disabled>Coming soon</button></article>
+        <article class="plugin-card" data-category="Productivity" data-search="pdf documents files summarize reader"><div class="plugin-card-top"><span class="plugin-card-icon docs">▤</span><span class="plugin-status">Planned</span></div><h3>PDF Assistant</h3><p>Read documents, explain sections and create quick summaries.</p><small>PRODUCTIVITY</small><button type="button" disabled>Coming soon</button></article>
+        <article class="plugin-card" data-category="Learning" data-search="calculator maths math equations"><div class="plugin-card-top"><span class="plugin-card-icon calc">＋</span><span class="plugin-status">Planned</span></div><h3>Smart Calculator</h3><p>Work through calculations and understand each step.</p><small>LEARNING</small><button type="button" disabled>Coming soon</button></article>
+        <article class="plugin-card" data-category="Productivity" data-search="weather forecast temperature rain"><div class="plugin-card-top"><span class="plugin-card-icon weather">☼</span><span class="plugin-status">Planned</span></div><h3>Weather</h3><p>Check local conditions and upcoming forecasts.</p><small>PRODUCTIVITY</small><button type="button" disabled>Coming soon</button></article>
+        <article class="plugin-card" data-category="Learning" data-search="translator translate language hindi marathi"><div class="plugin-card-top"><span class="plugin-card-icon translate">文</span><span class="plugin-status">Planned</span></div><h3>Translator</h3><p>Translate text and understand phrases in other languages.</p><small>LEARNING</small><button type="button" disabled>Coming soon</button></article>
+        <article class="plugin-card" data-category="Creative" data-search="coding programming developer code helper"><div class="plugin-card-top"><span class="plugin-card-icon code">&lt;/&gt;</span><span class="plugin-status">Planned</span></div><h3>Coding Helper</h3><p>Explain code, find bugs and help build projects.</p><small>CREATIVE</small><button type="button" disabled>Coming soon</button></article>
+        <article class="plugin-card" data-category="Creative" data-search="voice speech talk audio assistant"><div class="plugin-card-top"><span class="plugin-card-icon voice">♫</span><span class="plugin-status">Planned</span></div><h3>Voice Assistant</h3><p>Have natural hands-free conversations with NEXORA AI.</p><small>CREATIVE</small><button type="button" disabled>Coming soon</button></article>
+      </div>
+      <p class="plugins-footnote">This is a preview of planned integrations. Plugins are not active yet; each one will be enabled only after its service and privacy controls are ready.</p>
+    </section>
+  </div>
+  <div class="library-overlay" id="libraryOverlay" aria-hidden="true">
     <section class="library-panel" role="dialog" aria-modal="true" aria-labelledby="libraryTitle">
       <div class="library-head"><div><h2 id="libraryTitle">Library</h2><p>Saved memories and notes on this device</p></div><button id="closeLibraryBtn" class="library-close" aria-label="Close library">×</button></div>
       <div class="library-actions"><button id="addMemoryBtn" class="add-memory-btn">＋ Save a memory</button></div>
@@ -2271,6 +2302,18 @@ document.addEventListener("keydown", event => {
     menuButton.setAttribute("aria-label","Open menu");
   }
 });
+
+
+const pluginsOverlay=document.getElementById("pluginsOverlay");
+function openPlugins(){pluginsOverlay.classList.add("open");pluginsOverlay.setAttribute("aria-hidden","false");sidebar.classList.remove("open");document.getElementById("pluginsSearch").focus();}
+function closePlugins(){pluginsOverlay.classList.remove("open");pluginsOverlay.setAttribute("aria-hidden","true");}
+document.getElementById("pluginsBtn").addEventListener("click",openPlugins);
+document.getElementById("closePluginsBtn").addEventListener("click",closePlugins);
+pluginsOverlay.addEventListener("click",e=>{if(e.target===pluginsOverlay)closePlugins();});
+let activePluginFilter="All";
+function filterPluginCards(){const q=document.getElementById("pluginsSearch").value.trim().toLowerCase();document.querySelectorAll(".plugin-card").forEach(card=>{const categoryMatch=activePluginFilter==="All"||card.dataset.category===activePluginFilter;const textMatch=(card.dataset.search+" "+card.innerText).toLowerCase().includes(q);card.hidden=!(categoryMatch&&textMatch);});}
+document.querySelectorAll("[data-plugin-filter]").forEach(btn=>btn.addEventListener("click",()=>{activePluginFilter=btn.dataset.pluginFilter;document.querySelectorAll("[data-plugin-filter]").forEach(b=>b.classList.toggle("active",b===btn));filterPluginCards();}));
+document.getElementById("pluginsSearch").addEventListener("input",filterPluginCards);
 
 document.getElementById("libraryBtn").addEventListener("click",openLibrary);
 document.getElementById("closeLibraryBtn").addEventListener("click",closeLibrary);
