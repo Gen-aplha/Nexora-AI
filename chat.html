@@ -616,6 +616,27 @@ body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
 .my-image-actions button{min-width:0;min-height:36px;padding:4px 2px;border:0;border-radius:8px;background:#f2eff8;color:#55436f;font-size:11px;font-weight:700}
 .my-image-actions button:last-child{color:#a33345;background:#fff0f1}
 @media(max-width:360px){.my-image-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Dedicated voice mode work-in-progress page */
+.voice-mode-bar .voice-mode-btn{gap:0}
+.voice-mode-label{font-size:13px!important;line-height:1!important}
+.voice-wip-badge{display:none!important}
+.voice-wip-page{position:fixed;inset:0;z-index:3000;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 35%,rgba(104,57,205,.2),transparent 48%),var(--bg);color:var(--text)}
+.voice-wip-page[hidden]{display:none!important}
+body.voice-wip-open{overflow:hidden}
+.voice-wip-header{height:62px;min-height:62px;display:flex;align-items:center;gap:14px;padding:0 18px;border-bottom:1px solid var(--line);background:var(--panel)}
+.voice-wip-header strong{font-size:16px;letter-spacing:.3px}
+.voice-wip-back{width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:var(--panel2);color:var(--text);font-size:30px;line-height:1;cursor:pointer}
+.voice-wip-content{width:min(100% - 36px,440px);margin:auto;text-align:center;padding:28px 0 54px}
+.voice-wip-orb{width:112px;height:112px;margin:0 auto 26px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#a88bff,#7143d5 48%,#28134f 78%);box-shadow:0 0 32px #8955ff66,0 0 80px #6738c933,inset 0 0 18px #ffffff55}
+.voice-wip-orb span{font-size:42px;filter:drop-shadow(0 3px 8px #241044)}
+.voice-wip-eyebrow{margin:0 0 12px;color:#9876ef;font-size:11px;font-weight:800;letter-spacing:2.5px}
+.voice-wip-content h2{margin:0 0 12px;font-size:clamp(27px,7vw,36px);font-weight:800;letter-spacing:-.7px}
+.voice-wip-content>p:not(.voice-wip-eyebrow){margin:0 0 9px;font-size:17px;font-weight:650}
+.voice-wip-content .voice-wip-description{max-width:360px;margin:0 auto;color:var(--muted);font-size:14px!important;font-weight:400!important;line-height:1.65}
+.voice-wip-note{margin:25px auto 22px;padding:13px 15px;border:1px solid rgba(139,111,255,.25);border-radius:13px;background:rgba(109,60,255,.07);color:var(--muted);font-size:12px;line-height:1.5}
+.voice-wip-note span{color:#9876ef;margin-right:6px}
+.voice-wip-return{width:100%;min-height:48px;border:0;border-radius:13px;background:linear-gradient(120deg,#6740df,#9b55e5);color:#fff;font-size:14px;font-weight:750;cursor:pointer}
 </style>
 </head>
 <body data-theme="light">
@@ -693,7 +714,19 @@ body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
       <a class="plus-top-link" href="plus.html" aria-label="Explore NEXORA PLUS"><span class="plus-top-icon" aria-hidden="true">✦</span><span>NEXORA PLUS</span><span class="plus-top-arrow" aria-hidden="true">›</span></a>
       <div class="status"><span class="dot"></span> Online</div>
     </header>
-    <div class="voice-mode-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-pressed="false" title="Voice mode is coming soon"><span class="voice-mode-label">🎙 Voice mode</span><span class="voice-wip-badge">WORK IN PROGRESS</span><span aria-hidden="true">›</span></button></div>
+    <div class="voice-mode-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-haspopup="dialog" aria-controls="voiceWipPage"><span class="voice-mode-label">🎙 Voice mode</span></button></div>
+    <section class="voice-wip-page" id="voiceWipPage" role="dialog" aria-modal="true" aria-labelledby="voiceWipTitle" hidden>
+      <header class="voice-wip-header"><button type="button" class="voice-wip-back" id="voiceWipBack" aria-label="Back to chat">‹</button><strong>NEXORA AI</strong></header>
+      <div class="voice-wip-content">
+        <div class="voice-wip-orb" aria-hidden="true"><span>🎙</span></div>
+        <p class="voice-wip-eyebrow">NEXORA AI · VOICE</p>
+        <h2 id="voiceWipTitle">Work in Progress</h2>
+        <p>Voice mode is coming soon.</p>
+        <p class="voice-wip-description">We're working on hands-free conversations so you can talk with NEXORA AI and hear replies naturally.</p>
+        <div class="voice-wip-note"><span aria-hidden="true">✦</span> This feature is being prepared for a future update.</div>
+        <button type="button" class="voice-wip-return" id="voiceWipReturn">Back to chat</button>
+      </div>
+    </section>
     <section class="chat" id="chat" aria-live="polite">
       <div class="welcome" id="welcome">
         <img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">
@@ -1084,9 +1117,20 @@ let voiceTurnInProgress = false;
 let voiceCapturedText = false;
 let voiceModeRestartTimer = null;
 const voiceModeBtn = document.getElementById("voiceModeBtn");
-voiceModeBtn.addEventListener("click", () => {
-  voiceStatus.textContent = "WORK IN PROGRESS — Voice mode is coming soon. We're working to bring hands-free conversations to NEXORA AI.";
-});
+const voiceWipPage = document.getElementById("voiceWipPage");
+function openVoiceWipPage() {
+  voiceWipPage.hidden = false;
+  document.body.classList.add("voice-wip-open");
+  document.getElementById("voiceWipBack").focus();
+}
+function closeVoiceWipPage() {
+  voiceWipPage.hidden = true;
+  document.body.classList.remove("voice-wip-open");
+  voiceModeBtn.focus();
+}
+voiceModeBtn.addEventListener("click",openVoiceWipPage);
+document.getElementById("voiceWipBack").addEventListener("click",closeVoiceWipPage);
+document.getElementById("voiceWipReturn").addEventListener("click",closeVoiceWipPage);
 if (!SpeechRecognition) {
   voiceBtn.title = "Voice input is not supported in this browser";
   voiceStatus.textContent = "Voice input is not supported here. Try Chrome on Android.";
