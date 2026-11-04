@@ -901,15 +901,34 @@ function setStudioEditImage(data) {
   document.getElementById("studioEditStatus").textContent = studioEditImageData ? "Image ready. Describe the changes you want." : "Choose a photo to begin editing.";
 }
 document.getElementById("studioEditUpload").addEventListener("click",() => document.getElementById("studioEditFile").click());
-document.getElementById("studioEditFile").addEventListener("change",event => {
+async function prepareStudioImage(file) {
+  if(file.size > 12000000) throw new Error("Please choose an image smaller than 12 MB.");
+  const sourceURL = await new Promise((resolve,reject) => {
+    const reader = new FileReader(); reader.onload = () => resolve(String(reader.result || "")); reader.onerror = () => reject(new Error("Could not read that photo.")); reader.readAsDataURL(file);
+  });
+  const image = new Image();
+  image.src = sourceURL;
+  await new Promise((resolve,reject) => { image.onload = resolve; image.onerror = () => reject(new Error("That image format could not be opened.")); });
+  const scale = Math.min(1,1600/Math.max(image.naturalWidth,image.naturalHeight));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1,Math.round(image.naturalWidth*scale)); canvas.height = Math.max(1,Math.round(image.naturalHeight*scale));
+  const context = canvas.getContext("2d");
+  if(!context) throw new Error("Photo editing is unavailable in this browser.");
+  context.drawImage(image,0,0,canvas.width,canvas.height);
+  let result = canvas.toDataURL("image/jpeg",0.82);
+  if(result.length > 2450000) result = canvas.toDataURL("image/jpeg",0.68);
+  if(result.length > 2500000) throw new Error("This photo is too detailed to upload. Please choose a smaller image.");
+  return result;
+}
+document.getElementById("studioEditFile").addEventListener("change",async event => {
   const file = event.target.files && event.target.files[0];
   if(!file) return;
   if(!file.type.startsWith("image/")) { document.getElementById("studioEditStatus").textContent = "Please choose an image file."; return; }
-  if(file.size > 1800000) { document.getElementById("studioEditStatus").textContent = "Please choose an image smaller than 1.8 MB."; return; }
-  const reader = new FileReader();
-  reader.onload = () => setStudioEditImage(String(reader.result || ""));
-  reader.onerror = () => { document.getElementById("studioEditStatus").textContent = "Could not read that photo. Please try another."; };
-  reader.readAsDataURL(file);
+  const status = document.getElementById("studioEditStatus");
+  status.textContent = "Preparing your photo…";
+  try { setStudioEditImage(await prepareStudioImage(file)); }
+  catch(error) { status.textContent = error.message || "Could not prepare that photo."; }
+  event.target.value = "";
 });
 async function deleteGeneratedImage(id) {
   const db = await openImageDB();
