@@ -677,6 +677,7 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const API_URL = "https://nexora-ai-backend-v2.mayankhindubro.workers.dev";
+const STREAM_API_URL = "https://nexora-ai-stream.mayankhindubro.workers.dev";
 const CREATOR_IMAGE_URL = "https://gen-aplha.github.io/Nexora-AI/mayank-gupta.jpg";
 const CREATOR_REPLY = `NEXORA AI was created by **Mayank Gupta**, a 14-year-old school student and developer from India. He is the founder and creator of this independent AI project. He built NEXORA AI to explore technology and make AI more accessible.
 
@@ -1510,6 +1511,63 @@ async function postBackend(payload) {
   if (data && data.error) throw new Error(data.error);
   return data;
 }
+async function streamBackend(payload, onChunk) {
+  let response;
+  try {
+    response = await fetch(STREAM_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    throw new Error("Could not reach the streaming server. Check your internet connection and try again.");
+  }
+  if (!response.ok) {
+    const raw = await response.text();
+    let detail = raw;
+    try { detail = JSON.parse(raw).error || raw; } catch {}
+    throw new Error(detail || ("Streaming server error: HTTP " + response.status));
+  }
+  if (!response.body) throw new Error("This browser does not support streamed responses.");
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let fullText = "";
+  function consumeEvent(eventText) {
+    for (const line of eventText.split(/\\r?\\n/)) {
+      if (!line.startsWith("data:")) continue;
+      const dataText = line.slice(5).trim();
+      if (!dataText || dataText === "[DONE]") continue;
+      let item;
+      try { item = JSON.parse(dataText); } catch { continue; }
+      const piece = typeof item.response === "string" ? item.response
+        : typeof item.generated_text === "string" ? item.generated_text
+        : typeof item.text === "string" ? item.text
+        : typeof item.choices?.[0]?.delta?.content === "string" ? item.choices[0].delta.content
+        : typeof item.result?.response === "string" ? item.result.response : "";
+      if (piece) {
+        fullText += piece;
+        onChunk(fullText);
+      }
+    }
+  }
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const events = buffer.split(/\\r?\\n\\r?\\n/);
+      buffer = events.pop() || "";
+      for (const eventText of events) consumeEvent(eventText);
+    }
+    buffer += decoder.decode();
+    if (buffer.trim()) consumeEvent(buffer);
+  } finally {
+    reader.releaseLock();
+  }
+  if (!fullText.trim()) throw new Error("The streaming service returned an empty response. Please try again.");
+  return fullText;
+}
 async function generateImage() {
   const prompt = input.value.trim();
   if (!prompt || busy) {
@@ -1688,18 +1746,17 @@ async function sendMessage(text) {
         reply = imageNotes.join("\n\n");
       } else if (textFiles.length || imageNotes.length) {
         const combinedText = fileText + (imageNotes.length ? "\n\nIMAGE ANALYSIS RESULTS:\n" + imageNotes.join("\n\n") : "");
-        const data = await postBackend({
+        reply = await streamBackend({
           action:"attachment",
           message:message || "Please explain the attached file(s).",
           fileText:combinedText
-        });
-        reply = data.reply;
+        }, partial => { typing.bubble.textContent = partial; });
       } else if (videoFiles.length) {
         reply = "I received your video attachment" + (videoFiles.length > 1 ? "s" : "") + " and displayed " + (videoFiles.length > 1 ? "them" : "it") + " in the chat. Video analysis is not available yet, so I can't inspect its contents at this time.";
       } else {
         const memoryContext=savedMemories.length?"\n\nUSER SAVED MEMORIES (use only when relevant):\n"+savedMemories.map(m=>"- "+m.text).join("\n"):"";
-        const data = await postBackend({action:"chat",message:message+memoryContext});
-        reply = data.reply;
+        reply = await streamBackend({action:"chat",message:message+memoryContext},
+          partial => { typing.bubble.textContent = partial; });
       }
       if (videoFiles.length && (imageNotes.length || textFiles.length)) {
         reply += "\n\nI also received your video attachment" + (videoFiles.length > 1 ? "s" : "") + ", but video analysis is not available yet.";
