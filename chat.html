@@ -827,6 +827,20 @@ body[data-theme="dark"] .footnote{color:#999}
   .welcome,.message-row{animation:none!important}
 }
 
+
+/* Header logo clarity: keep the original mark fully visible on both themes. */
+.topbar .topbrand{gap:10px;flex:0 1 auto;min-width:0}
+.topbar .topbrand .logo-mark{
+  display:block!important;flex:0 0 42px!important;width:42px!important;height:42px!important;
+  min-width:42px;object-fit:contain;object-position:center;opacity:1!important;
+  mix-blend-mode:normal!important;filter:drop-shadow(0 2px 5px rgba(90,65,160,.22))!important;
+  border-radius:10px;background:rgba(125,95,205,.07);padding:2px;box-sizing:border-box;
+}
+.topbar .topbrand h1{white-space:nowrap}
+@media(max-width:560px){
+  .topbar .topbrand{gap:7px}
+  .topbar .topbrand .logo-mark{flex-basis:38px!important;width:38px!important;height:38px!important;min-width:38px}
+}
 </style>
 </head>
 <body data-theme="light">
