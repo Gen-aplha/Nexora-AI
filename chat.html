@@ -804,6 +804,7 @@ let recognition = null;
 let isListening = false;
 let voiceModeEnabled = false;
 let voiceTurnInProgress = false;
+let voiceCapturedText = false;
 let voiceModeRestartTimer = null;
 const voiceModeBtn = document.getElementById("voiceModeBtn");
 function updateVoiceModeButton() {
@@ -857,6 +858,7 @@ if (!SpeechRecognition) {
       else interimText += event.results[i][0].transcript;
     }
     if (finalText) {
+      voiceCapturedText = true;
       input.value = (input.value.trim() ? input.value.trim() + " " : "") + finalText.trim();
       input.dispatchEvent(new Event("input", {bubbles:true}));
       voiceStatus.textContent = "Voice captured. Review your message, then tap Send.";
@@ -878,7 +880,8 @@ if (!SpeechRecognition) {
     voiceBtn.textContent = "🎙️";
     voiceBtn.setAttribute("aria-label", "Start voice input");
     if (voiceModeEnabled && !voiceTurnInProgress) {
-      const spokenMessage = input.value.trim();
+      const spokenMessage = voiceCapturedText ? input.value.trim() : "";
+      voiceCapturedText = false;
       if (spokenMessage) {
         voiceTurnInProgress = true;
         voiceStatus.textContent = "Sending your voice message…";
@@ -1140,7 +1143,7 @@ function speakText(text, button, resumeVoiceMode = false) {
     return;
   }
   stopSpeaking();
-  const clean = String(text).replace(/\x60\x60\x60[\\s\\S]*?\x60\x60\x60/g, " code block omitted ").replace(/[#>*_\x60]/g, " ").replace(/<[^>]*>/g, " ").trim();
+  const clean = String(text).replace(/[#>*_]/g, " ").replace(/<[^>]*>/g, " ").trim();
   if (!clean) { if (resumeVoiceMode && voiceModeEnabled) { voiceTurnInProgress = false; startVoiceModeListening(); } return; }
   const utterance = new SpeechSynthesisUtterance(clean.slice(0, 12000));
   utterance.lang = voiceLanguage?.value || "en-IN";
@@ -1840,7 +1843,7 @@ async function sendMessage(text) {
     generateImageBtn.disabled = false;
     chat.scrollTop = chat.scrollHeight;
     if (voiceModeEnabled && voiceTurnInProgress) {
-      if (voiceReplyToSpeak) speakText(voiceReplyToSpeak, voiceModeBtn, true);
+      if (voiceReplyToSpeak) speakText(voiceReplyToSpeak, null, true);
       else {
         voiceTurnInProgress = false;
         voiceStatus.textContent = "Voice mode is on. Listening for your next question…";
