@@ -861,12 +861,7 @@ body[data-theme="dark"] .footnote{color:#999}
       <button class="side-chat-btn" id="sideNewChatBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>New chat</span></button>
       <button class="side-profile" id="sideProfileBtn" aria-label="NEXORA profile" title="NEXORA AI">N</button>
     </div>
-    <div class="history-tools">
-      <button type="button" id="exportChatsBtn">⇩ Export chats</button>
-      <button type="button" id="importChatsBtn">⇧ Import chats</button>
-      <button type="button" id="clearChatsBtn">✕ Clear all chats</button>
-      <input type="file" id="importChatsFile" accept="application/json,.json" hidden>
-    </div>
+    <input type="file" id="importChatsFile" accept="application/json,.json" hidden>
     <button class="nav-btn" id="themeBtn"><span class="nav-icon">☾</span> Toggle theme</button>
   </aside>  <div class="plugins-overlay" id="pluginsOverlay" aria-hidden="true">
     <section class="plugins-panel" role="dialog" aria-modal="true" aria-labelledby="pluginsTitle">
@@ -2514,7 +2509,7 @@ function loadAccountProfile(){try{const p=JSON.parse(localStorage.getItem(ACCOUN
 function renderAccountButton(){const b=document.getElementById("sideProfileBtn");if(!b)return;b.textContent="";b.style.backgroundImage="";if(accountProfile?.picture){b.style.backgroundImage="url("+JSON.stringify(accountProfile.picture)+")";b.style.backgroundSize="cover";b.style.backgroundPosition="center";}else{b.textContent=accountProfile?.name?.trim()?.charAt(0)?.toUpperCase()||"N";}}
 function renderAccountPreview(){const img=document.getElementById("accountPreview"),empty=document.getElementById("accountNoPicture");if(pendingAccountPicture){img.src=pendingAccountPicture;img.hidden=false;empty.hidden=true;}else{img.removeAttribute("src");img.hidden=true;empty.hidden=false;}}
 function openAccount(){const p=accountProfile||{};const signedIn=!!((supabaseSession||authToken)&&accountProfile);const form=document.getElementById("accountForm");const summary=document.getElementById("accountSignedSummary");const avatar=document.getElementById("accountMenuAvatar");document.getElementById("accountName").value=p.name||"";document.getElementById("accountAge").value=p.age||"";document.getElementById("accountEmail").value=p.email||"";document.getElementById("accountPassword").value="";pendingAccountPicture=p.picture||"";document.getElementById("accountPicture").value="";renderAccountPreview();document.getElementById("accountStatus").textContent="";form.classList.toggle("account-signed-in",signedIn);summary.hidden=!signedIn;document.getElementById("accountCentreMenu").hidden=!signedIn;document.getElementById("accountTitle").textContent=signedIn?"Account centre":"Your account";document.getElementById("accountSubtitle").textContent=signedIn?"Manage your NEXORA account":"Create an account or sign in from any device";if(signedIn){accountMode="profile";setAccountMode("login");document.getElementById("accountEmail").value=accountProfile.email||"";document.getElementById("accountPassword").hidden=true;document.querySelector("label[for=accountPassword]").hidden=true;document.getElementById("accountSubmitBtn").hidden=true;document.getElementById("accountModeToggle").hidden=true;document.getElementById("accountSignOut").hidden=false;document.getElementById("deleteAccountProfile").hidden=true;document.getElementById("accountMenuName").textContent=accountProfile.name||"NEXORA user";document.getElementById("accountMenuEmail").textContent=accountProfile.email||"";avatar.textContent=(accountProfile.name||"N").trim().charAt(0).toUpperCase();avatar.style.backgroundImage=accountProfile.picture?"url("+JSON.stringify(accountProfile.picture)+")":"";document.getElementById("accountStatus").textContent="";}else{accountMode="register";setAccountMode("register");document.getElementById("accountPassword").hidden=false;document.querySelector("label[for=accountPassword]").hidden=false;document.getElementById("accountSubmitBtn").hidden=false;document.getElementById("accountModeToggle").hidden=false;document.getElementById("accountSignOut").hidden=true;document.getElementById("deleteAccountProfile").hidden=false;avatar.style.backgroundImage="";}document.getElementById("accountOverlay").classList.add("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
-function openAccountInfo(title,html){const overlay=document.getElementById("accountInfoOverlay");document.getElementById("accountInfoTitle").textContent=title;document.getElementById("accountInfoContent").innerHTML=html;overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");document.getElementById("closeAccountInfo").onclick=closeAccountInfo;document.getElementById("accountThemeToggle")?.addEventListener("click",()=>setTheme(document.body.dataset.theme==="light"?"dark":"light"));document.getElementById("accountVoicePrefs")?.addEventListener("click",()=>{closeAccountInfo();openPersonalization();});document.getElementById("accountDataExport")?.addEventListener("click",()=>document.getElementById("exportChatsBtn")?.click());}
+function openAccountInfo(title,html){const overlay=document.getElementById("accountInfoOverlay");document.getElementById("accountInfoTitle").textContent=title;document.getElementById("accountInfoContent").innerHTML=html;overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");document.getElementById("closeAccountInfo").onclick=closeAccountInfo;document.getElementById("accountThemeToggle")?.addEventListener("click",()=>setTheme(document.body.dataset.theme==="light"?"dark":"light"));document.getElementById("accountVoicePrefs")?.addEventListener("click",()=>{closeAccountInfo();openPersonalization();});document.getElementById("accountDataExport")?.addEventListener("click",exportChats);}
 function closeAccountInfo(){const overlay=document.getElementById("accountInfoOverlay");overlay.classList.remove("open");overlay.setAttribute("aria-hidden","true");}
 document.getElementById("accountInfoOverlay").addEventListener("click",e=>{if(e.target.id==="accountInfoOverlay")closeAccountInfo();});
 function closeAccount(){document.getElementById("accountOverlay").classList.remove("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","true");}
@@ -2742,13 +2737,13 @@ const exportChatsBtn = document.getElementById("exportChatsBtn");
 const importChatsBtn = document.getElementById("importChatsBtn");
 const importChatsFile = document.getElementById("importChatsFile");
 const clearChatsBtn = document.getElementById("clearChatsBtn");
-exportChatsBtn?.addEventListener("click", () => {
+function exportChats(){
   const blob = new Blob([JSON.stringify({app:"NEXORA AI",version:1,exportedAt:new Date().toISOString(),sessions}, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url; a.download = "nexora-ai-chat-backup.json"; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-});
+}
 importChatsBtn?.addEventListener("click", () => importChatsFile?.click());
 importChatsFile?.addEventListener("change", async () => {
   const file = importChatsFile.files && importChatsFile.files[0];
