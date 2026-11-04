@@ -631,7 +631,7 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
     </section>
     <div class="composer-wrap">
       <input type="file" id="attachmentInput" accept="image/*,video/*" multiple hidden>
-      <input type="file" id="filesInput" accept=".pdf,.txt,.md,.csv,.json" multiple hidden>
+      <input type="file" id="filesInput" accept=".pdf,.docx,.xlsx,.xls,.txt,.md,.csv,.json" multiple hidden>
       <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
       <div class="composer-menu" id="composerMenu" hidden>
         <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Photos and videos</strong><small>Choose photos or videos from your device</small></span></button>
@@ -680,6 +680,8 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
   </main>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const API_URL = "https://nexora-ai-backend-v2.mayankhindubro.workers.dev";
@@ -1318,6 +1320,7 @@ let pendingAttachments = [];
 const MAX_IMAGE_BYTES = 3500000;
 const MAX_TEXT_CHARS = 60000;
 const ALLOWED_TEXT_EXTENSIONS = ["txt","md","csv","json"];
+const MAX_OFFICE_FILE_BYTES = 10 * 1024 * 1024;
 const IMAGE_TYPES = ["image/jpeg","image/png","image/webp"];
 
 function fileExtension(name) {
@@ -1432,6 +1435,32 @@ async function prepareImageForVision(file) {
     if (bitmap) bitmap.close();
   }
 }
+async function extractDocxText(file) {
+  if (!window.mammoth) throw new Error("Word document reader could not load. Check your internet connection and try again.");
+  if (file.size > MAX_OFFICE_FILE_BYTES) throw new Error(file.name + " is too large. Word documents must be 10 MB or smaller.");
+  const result = await window.mammoth.extractRawText({arrayBuffer: await file.arrayBuffer()});
+  const text = (result.value || "").trim();
+  if (!text) throw new Error(file.name + " contains no extractable text.");
+  return text.slice(0, MAX_TEXT_CHARS);
+}
+async function extractSpreadsheetText(file) {
+  if (!window.XLSX) throw new Error("Spreadsheet reader could not load. Check your internet connection and try again.");
+  if (file.size > MAX_OFFICE_FILE_BYTES) throw new Error(file.name + " is too large. Spreadsheets must be 10 MB or smaller.");
+  const workbook = window.XLSX.read(await file.arrayBuffer(), {type:"array", cellDates:true});
+  const sections = [];
+  let total = 0;
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName];
+    const rows = window.XLSX.utils.sheet_to_csv(sheet, {blankrows:false});
+    const section = "\n[SHEET: " + sheetName + "]\n" + (rows || "(empty sheet)");
+    const remaining = MAX_TEXT_CHARS - total;
+    if (remaining <= 0) break;
+    sections.push(section.slice(0, remaining));
+    total += Math.min(section.length, remaining);
+  }
+  if (!sections.length) throw new Error(file.name + " contains no readable worksheet data.");
+  return "SPREADSHEET: " + file.name + "\n" + sections.join("\n").slice(0, MAX_TEXT_CHARS);
+}
 async function extractPdfText(file) {
   if (!window.pdfjsLib) throw new Error("PDF reader could not load. Check your internet connection and try again.");
   window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -1485,15 +1514,21 @@ attachmentInput.addEventListener("change", async () => {
       } else if (file.type === "application/pdf" || ext === "pdf") {
         if (file.size > 12 * 1024 * 1024) throw new Error(file.name + " is too large. PDFs must be 12 MB or smaller.");
         const text = await extractPdfText(file);
-        if (!text.trim()) throw new Error(file.name + " has no selectable text. Scanned PDFs cannot be read yet.");
-        pendingAttachments.push({kind:"text",name:file.name,text:"PDF CONTENT:\n"+text});
+        if (!text.trim()) throw new Error(file.name + " has no selectable text. Scanned PDFs are not supported yet.");
+        pendingAttachments.push({kind:"text",name:file.name,text:"PDF CONTENT (page-labelled; first 40 pages maximum):\n"+text});
+      } else if (ext === "docx") {
+        const text = await extractDocxText(file);
+        pendingAttachments.push({kind:"text",name:file.name,text:"WORD DOCUMENT CONTENT:\n"+text});
+      } else if (ext === "xlsx" || ext === "xls") {
+        const text = await extractSpreadsheetText(file);
+        pendingAttachments.push({kind:"text",name:file.name,text:text});
       } else if (ALLOWED_TEXT_EXTENSIONS.includes(ext)) {
         if (file.size > 200000) throw new Error(file.name + " is too large. Text files must be 200 KB or smaller.");
         const text = await file.text();
         if (!text.trim()) throw new Error(file.name + " is empty.");
         pendingAttachments.push({kind:"text",name:file.name,text:text.slice(0,MAX_TEXT_CHARS)});
       } else {
-        throw new Error(file.name + " is not supported. Choose a photo, video, PDF, TXT, MD, CSV or JSON file.");
+        throw new Error(file.name + " is not supported. Choose a photo, video, PDF, DOCX, XLSX, XLS, TXT, MD, CSV or JSON file.");
       }
     } catch (error) {
       alert(error.message || "Could not add this file.");
@@ -1811,7 +1846,7 @@ async function sendMessage(text) {
         const combinedText = fileText + (imageNotes.length ? "\n\nIMAGE ANALYSIS RESULTS:\n" + imageNotes.join("\n\n") : "");
         reply = await streamBackend({
           action:"attachment",
-          message:message || "Please explain the attached file(s).",
+          message:message || "Please explain the attached file(s). Read the supplied document content carefully. For spreadsheets, consider sheet names, headers, rows, calculations and trends. For PDFs, use page labels when referencing facts. If information is missing or truncated, say so rather than guessing.",
           fileText:combinedText
         }, partial => { typing.bubble.textContent = partial; });
       } else if (videoFiles.length) {
