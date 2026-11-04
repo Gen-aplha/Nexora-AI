@@ -493,10 +493,10 @@ body{letter-spacing:-.01em}
 .tool-btn:hover,.voice-btn:hover,.plus-btn:hover{transform:translateY(-1px)}
 .footnote{padding:0 8px}
  
-.voice-mode-bar{height:62px;min-height:62px;display:flex;align-items:center;justify-content:center;padding-right:10vw;position:relative;z-index:2}
+.voice-mode-bar{height:62px;min-height:62px;display:flex;align-items:center;justify-content:flex-start;padding-left:clamp(16px,5vw,70px);position:relative;z-index:2}
 .voice-mode-bar .voice-mode-btn{height:44px;padding:0 22px;border-radius:999px;font-size:13px;box-shadow:0 5px 20px rgba(91,33,182,.22);display:inline-flex;align-items:center;gap:10px}
 .voice-mode-bar .voice-mode-btn span{font-size:22px;line-height:1}
-@media(max-width:560px){.voice-mode-bar{height:58px;min-height:58px;padding-right:12vw}.voice-mode-bar .voice-mode-btn{height:42px;padding:0 19px;font-size:12px}}
+@media(max-width:560px){.voice-mode-bar{height:58px;min-height:58px;padding-left:20px}.voice-mode-bar .voice-mode-btn{height:42px;padding:0 19px;font-size:12px}}
 
 .voice-mode-btn{flex:0 0 auto;height:38px;padding:0 12px;border:1px solid rgba(139,111,255,.35);border-radius:20px;background:rgba(109,60,255,.12);color:var(--text);font-size:12px;font-weight:650;white-space:nowrap}
 .voice-mode-btn[aria-pressed="true"]{background:linear-gradient(135deg,#6740df,#a34be5);border-color:#a58aff;color:#fff;box-shadow:0 0 0 3px rgba(109,60,255,.16)}
