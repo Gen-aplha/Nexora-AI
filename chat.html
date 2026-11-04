@@ -499,6 +499,8 @@ body{letter-spacing:-.01em}
 @media(max-width:560px){.voice-mode-bar{height:58px;min-height:58px;padding-left:20px}.voice-mode-bar .voice-mode-btn{height:42px;padding:0 19px;font-size:12px}}
 
 .voice-mode-btn{flex:0 0 auto;height:38px;padding:0 12px;border:1px solid rgba(139,111,255,.35);border-radius:20px;background:rgba(109,60,255,.12);color:var(--text);font-size:12px;font-weight:650;white-space:nowrap}
+.voice-wip-badge{display:inline-flex;align-items:center;border:1px solid #d9a441;border-radius:999px;padding:4px 7px;background:rgba(217,164,65,.13);color:#9a6811;font-size:9px;font-weight:800;letter-spacing:.35px;line-height:1;white-space:nowrap}
+body[data-theme="dark"] .voice-wip-badge{color:#ffd98a;border-color:#9b7431;background:rgba(217,164,65,.15)}
 .voice-mode-btn[aria-pressed="true"]{background:linear-gradient(135deg,#6740df,#a34be5);border-color:#a58aff;color:#fff;box-shadow:0 0 0 3px rgba(109,60,255,.16)}
 body[data-theme="light"] .voice-mode-btn{color:#514080;background:#f0ebff;border-color:#ddd2ff}
 body[data-theme="light"] .voice-mode-btn[aria-pressed="true"]{color:#fff;background:linear-gradient(135deg,#6740df,#a34be5)}
@@ -666,7 +668,7 @@ body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
       <a class="plus-top-link" href="plus.html" aria-label="Explore NEXORA PLUS"><span class="plus-top-icon" aria-hidden="true">✦</span><span>NEXORA PLUS</span><span class="plus-top-arrow" aria-hidden="true">›</span></a>
       <div class="status"><span class="dot"></span> Online</div>
     </header>
-    <div class="voice-mode-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-pressed="false" title="Start hands-free voice conversation">🎙 Voice mode <span aria-hidden="true">›</span></button></div>
+    <div class="voice-mode-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-pressed="false" title="Voice mode is coming soon"><span class="voice-mode-label">🎙 Voice mode</span><span class="voice-wip-badge">WORK IN PROGRESS</span><span aria-hidden="true">›</span></button></div>
     <section class="chat" id="chat" aria-live="polite">
       <div class="welcome" id="welcome">
         <img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">
@@ -958,30 +960,8 @@ let voiceTurnInProgress = false;
 let voiceCapturedText = false;
 let voiceModeRestartTimer = null;
 const voiceModeBtn = document.getElementById("voiceModeBtn");
-function updateVoiceModeButton() {
-  voiceModeBtn.setAttribute("aria-pressed", String(voiceModeEnabled));
-  voiceModeBtn.textContent = voiceModeEnabled ? "✓ Voice mode on" : "✨ Voice mode";
-  voiceModeBtn.title = voiceModeEnabled ? "Turn off hands-free voice conversation" : "Start hands-free voice conversation";
-}
-function startVoiceModeListening() {
-  if (!voiceModeEnabled || !recognition || isListening || voiceTurnInProgress) return;
-  try { recognition.lang = voiceLanguage ? voiceLanguage.value : "en-IN"; recognition.start(); }
-  catch (error) { voiceStatus.textContent = "Could not start listening. Tap the microphone to try again."; }
-}
 voiceModeBtn.addEventListener("click", () => {
-  voiceModeEnabled = !voiceModeEnabled;
-  updateVoiceModeButton();
-  if (!voiceModeEnabled) {
-    clearTimeout(voiceModeRestartTimer); voiceTurnInProgress = false;
-    if (recognition && isListening) recognition.stop();
-    stopSpeaking(); voiceStatus.textContent = "Voice mode turned off."; return;
-  }
-  if (!SpeechRecognition || !("speechSynthesis" in window)) {
-    voiceModeEnabled = false; updateVoiceModeButton();
-    voiceStatus.textContent = "Hands-free voice mode needs speech recognition and spoken-audio support. Try Chrome on Android."; return;
-  }
-  voiceStatus.textContent = "Voice mode is on. Speak your question.";
-  startVoiceModeListening();
+  voiceStatus.textContent = "WORK IN PROGRESS — Voice mode is coming soon. We're working to bring hands-free conversations to NEXORA AI.";
 });
 if (!SpeechRecognition) {
   voiceBtn.title = "Voice input is not supported in this browser";
