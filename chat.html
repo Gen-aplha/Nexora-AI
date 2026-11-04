@@ -559,6 +559,11 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
+
+/* Keep the message composer free of the purple focus box */
+.composer:focus-within{border-color:#555!important;box-shadow:none!important;outline:none!important}
+.composer textarea:focus{outline:none!important;box-shadow:none!important}
+body[data-theme="light"] .composer:focus-within{border-color:#d6d6df!important;box-shadow:none!important}
 </style>
 </head>
 <body>
