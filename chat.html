@@ -34,6 +34,18 @@ button{cursor:pointer}
 .voice-btn{flex-shrink:0;width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:var(--text);display:flex;align-items:center;justify-content:center;font-size:18px}
 .voice-btn.listening{background:#a92346;border-color:#ff7895;box-shadow:0 0 0 3px rgba(255,90,130,.18)}
 .voice-btn:disabled{opacity:.55;cursor:not-allowed}
+
+.voice-settings-actions{display:flex;justify-content:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.voice-settings-actions button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:7px 11px;font-size:11px}
+.voice-settings-toggle{color:var(--muted)!important}
+.voice-settings-panel{max-width:520px;margin:8px auto 4px;padding:13px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;display:grid;gap:11px}
+.voice-settings-panel[hidden]{display:none}
+.voice-setting-field{display:grid;grid-template-columns:1fr;gap:6px;color:var(--text);font-size:12px}
+.voice-setting-field label{display:flex;justify-content:space-between;gap:12px}
+.voice-setting-field select{width:100%;min-width:0;height:38px;padding:0 9px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text)}
+.voice-setting-field input{width:100%;accent-color:#8965ef}
+.voice-settings-note{font-size:10px;color:var(--muted);margin:0;text-align:center}
+
 .voice-status{font-size:11px;color:var(--muted);text-align:center;min-height:15px;margin-top:5px}
 .bubble h1,.bubble h2,.bubble h3{line-height:1.3;margin:1em 0 .45em}
 .bubble h1{font-size:1.35em}.bubble h2{font-size:1.2em}.bubble h3{font-size:1.08em}
@@ -674,6 +686,14 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
         <button class="send" id="sendBtn" type="submit" aria-label="Send message">↑</button>
       </form>
       <div class="voice-status" id="voiceStatus" aria-live="polite"></div>
+      <div class="voice-settings-actions"><button type="button" class="voice-settings-toggle" id="voiceSettingsToggle" aria-expanded="false">⚙ Voice settings</button></div>
+      <section class="voice-settings-panel" id="voiceSettingsPanel" hidden aria-label="Voice assistant settings">
+        <div class="voice-setting-field"><label for="voiceOutputSelect">Speaking voice</label><select id="voiceOutputSelect"><option value="">Device default voice</option></select></div>
+        <div class="voice-setting-field"><label for="voiceRate">Speaking speed <output id="voiceRateValue">1.0×</output></label><input id="voiceRate" type="range" min="0.7" max="1.4" step="0.1" value="1"></div>
+        <div class="voice-setting-field"><label for="voicePitch">Voice pitch <output id="voicePitchValue">1.0</output></label><input id="voicePitch" type="range" min="0.7" max="1.4" step="0.1" value="1"></div>
+        <div class="voice-settings-actions"><button type="button" id="voicePreviewBtn">▶ Preview voice</button><button type="button" id="voiceResetBtn">Reset</button></div>
+        <p class="voice-settings-note" id="voiceSettingsNote">Available voices depend on your Android device and browser.</p>
+      </section>
       <div class="footnote">NEXORA AI can make mistakes. Check important information.</div>
       <div class="footnote"><a href="privacy.html" style="color:#a99bff;text-decoration:none;">Privacy Policy</a></div>
     </div>
@@ -801,6 +821,86 @@ async function renderMyImages() {
 const voiceBtn = document.getElementById("voiceBtn");
 const voiceLanguage = document.getElementById("voiceLanguage");
 const voiceStatus = document.getElementById("voiceStatus");
+
+const voiceOutputSelect = document.getElementById("voiceOutputSelect");
+const voiceRate = document.getElementById("voiceRate");
+const voicePitch = document.getElementById("voicePitch");
+const voiceRateValue = document.getElementById("voiceRateValue");
+const voicePitchValue = document.getElementById("voicePitchValue");
+const voiceSettingsPanel = document.getElementById("voiceSettingsPanel");
+const voiceSettingsToggle = document.getElementById("voiceSettingsToggle");
+const voiceSettingsNote = document.getElementById("voiceSettingsNote");
+const VOICE_SETTINGS_KEY = "nexoraVoiceSettingsV1";
+let availableSpeechVoices = [];
+function readVoiceSettings() {
+  try { return JSON.parse(localStorage.getItem(VOICE_SETTINGS_KEY) || "{}"); }
+  catch (error) { return {}; }
+}
+function saveVoiceSettings() {
+  try {
+    localStorage.setItem(VOICE_SETTINGS_KEY, JSON.stringify({
+      voiceURI: voiceOutputSelect.value,
+      rate: Number(voiceRate.value),
+      pitch: Number(voicePitch.value)
+    }));
+  } catch (error) { voiceSettingsNote.textContent = "Settings apply for this session, but could not be saved on this device."; }
+}
+function refreshSpeechVoices() {
+  if (!("speechSynthesis" in window)) {
+    voiceSettingsNote.textContent = "Spoken voice settings are not supported in this browser.";
+    return;
+  }
+  const previous = voiceOutputSelect.value || readVoiceSettings().voiceURI || "";
+  availableSpeechVoices = window.speechSynthesis.getVoices();
+  voiceOutputSelect.innerHTML = '<option value="">Device default voice</option>';
+  availableSpeechVoices.forEach((voice) => {
+    const option = document.createElement("option");
+    option.value = voice.voiceURI;
+    option.textContent = voice.name + (voice.lang ? " (" + voice.lang + ")" : "");
+    voiceOutputSelect.appendChild(option);
+  });
+  if (availableSpeechVoices.some(v => v.voiceURI === previous)) voiceOutputSelect.value = previous;
+  voiceSettingsNote.textContent = availableSpeechVoices.length
+    ? availableSpeechVoices.length + " device voice(s) available. Some voices may need an internet connection."
+    : "No voice list is available yet. The device default voice can still work.";
+}
+function updateVoiceSettingLabels() {
+  voiceRateValue.textContent = Number(voiceRate.value).toFixed(1) + "×";
+  voicePitchValue.textContent = Number(voicePitch.value).toFixed(1);
+}
+function loadVoiceSettings() {
+  const saved = readVoiceSettings();
+  if (saved.rate >= 0.7 && saved.rate <= 1.4) voiceRate.value = saved.rate;
+  if (saved.pitch >= 0.7 && saved.pitch <= 1.4) voicePitch.value = saved.pitch;
+  updateVoiceSettingLabels();
+  refreshSpeechVoices();
+  if ("speechSynthesis" in window) window.speechSynthesis.onvoiceschanged = refreshSpeechVoices;
+}
+voiceSettingsToggle.addEventListener("click", () => {
+  const opening = voiceSettingsPanel.hidden;
+  voiceSettingsPanel.hidden = !opening;
+  voiceSettingsToggle.setAttribute("aria-expanded", String(opening));
+  if (opening) refreshSpeechVoices();
+});
+voiceOutputSelect.addEventListener("change", saveVoiceSettings);
+voiceRate.addEventListener("input", () => { updateVoiceSettingLabels(); saveVoiceSettings(); });
+voicePitch.addEventListener("input", () => { updateVoiceSettingLabels(); saveVoiceSettings(); });
+document.getElementById("voicePreviewBtn").addEventListener("click", () => {
+  if (!("speechSynthesis" in window)) {
+    voiceSettingsNote.textContent = "Voice preview is not supported in this browser.";
+    return;
+  }
+  speakText("Hello! This is how NEXORA AI will sound.", null, false);
+});
+document.getElementById("voiceResetBtn").addEventListener("click", () => {
+  voiceOutputSelect.value = "";
+  voiceRate.value = "1";
+  voicePitch.value = "1";
+  updateVoiceSettingLabels();
+  saveVoiceSettings();
+  voiceSettingsNote.textContent = "Voice settings have been reset to the device defaults.";
+});
+loadVoiceSettings();
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 let isListening = false;
@@ -1149,6 +1249,10 @@ function speakText(text, button, resumeVoiceMode = false) {
   if (!clean) { if (resumeVoiceMode && voiceModeEnabled) { voiceTurnInProgress = false; startVoiceModeListening(); } return; }
   const utterance = new SpeechSynthesisUtterance(clean.slice(0, 12000));
   utterance.lang = voiceLanguage?.value || "en-IN";
+  const chosenVoice = availableSpeechVoices.find(v => v.voiceURI === voiceOutputSelect.value);
+  if (chosenVoice) utterance.voice = chosenVoice;
+  utterance.rate = Number(voiceRate.value) || 1;
+  utterance.pitch = Number(voicePitch.value) || 1;
   utterance.onend = utterance.onerror = () => {
     if (activeSpeechButton === button) stopSpeaking();
     if (resumeVoiceMode && voiceModeEnabled) {
