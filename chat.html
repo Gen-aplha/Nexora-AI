@@ -480,6 +480,11 @@ body{letter-spacing:-.01em}
 .tool-btn,.voice-btn,.plus-btn{transition:background .18s ease,border-color .18s ease,transform .18s ease}
 .tool-btn:hover,.voice-btn:hover,.plus-btn:hover{transform:translateY(-1px)}
 .footnote{padding:0 8px}
+ .voice-mode-btn{flex:0 0 auto;height:38px;padding:0 12px;border:1px solid rgba(139,111,255,.35);border-radius:20px;background:rgba(109,60,255,.12);color:var(--text);font-size:12px;font-weight:650;white-space:nowrap}
+.voice-mode-btn[aria-pressed="true"]{background:linear-gradient(135deg,#6740df,#a34be5);border-color:#a58aff;color:#fff;box-shadow:0 0 0 3px rgba(109,60,255,.16)}
+body[data-theme="light"] .voice-mode-btn{color:#514080;background:#f0ebff;border-color:#ddd2ff}
+body[data-theme="light"] .voice-mode-btn[aria-pressed="true"]{color:#fff;background:linear-gradient(135deg,#6740df,#a34be5)}
+@media(max-width:420px){.voice-mode-btn{height:36px;padding:0 9px;font-size:11px}}
 button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
   outline:2px solid var(--nx-accent);outline-offset:3px
 }
@@ -664,6 +669,7 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
         <select id="voiceLanguage" class="voice-language" aria-label="Voice recognition language" title="Voice language">
           <option value="en-IN">English IN</option><option value="hi-IN">हिन्दी</option><option value="en-US">English US</option><option value="mr-IN">मराठी</option>
         </select>
+        <button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-pressed="false" title="Start hands-free voice conversation">✨ Voice mode</button>
         <button class="voice-btn" id="voiceBtn" type="button" aria-label="Start voice input" title="Speak your message">🎙</button>
         <button class="send" id="sendBtn" type="submit" aria-label="Send message">↑</button>
       </form>
@@ -796,6 +802,35 @@ const voiceStatus = document.getElementById("voiceStatus");
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 let isListening = false;
+let voiceModeEnabled = false;
+let voiceTurnInProgress = false;
+let voiceModeRestartTimer = null;
+const voiceModeBtn = document.getElementById("voiceModeBtn");
+function updateVoiceModeButton() {
+  voiceModeBtn.setAttribute("aria-pressed", String(voiceModeEnabled));
+  voiceModeBtn.textContent = voiceModeEnabled ? "✓ Voice mode on" : "✨ Voice mode";
+  voiceModeBtn.title = voiceModeEnabled ? "Turn off hands-free voice conversation" : "Start hands-free voice conversation";
+}
+function startVoiceModeListening() {
+  if (!voiceModeEnabled || !recognition || isListening || voiceTurnInProgress) return;
+  try { recognition.lang = voiceLanguage ? voiceLanguage.value : "en-IN"; recognition.start(); }
+  catch (error) { voiceStatus.textContent = "Could not start listening. Tap the microphone to try again."; }
+}
+voiceModeBtn.addEventListener("click", () => {
+  voiceModeEnabled = !voiceModeEnabled;
+  updateVoiceModeButton();
+  if (!voiceModeEnabled) {
+    clearTimeout(voiceModeRestartTimer); voiceTurnInProgress = false;
+    if (recognition && isListening) recognition.stop();
+    stopSpeaking(); voiceStatus.textContent = "Voice mode turned off."; return;
+  }
+  if (!SpeechRecognition || !("speechSynthesis" in window)) {
+    voiceModeEnabled = false; updateVoiceModeButton();
+    voiceStatus.textContent = "Hands-free voice mode needs speech recognition and spoken-audio support. Try Chrome on Android."; return;
+  }
+  voiceStatus.textContent = "Voice mode is on. Speak your question.";
+  startVoiceModeListening();
+});
 if (!SpeechRecognition) {
   voiceBtn.title = "Voice input is not supported in this browser";
   voiceStatus.textContent = "Voice input is not supported here. Try Chrome on Android.";
@@ -842,7 +877,20 @@ if (!SpeechRecognition) {
     voiceBtn.classList.remove("listening");
     voiceBtn.textContent = "🎙️";
     voiceBtn.setAttribute("aria-label", "Start voice input");
-    if (voiceStatus.textContent === "Listening… speak now") voiceStatus.textContent = "Voice input stopped.";
+    if (voiceModeEnabled && !voiceTurnInProgress) {
+      const spokenMessage = input.value.trim();
+      if (spokenMessage) {
+        voiceTurnInProgress = true;
+        voiceStatus.textContent = "Sending your voice message…";
+        sendMessage(spokenMessage);
+      } else {
+        voiceStatus.textContent = "Voice mode is on. Listening again…";
+        clearTimeout(voiceModeRestartTimer);
+        voiceModeRestartTimer = setTimeout(startVoiceModeListening, 550);
+      }
+    } else if (!voiceModeEnabled && voiceStatus.textContent === "Listening… speak now") {
+      voiceStatus.textContent = "Voice input stopped.";
+    }
   };
   voiceBtn.addEventListener("click", () => {
     if (isListening) recognition.stop();
@@ -1085,17 +1133,27 @@ function stopSpeaking() {
   if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   if (activeSpeechButton) { activeSpeechButton.textContent = "🔊 Read aloud"; activeSpeechButton.classList.remove("voice-speaking"); activeSpeechButton = null; }
 }
-function speakText(text, button) {
-  if (!("speechSynthesis" in window)) { alert("Voice responses are not supported in this browser. Try Chrome."); return; }
+function speakText(text, button, resumeVoiceMode = false) {
+  if (!("speechSynthesis" in window)) {
+    if (resumeVoiceMode && voiceModeEnabled) { voiceTurnInProgress = false; startVoiceModeListening(); }
+    else alert("Voice responses are not supported in this browser. Try Chrome.");
+    return;
+  }
   stopSpeaking();
-  const clean = String(text).replace(/```[\s\S]*?```/g, " code block omitted ").replace(/[#>*_`]/g, " ");
+  const clean = String(text).replace(/\x60\x60\x60[\\s\\S]*?\x60\x60\x60/g, " code block omitted ").replace(/[#>*_\x60]/g, " ").replace(/<[^>]*>/g, " ").trim();
+  if (!clean) { if (resumeVoiceMode && voiceModeEnabled) { voiceTurnInProgress = false; startVoiceModeListening(); } return; }
   const utterance = new SpeechSynthesisUtterance(clean.slice(0, 12000));
   utterance.lang = voiceLanguage?.value || "en-IN";
   utterance.onend = utterance.onerror = () => {
     if (activeSpeechButton === button) stopSpeaking();
+    if (resumeVoiceMode && voiceModeEnabled) {
+      voiceTurnInProgress = false;
+      voiceStatus.textContent = "Voice mode is on. Listening for your next question…";
+      voiceModeRestartTimer = setTimeout(startVoiceModeListening, 650);
+    }
   };
   activeSpeechButton = button;
-  button.textContent = "⏹ Stop speaking"; button.classList.add("voice-speaking");
+  if (button) { button.textContent = "⏹ Stop speaking"; button.classList.add("voice-speaking"); }
   window.speechSynthesis.speak(utterance);
 }
 function addMessage(role, text, options = {}) {
@@ -1663,6 +1721,7 @@ let savedMemories=loadSavedMemories();
 
 async function sendMessage(text) {
   const message = text.trim();
+  let voiceReplyToSpeak = "";
   const files = pendingAttachments.slice();
   if ((!message && !files.length) || busy) return;
   // Route clear image-generation requests to the image model instead of chat.
@@ -1695,6 +1754,7 @@ async function sendMessage(text) {
     if (isCreatorQuestion(message) && !files.length) {
       typing.bubble.innerHTML = renderMarkdown(CREATOR_REPLY);
       session.messages.push({role:"bot",text:CREATOR_REPLY});
+      voiceReplyToSpeak = CREATOR_REPLY;
     } else {
       const textFiles = files.filter(item => item.kind === "text");
       const imageFiles = files.filter(item => item.kind === "image");
@@ -1764,6 +1824,7 @@ async function sendMessage(text) {
       if (reply) {
         typing.bubble.innerHTML = renderMarkdown(reply);
         session.messages.push({role:"bot",text:reply});
+        voiceReplyToSpeak = reply;
       }
     }
   } catch (error) {
@@ -1778,7 +1839,15 @@ async function sendMessage(text) {
     sendBtn.disabled = false;
     generateImageBtn.disabled = false;
     chat.scrollTop = chat.scrollHeight;
-    input.focus();
+    if (voiceModeEnabled && voiceTurnInProgress) {
+      if (voiceReplyToSpeak) speakText(voiceReplyToSpeak, voiceModeBtn, true);
+      else {
+        voiceTurnInProgress = false;
+        voiceStatus.textContent = "Voice mode is on. Listening for your next question…";
+        voiceModeRestartTimer = setTimeout(startVoiceModeListening, 650);
+      }
+    }
+    if (!voiceModeEnabled) input.focus();
   }
 }
 form.addEventListener("submit", event => {
