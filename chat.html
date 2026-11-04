@@ -2115,7 +2115,7 @@ document.getElementById("sideNewChatBtn").addEventListener("click",()=>{startNew
 document.getElementById("seeAllChatsBtn").addEventListener("click",()=>{historySearch.value="";renderHistory();historyList.style.maxHeight="52vh";historyList.scrollIntoView({block:"nearest"});});
 const ACCOUNT_STORAGE_KEY="nexora_account_profile_v1";
 let accountMode="register";
-const ONBOARDING_STORAGE_KEY="nexora_first_launch_choice_v1";
+const ONBOARDING_STORAGE_KEY="nexora_first_launch_choice_v2";
 const firstLaunchOverlay=document.getElementById("firstLaunchOverlay");
 function closeFirstLaunch(){firstLaunchOverlay.classList.remove("open");firstLaunchOverlay.setAttribute("aria-hidden","true");}
 function showFirstLaunch(){firstLaunchOverlay.classList.add("open");firstLaunchOverlay.setAttribute("aria-hidden","false");}
@@ -2275,8 +2275,7 @@ async function initializeNexoraAuth(){
  if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="guest")return;
  if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="account"||accountProfile){showFirstLaunch();return;}
  if(!localStorage.getItem(ONBOARDING_STORAGE_KEY)){
-   if(sessions.length){localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");}
-   else{showFirstLaunch();}
+   showFirstLaunch();
  }
 }
 initializeNexoraAuth();
