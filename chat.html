@@ -876,13 +876,12 @@ body[data-theme="dark"] .footnote{color:#999}
 .chat:not(.has-messages){display:flex;align-items:center;justify-content:center}
 .chat:not(.has-messages) .welcome{margin:0 auto}
 
-/* Keep the app chrome fixed; only the conversation area may scroll. */
+/* Keep the app layout fixed while allowing the chat area to scroll from the start. */
 html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:none}
 .app{height:100dvh;min-height:0;overflow:hidden}
 .main{height:100dvh;min-height:0;overflow:hidden}
 .topbar,.voice-mode-bar,.composer-wrap{flex:0 0 auto}
-.chat{flex:1 1 0;min-height:0;overflow-x:hidden!important;overflow-y:hidden!important;overscroll-behavior-y:contain}
-.chat.has-messages{overflow-y:auto!important;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.chat{flex:1 1 0;min-height:0;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 </style>
 </head>
 <body data-theme="light">
