@@ -1995,9 +1995,12 @@ async function sendMessage(text) {
         reply = imageNotes.join("\n\n");
       } else if (textFiles.length || imageNotes.length) {
         const combinedText = fileText + (imageNotes.length ? "\n\nIMAGE ANALYSIS RESULTS:\n" + imageNotes.join("\n\n") : "");
+        const prefs=readPersonalization();
+        const toneGuidance={friendly:"Use a friendly, encouraging tone.",professional:"Use a professional, clear tone.",concise:"Keep answers short and concise unless detail is necessary.",detailed:"Explain thoroughly with helpful examples.",balanced:"Use a balanced, natural tone."};
+        const preferenceContext="\n\nUSER PERSONALIZATION PREFERENCES (follow when relevant):\n"+(toneGuidance[prefs.tone]||toneGuidance.balanced)+(prefs.language&&prefs.language!=="auto"?" Reply in "+prefs.language+" unless the user requests another language.":" Match the language used by the user.")+(prefs.instructions?"\nCustom instructions: "+prefs.instructions:"");
         reply = await streamBackend({
           action:"attachment",
-          message:message || "Please explain the attached file(s). Read the supplied document content carefully. For spreadsheets, consider sheet names, headers, rows, calculations and trends. For PDFs, use page labels when referencing facts. If information is missing or truncated, say so rather than guessing.",
+          message:(message || "Please explain the attached file(s). Read the supplied document content carefully. For spreadsheets, consider sheet names, headers, rows, calculations and trends. For PDFs, use page labels when referencing facts. If information is missing or truncated, say so rather than guessing.")+preferenceContext,
           fileText:combinedText
         }, partial => { typing.bubble.textContent = partial; });
       } else if (videoFiles.length) {
@@ -2294,6 +2297,9 @@ function closeLibrary(){document.getElementById("libraryOverlay").classList.remo
 function setTheme(theme) {
   const light = theme === "light";
   document.body.dataset.theme = light ? "light" : "dark";
+  document.documentElement.style.colorScheme = light ? "light" : "dark";
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) themeMeta.content = light ? "#f7f7fb" : "#0c0e1d";
   document.body.style.setProperty("--bg", light ? "#f7f7fb" : "#0c0e1d");
   document.body.style.setProperty("--text", light ? "#20212a" : "#f5f6ff");
   document.body.style.setProperty("--muted", light ? "#777987" : "#9da5dc");
