@@ -1,3 +1,3 @@
 window.NEXORA_CONFIG = {
-  apkUrl: "https://github.com/gen-aplha/Nexora-AI/releases/download/v1.0.0/nexora_ai.apk"
+  apkUrl: "https://github.com/user-attachments/files/34367703/NEXORA_AI_v1.45.6_APK.zip"
 };
