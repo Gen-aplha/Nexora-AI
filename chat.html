@@ -414,7 +414,7 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
 .account-menu-avatar{width:44px;height:44px;flex:0 0 44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#7655e8,#a477ff);color:#fff;font-size:18px;font-weight:750;overflow:hidden;background-size:cover;background-position:center}
 .account-menu-identity{display:grid;gap:2px;min-width:0}.account-menu-identity strong{font-size:14px;overflow-wrap:anywhere}.account-menu-identity span{font-size:12px;color:#777;overflow-wrap:anywhere}
 .account-form.account-signed-in>label,.account-form.account-signed-in>input,.account-form.account-signed-in .account-preview-wrap,.account-form.account-signed-in .account-actions,.account-form.account-signed-in #accountModeToggle,.account-form.account-signed-in #deleteAccountProfile,.account-form.account-signed-in .account-note,.account-form.account-signed-in #accountResendVerification{display:none!important}
-.account-form.account-signed-in .account-social-actions{margin:0 0 8px}
+.account-form.account-signed-in .account-social-actions{display:none!important;margin:0 0 8px}
 .account-form.account-signed-in .account-social-actions button,.account-form.account-signed-in #accountSignOut{width:100%;min-height:44px;text-align:left;padding:12px 14px;border-radius:11px;font-size:14px}
 .account-form.account-signed-in #accountSignOut{background:transparent;color:#b42336;border:1px solid #ead9dc}
 .account-form.account-signed-in #accountStatus{margin-top:8px}
@@ -714,6 +714,7 @@ body.voice-wip-open{overflow:hidden}
         <label id="accountPictureLabel" for="accountPicture">Profile picture <span>(optional)</span></label><input id="accountPicture" type="file" accept="image/*">
         <div class="account-preview-wrap" id="accountPicturePreviewWrap"><img id="accountPreview" alt="Profile picture preview" hidden><span id="accountNoPicture">No picture selected</span></div>
         <div class="account-actions"><button type="submit" class="account-save" id="accountSubmitBtn">Create account</button><button type="button" id="removeAccountPicture" class="account-secondary">Remove picture</button></div>
+        <div class="account-social-actions"><button type="button" id="googleSignInBtn" class="account-secondary">Continue with Google</button></div>
         <button type="button" id="accountModeToggle" class="account-secondary">Already have an account? Sign in</button>
         <button type="button" id="accountSignOut" class="account-secondary" hidden>Sign out</button>
         <button type="button" id="deleteAccountProfile" class="account-delete">Delete saved profile</button>
@@ -1882,6 +1883,26 @@ function setAccountMode(mode){
  document.getElementById("accountSubmitBtn").textContent=login?"Sign in":"Create account";
  document.getElementById("accountModeToggle").textContent=login?"New to NEXORA? Create an account":"Already have an account? Sign in";
 }
+async function signInWithGoogle(){
+ const status=document.getElementById("accountStatus");
+ const button=document.getElementById("googleSignInBtn");
+ if(!supabaseClient){status.textContent="The account service could not load. Refresh the page and try again.";return;}
+ button.disabled=true;
+ status.textContent="Connecting to Google…";
+ try{
+   localStorage.setItem("nexora_google_auth_pending","1");
+   localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+   const {error}=await supabaseClient.auth.signInWithOAuth({
+     provider:"google",
+     options:{redirectTo:SUPABASE_REDIRECT_URL}
+   });
+   if(error)throw error;
+ }catch(error){
+   status.textContent=error.message||"Google sign-in could not start. Check the provider setup and try again.";
+   button.disabled=false;
+ }
+}
+document.getElementById("googleSignInBtn").addEventListener("click",signInWithGoogle);
 async function postBackend(payload) {
   let response;
   try {
@@ -2358,6 +2379,13 @@ document.getElementById("accountResendVerification").addEventListener("click",as
  finally{button.disabled=false;}
 });
 document.getElementById("deleteAccountProfile").addEventListener("click",()=>{if(!accountProfile){document.getElementById("accountStatus").textContent="No saved profile to delete.";return;}if(!confirm("Delete your saved NEXORA profile from this device?"))return;localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);accountProfile=null;pendingAccountPicture="";renderAccountButton();document.getElementById("accountForm").reset();renderAccountPreview();document.getElementById("accountStatus").textContent="Saved profile deleted from this device.";});
+const authCallbackParams=new URLSearchParams(location.hash.startsWith("#")?location.hash.slice(1):"");
+const authCallbackError=authCallbackParams.get("error_description")||authCallbackParams.get("error");
+const googleAuthPending=localStorage.getItem("nexora_google_auth_pending")==="1";
+if(authCallbackError){
+ localStorage.removeItem("nexora_google_auth_pending");
+ history.replaceState(null,"",location.pathname+location.search);
+}
 renderAccountButton();
 if(supabaseClient){
  supabaseClient.auth.onAuthStateChange((_event,session)=>{
@@ -2381,11 +2409,22 @@ async function initializeNexoraAuth(){
        hasSupabaseSession=true;
        accountProfile={name:supabaseSession.user.user_metadata?.name||supabaseSession.user.email?.split("@")[0]||"NEXORA user",email:supabaseSession.user.email};
        localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
+       localStorage.removeItem("nexora_google_auth_pending");
        renderAccountButton();
      }
    }catch(error){console.warn("Could not restore NEXORA sign-in session:",error);}
  }
+ if(authCallbackError){
+   openAccount();
+   document.getElementById("accountStatus").textContent="Google sign-in did not finish: "+authCallbackError+". The Google provider credentials need to be corrected.";
+   return;
+ }
  if(hasSupabaseSession)return;
+ if(googleAuthPending){
+   openAccount();
+   document.getElementById("accountStatus").textContent="Google sign-in was not completed. Please try again after the Google provider setup is fixed.";
+   return;
+ }
  if(authToken){
    try{
      const data=await accountRequest({action:"me"});
