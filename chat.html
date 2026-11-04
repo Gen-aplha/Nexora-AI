@@ -869,6 +869,10 @@ body[data-theme="dark"] .footnote{color:#999}
 /* Nudge the text-only NEXORA heading slightly to the right on mobile. */
 @media(max-width:560px){.topbar .topbrand{position:relative;top:8px;margin-left:14px;width:calc(100% - 14px)}}
 
+/* Center the empty-chat welcome content vertically in the available chat area. */
+.chat:not(.has-messages){display:flex;align-items:center;justify-content:center}
+.chat:not(.has-messages) .welcome{margin:0 auto}
+
 /* Keep the app chrome fixed; only the conversation area may scroll. */
 html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:none}
 .app{height:100dvh;min-height:0;overflow:hidden}
