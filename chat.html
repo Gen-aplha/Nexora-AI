@@ -492,7 +492,13 @@ body{letter-spacing:-.01em}
 .tool-btn,.voice-btn,.plus-btn{transition:background .18s ease,border-color .18s ease,transform .18s ease}
 .tool-btn:hover,.voice-btn:hover,.plus-btn:hover{transform:translateY(-1px)}
 .footnote{padding:0 8px}
- .voice-mode-btn{flex:0 0 auto;height:38px;padding:0 12px;border:1px solid rgba(139,111,255,.35);border-radius:20px;background:rgba(109,60,255,.12);color:var(--text);font-size:12px;font-weight:650;white-space:nowrap}
+ 
+.voice-mode-bar{height:62px;min-height:62px;display:flex;align-items:center;justify-content:center;padding-right:10vw;position:relative;z-index:2}
+.voice-mode-bar .voice-mode-btn{height:44px;padding:0 22px;border-radius:999px;font-size:13px;box-shadow:0 5px 20px rgba(91,33,182,.22);display:inline-flex;align-items:center;gap:10px}
+.voice-mode-bar .voice-mode-btn span{font-size:22px;line-height:1}
+@media(max-width:560px){.voice-mode-bar{height:58px;min-height:58px;padding-right:12vw}.voice-mode-bar .voice-mode-btn{height:42px;padding:0 19px;font-size:12px}}
+
+.voice-mode-btn{flex:0 0 auto;height:38px;padding:0 12px;border:1px solid rgba(139,111,255,.35);border-radius:20px;background:rgba(109,60,255,.12);color:var(--text);font-size:12px;font-weight:650;white-space:nowrap}
 .voice-mode-btn[aria-pressed="true"]{background:linear-gradient(135deg,#6740df,#a34be5);border-color:#a58aff;color:#fff;box-shadow:0 0 0 3px rgba(109,60,255,.16)}
 body[data-theme="light"] .voice-mode-btn{color:#514080;background:#f0ebff;border-color:#ddd2ff}
 body[data-theme="light"] .voice-mode-btn[aria-pressed="true"]{color:#fff;background:linear-gradient(135deg,#6740df,#a34be5)}
@@ -629,6 +635,7 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
       <a class="plus-top-link" href="plus.html" aria-label="Explore NEXORA PLUS"><span class="plus-top-icon" aria-hidden="true">✦</span><span>NEXORA PLUS</span><span class="plus-top-arrow" aria-hidden="true">›</span></a>
       <div class="status"><span class="dot"></span> Online</div>
     </header>
+    <div class="voice-mode-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-pressed="false" title="Start hands-free voice conversation">🎙 Voice mode <span aria-hidden="true">›</span></button></div>
     <section class="chat" id="chat" aria-live="polite">
       <div class="welcome" id="welcome">
         <img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">
@@ -681,7 +688,6 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
         <select id="voiceLanguage" class="voice-language" aria-label="Voice recognition language" title="Voice language">
           <option value="en-IN">English IN</option><option value="hi-IN">हिन्दी</option><option value="en-US">English US</option><option value="mr-IN">मराठी</option>
         </select>
-        <button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-pressed="false" title="Start hands-free voice conversation">✨ Voice mode</button>
         <button class="voice-btn" id="voiceBtn" type="button" aria-label="Start voice input" title="Speak your message">🎙</button>
         <button class="send" id="sendBtn" type="submit" aria-label="Send message">↑</button>
       </form>
