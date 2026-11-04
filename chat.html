@@ -841,6 +841,24 @@ body[data-theme="dark"] .footnote{color:#999}
   .topbar .topbrand{gap:7px}
   .topbar .topbrand .logo-mark{flex-basis:38px!important;width:38px!important;height:38px!important;min-width:38px}
 }
+
+/* Mobile header layout: give the NEXORA brand its own clear row and keep Voice mode below it. */
+@media(max-width:560px){
+  .topbar{
+    height:auto!important;min-height:0;display:grid!important;
+    grid-template-columns:42px minmax(0,1fr);grid-template-rows:auto auto;
+    align-items:center;column-gap:9px;row-gap:8px;padding:12px 14px!important;
+  }
+  .topbar .menu-btn{grid-column:1;grid-row:1;justify-self:start}
+  .topbar .topbrand{grid-column:2;grid-row:1;min-width:0;width:100%;gap:8px}
+  .topbar .topbrand h1{font-size:18px!important;line-height:1.2;white-space:normal}
+  .topbar .topbrand p{font-size:11px!important}
+  .topbar .topbrand .logo-mark{width:40px!important;height:40px!important;flex-basis:40px!important;min-width:40px!important}
+  .topbar .plus-top-link{grid-column:2;grid-row:2;justify-self:start;width:max-content}
+  .topbar .status{display:none!important}
+  .voice-mode-bar{height:auto!important;min-height:58px;padding:8px 14px 12px!important;justify-content:flex-start}
+}
+
 </style>
 </head>
 <body data-theme="light">
