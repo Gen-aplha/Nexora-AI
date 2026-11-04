@@ -573,6 +573,9 @@ body[data-theme="light"] .composer:focus-within{border-color:#d6d6df!important;b
 .personalization-head h2{margin:0;font-size:21px}.personalization-head p{margin:6px 0 0;color:var(--muted);font-size:13px}
 .personalization-close{width:34px;height:34px;border:0;border-radius:10px;background:var(--panel2);color:var(--text);font-size:23px}
 .personalization-label{display:block;margin:15px 0 7px;font-size:13px;font-weight:650}
+.personalization-section-title{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:15px;font-weight:700;color:var(--text)}
+.personalization-panel .voice-settings-actions{justify-content:flex-start;margin-top:4px}
+.personalization-panel .voice-settings-panel{max-width:none;margin:0}
 .personalization-control{display:block;width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);font:inherit;font-size:14px}
 .personalization-textarea{resize:vertical;min-height:110px;line-height:1.5}
 .personalization-hint{margin:9px 0;color:var(--muted);font-size:11px}
@@ -713,21 +716,10 @@ body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
       <form class="composer" id="chatForm">
         <button class="plus-btn" id="composerPlus" type="button" aria-label="Add photos, files or create an image" aria-expanded="false">＋</button>
         <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI" aria-label="Your message"></textarea>
-        <select id="voiceLanguage" class="voice-language" aria-label="Voice recognition language" title="Voice language">
-          <option value="en-IN">English IN</option><option value="hi-IN">हिन्दी</option><option value="en-US">English US</option><option value="mr-IN">मराठी</option>
-        </select>
         <button class="voice-btn" id="voiceBtn" type="button" aria-label="Start voice input" title="Speak your message">🎙</button>
         <button class="send" id="sendBtn" type="submit" aria-label="Send message">↑</button>
       </form>
       <div class="voice-status" id="voiceStatus" aria-live="polite"></div>
-      <div class="voice-settings-actions"><button type="button" class="voice-settings-toggle" id="voiceSettingsToggle" aria-expanded="false">⚙ Voice settings</button></div>
-      <section class="voice-settings-panel" id="voiceSettingsPanel" hidden aria-label="Voice assistant settings">
-        <div class="voice-setting-field"><label for="voiceOutputSelect">Speaking voice</label><select id="voiceOutputSelect"><option value="">Device default voice</option></select></div>
-        <div class="voice-setting-field"><label for="voiceRate">Speaking speed <output id="voiceRateValue">1.0×</output></label><input id="voiceRate" type="range" min="0.7" max="1.4" step="0.1" value="1"></div>
-        <div class="voice-setting-field"><label for="voicePitch">Voice pitch <output id="voicePitchValue">1.0</output></label><input id="voicePitch" type="range" min="0.7" max="1.4" step="0.1" value="1"></div>
-        <div class="voice-settings-actions"><button type="button" id="voicePreviewBtn">▶ Preview voice</button><button type="button" id="voiceResetBtn">Reset</button></div>
-        <p class="voice-settings-note" id="voiceSettingsNote">Available voices depend on your Android device and browser.</p>
-      </section>
       <div class="footnote">NEXORA AI can make mistakes. Check important information.</div>
       <div class="footnote"><a href="privacy.html" style="color:#a99bff;text-decoration:none;">Privacy Policy</a></div>
     </div>
@@ -746,6 +738,16 @@ body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
     <select id="personalizationLanguage" class="personalization-control"><option value="auto">Automatic / match my message</option><option value="English">English</option><option value="Hindi">Hindi</option><option value="Marathi">Marathi</option></select>
     <label class="personalization-label" for="personalizationInstructions">Custom instructions</label>
     <textarea id="personalizationInstructions" class="personalization-control personalization-textarea" rows="5" maxlength="1200" placeholder="Example: Explain difficult topics in simple words and use examples."></textarea>
+    <div class="personalization-section-title">Voice settings</div>
+    <div class="voice-setting-field"><label for="voiceLanguage">Speech recognition language</label><select id="voiceLanguage" class="personalization-control" aria-label="Voice recognition language"><option value="en-IN">English (India)</option><option value="hi-IN">Hindi</option><option value="en-US">English (US)</option><option value="mr-IN">Marathi</option></select></div>
+    <div class="voice-settings-actions"><button type="button" class="voice-settings-toggle" id="voiceSettingsToggle" aria-expanded="false">⚙ Speaking voice settings</button></div>
+    <section class="voice-settings-panel" id="voiceSettingsPanel" hidden aria-label="Voice assistant settings">
+      <div class="voice-setting-field"><label for="voiceOutputSelect">Speaking voice</label><select id="voiceOutputSelect"><option value="">Device default voice</option></select></div>
+      <div class="voice-setting-field"><label for="voiceRate">Speaking speed <output id="voiceRateValue">1.0×</output></label><input id="voiceRate" type="range" min="0.7" max="1.4" step="0.1" value="1"></div>
+      <div class="voice-setting-field"><label for="voicePitch">Voice pitch <output id="voicePitchValue">1.0</output></label><input id="voicePitch" type="range" min="0.7" max="1.4" step="0.1" value="1"></div>
+      <div class="voice-settings-actions"><button type="button" id="voicePreviewBtn">▶ Preview voice</button><button type="button" id="voiceResetBtn">Reset</button></div>
+      <p class="voice-settings-note" id="voiceSettingsNote">Available voices depend on your Android device and browser.</p>
+    </section>
     <p class="personalization-hint">These preferences are saved only in this browser on this device.</p>
     <div class="personalization-actions"><button type="button" id="resetPersonalizationBtn">Reset</button><button type="button" id="savePersonalizationBtn">Save preferences</button></div>
   </section>
