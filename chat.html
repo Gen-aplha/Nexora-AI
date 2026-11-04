@@ -1534,7 +1534,7 @@ async function streamBackend(payload, onChunk) {
   let buffer = "";
   let fullText = "";
   function consumeEvent(eventText) {
-    for (const line of eventText.split(/\\r?\\n/)) {
+    for (const line of eventText.split(/\r?\n/)) {
       if (!line.startsWith("data:")) continue;
       const dataText = line.slice(5).trim();
       if (!dataText || dataText === "[DONE]") continue;
@@ -1556,7 +1556,7 @@ async function streamBackend(payload, onChunk) {
       const { value, done } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
-      const events = buffer.split(/\\r?\\n\\r?\\n/);
+      const events = buffer.split(/\r?\n\r?\n/);
       buffer = events.pop() || "";
       for (const eventText of events) consumeEvent(eventText);
     }
