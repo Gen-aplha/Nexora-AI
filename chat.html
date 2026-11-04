@@ -583,9 +583,12 @@ body[data-theme="light"] .personalization-panel{background:#fff;color:#20212a}
 body[data-theme="light"] .personalization-control{background:#f7f7fb;color:#20212a;border-color:#dedee8}
 @media(max-width:520px){.personalization-panel{padding:18px;border-radius:16px}.personalization-actions button{flex:1}}
 
+
+/* Keep the supplied logo readable on the light theme. */
+body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
 </style>
 </head>
-<body>
+<body data-theme="light">
 <div class="first-launch-overlay" id="firstLaunchOverlay" aria-hidden="true">
   <section class="first-launch-panel" role="dialog" aria-modal="true" aria-labelledby="firstLaunchTitle">
     <img class="first-launch-logo" src="nexora-logo.svg" alt="NEXORA logo">
@@ -734,6 +737,19 @@ body[data-theme="light"] .personalization-control{background:#f7f7fb;color:#2021
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<div class="personalization-overlay" id="personalizationOverlay" aria-hidden="true">
+  <section class="personalization-panel" role="dialog" aria-modal="true" aria-labelledby="personalizationTitle">
+    <div class="personalization-head"><div><h2 id="personalizationTitle">Personalization</h2><p>Make NEXORA AI respond the way you prefer.</p></div><button type="button" id="closePersonalizationBtn" class="personalization-close" aria-label="Close personalization">×</button></div>
+    <label class="personalization-label" for="personalizationTone">Response style</label>
+    <select id="personalizationTone" class="personalization-control"><option value="balanced">Balanced</option><option value="friendly">Friendly</option><option value="professional">Professional</option><option value="concise">Short and concise</option><option value="detailed">Detailed and explanatory</option></select>
+    <label class="personalization-label" for="personalizationLanguage">Preferred language</label>
+    <select id="personalizationLanguage" class="personalization-control"><option value="auto">Automatic / match my message</option><option value="English">English</option><option value="Hindi">Hindi</option><option value="Marathi">Marathi</option></select>
+    <label class="personalization-label" for="personalizationInstructions">Custom instructions</label>
+    <textarea id="personalizationInstructions" class="personalization-control personalization-textarea" rows="5" maxlength="1200" placeholder="Example: Explain difficult topics in simple words and use examples."></textarea>
+    <p class="personalization-hint">These preferences are saved only in this browser on this device.</p>
+    <div class="personalization-actions"><button type="button" id="resetPersonalizationBtn">Reset</button><button type="button" id="savePersonalizationBtn">Save preferences</button></div>
+  </section>
+</div>
 <script>
 const API_URL = "https://nexora-ai-backend-v2.mayankhindubro.workers.dev";
 const STREAM_API_URL = "https://nexora-ai-stream.mayankhindubro.workers.dev";
@@ -2345,22 +2361,6 @@ if (sessions.length) {
 }
 </script>
  
-<div class="personalization-overlay" id="personalizationOverlay" aria-hidden="true">
-  <section class="personalization-panel" role="dialog" aria-modal="true" aria-labelledby="personalizationTitle">
-    <div class="personalization-head"><div><h2 id="personalizationTitle">Personalization</h2><p>Make NEXORA AI respond the way you prefer.</p></div><button type="button" id="closePersonalizationBtn" class="personalization-close" aria-label="Close personalization">×</button></div>
-    <label class="personalization-label" for="personalizationTone">Response style</label>
-    <select id="personalizationTone" class="personalization-control"><option value="balanced">Balanced</option><option value="friendly">Friendly</option><option value="professional">Professional</option><option value="concise">Short and concise</option><option value="detailed">Detailed and explanatory</option></select>
-    <label class="personalization-label" for="personalizationLanguage">Preferred language</label>
-    <select id="personalizationLanguage" class="personalization-control"><option value="auto">Automatic / match my message</option><option value="English">English</option><option value="Hindi">Hindi</option><option value="Marathi">Marathi</option></select>
-    <label class="personalization-label" for="personalizationInstructions">Custom instructions</label>
-    <textarea id="personalizationInstructions" class="personalization-control personalization-textarea" rows="5" maxlength="1200" placeholder="Example: Explain difficult topics in simple words and use examples."></textarea>
-    <p class="personalization-hint">These preferences are saved only in this browser on this device.</p>
-    <div class="personalization-actions"><button type="button" id="resetPersonalizationBtn">Reset</button><button type="button" id="savePersonalizationBtn">Save preferences</button></div>
-  </section>
-</div>
 
 </body>
 </html>
-
-/* Let the supplied dark-backed logo blend into the light UI; preserve its original look in dark mode. */
-body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
