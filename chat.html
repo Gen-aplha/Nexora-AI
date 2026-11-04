@@ -410,6 +410,7 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
 .account-overlay{display:none;position:fixed;z-index:30;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}.account-overlay.open{display:flex}.account-panel{width:min(100%,480px);max-height:90dvh;overflow:auto;background:#fff;color:#202124;border-radius:20px;padding:20px;box-shadow:0 20px 70px #0004}.account-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}.account-head h2{margin:0;font-size:23px}.account-head p{margin:5px 0 0;color:#777;font-size:13px}.account-form{display:flex;flex-direction:column;gap:8px}.account-form label{font-size:13px;font-weight:650;color:#333;margin-top:5px}.account-form label span{font-weight:400;color:#777}.account-form input:not([type=file]){width:100%;min-height:43px;border:1px solid #ddd;border-radius:10px;padding:10px 12px;background:#fff;color:#222;font:inherit}.account-form input[type=file]{width:100%;font-size:13px;color:#444}.account-preview-wrap{min-height:76px;display:flex;align-items:center;gap:12px;color:#888;font-size:12px}#accountPreview{width:68px;height:68px;border-radius:50%;object-fit:cover;border:1px solid #ddd}.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.account-save,.account-secondary,.account-delete{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-size:13px;cursor:pointer}.account-save{background:#25252d;color:#fff}.account-secondary{background:#eee;color:#333}.account-social-actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px}.account-social-actions button{width:100%;min-height:42px;font-weight:600}.account-delete{background:transparent;color:#b42336;text-align:left;padding-left:0;margin-top:3px}.account-note{font-size:11px;line-height:1.5;color:#777;margin:8px 0 0}.account-status{font-size:12px;color:#28764d;min-height:16px;margin:0}
 .account-overlay{align-items:flex-end;justify-content:flex-start;padding:16px 16px 82px}
 .account-panel{width:min(100%,360px);border:1px solid #e5e5e9;border-radius:18px;padding:18px}
+.account-avatar-edit-wrap{position:relative;flex:0 0 58px;display:flex;flex-direction:column;align-items:center;gap:5px}.account-avatar-edit{width:27px;height:27px;display:grid;place-items:center;border:1px solid #d9d0f5;border-radius:50%;background:#f1ebff;color:#6741bd;font-size:15px;line-height:1;box-shadow:0 2px 8px #0002}.account-avatar-edit:active{transform:scale(.94)}body[data-theme="dark"] .account-avatar-edit{background:#33264f;color:#e5d8ff;border-color:#59447f}
 .account-signed-summary{display:flex;align-items:center;gap:12px;padding:8px 2px 17px;margin-bottom:12px;border-bottom:1px solid #e8e8ec}
 .account-menu-avatar{width:44px;height:44px;flex:0 0 44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#7655e8,#a477ff);color:#fff;font-size:18px;font-weight:750;overflow:hidden;background-size:cover;background-position:center}
 .account-menu-identity{display:grid;gap:2px;min-width:0}.account-menu-identity strong{font-size:14px;overflow-wrap:anywhere}.account-menu-identity span{font-size:12px;color:#777;overflow-wrap:anywhere}
@@ -754,7 +755,7 @@ body.voice-wip-open{overflow:hidden}
     <section class="account-panel" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
       <div class="account-head"><div><h2 id="accountTitle">Your account</h2><p id="accountSubtitle">Create an account or sign in from any device</p></div><button type="button" id="closeAccountBtn" class="library-close" aria-label="Close account">×</button></div>
       <div class="account-signed-summary" id="accountSignedSummary" hidden>
-        <div class="account-menu-avatar" id="accountMenuAvatar">N</div>
+        <div class="account-avatar-edit-wrap"><div class="account-menu-avatar" id="accountMenuAvatar">N</div><button type="button" class="account-avatar-edit" id="editAccountPictureBtn" aria-label="Edit profile picture" title="Edit profile picture">✎</button></div><input type="file" id="accountQuickPicture" accept="image/*" hidden>
         <div class="account-menu-identity"><strong id="accountMenuName">NEXORA user</strong><span id="accountMenuEmail"></span></div>
       </div>
       <nav class="account-centre-menu" id="accountCentreMenu" aria-label="Account centre" hidden>
@@ -2374,7 +2375,7 @@ function closeAccountInfo(){const overlay=document.getElementById("accountInfoOv
 document.getElementById("accountInfoOverlay").addEventListener("click",e=>{if(e.target.id==="accountInfoOverlay")closeAccountInfo();});
 function closeAccount(){document.getElementById("accountOverlay").classList.remove("open");document.getElementById("accountOverlay").setAttribute("aria-hidden","true");if(!authToken&&localStorage.getItem(ONBOARDING_STORAGE_KEY)!=="guest")showFirstLaunch();}
 document.getElementById("accountModeToggle").addEventListener("click",()=>{accountMode=accountMode==="register"?"login":"register";setAccountMode(accountMode);document.getElementById("accountStatus").textContent="";document.getElementById("accountPassword").value="";});
-document.getElementById("accountSignOut").addEventListener("click",async()=>{try{await accountRequest({action:"logout"});}catch(e){}try{await supabaseClient?.auth.signOut();}catch(e){}supabaseSession=null;authToken="";accountProfile=null;localStorage.removeItem(AUTH_TOKEN_KEY);localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);renderAccountButton();closeAccount();showFirstLaunch();});
+document.getElementById("accountSignOut").addEventListener("click",async()=>{try{await accountRequest({action:"logout"});}catch(e){}try{await supabaseClient?.auth.signOut();}catch(e){}supabaseSession=null;authToken="";accountProfile=null;localStorage.removeItem(PROFILE_PICTURE_KEY);localStorage.removeItem(AUTH_TOKEN_KEY);localStorage.removeItem(ACCOUNT_STORAGE_KEY);localStorage.removeItem(ONBOARDING_STORAGE_KEY);renderAccountButton();closeAccount();showFirstLaunch();});
 document.querySelectorAll("[data-account-action]").forEach(button=>button.addEventListener("click",()=>{
  const action=button.dataset.accountAction;
  closeAccount();
@@ -2384,6 +2385,29 @@ document.querySelectorAll("[data-account-action]").forEach(button=>button.addEve
  else if(action==="help")openAccountInfo("Help",'<p><strong>How do I start a chat?</strong><br>Type a message in the box at the bottom and tap Send.</p><p><strong>How do I create an image?</strong><br>Tap the + button beside the message box and choose Create an image.</p><p><strong>Where are my chats saved?</strong><br>Your chat history is saved in this browser on this device. Export a backup before clearing browser data.</p><p><strong>Need account help?</strong><br>Use the sign-in options in Account centre and check your email for verification messages.</p>');
  else if(action==="about")openAccountInfo("About NEXORA AI",'<p>NEXORA AI is an independent AI assistant project.</p><p>Explore chat, image tools, personalization and other features from the app.</p><p><a href="plus.html">Explore NEXORA PLUS</a> · <a href="privacy.html">Privacy policy</a></p>');
 }));
+
+const PROFILE_PICTURE_KEY="nexora_profile_picture_v1";
+function currentProfilePicture(){return accountProfile?.picture||localStorage.getItem(PROFILE_PICTURE_KEY)||"";}
+document.getElementById("editAccountPictureBtn").addEventListener("click",()=>document.getElementById("accountQuickPicture").click());
+document.getElementById("accountQuickPicture").addEventListener("change",async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ if(!file.type.startsWith("image/")){alert("Please choose an image file.");e.target.value="";return;}
+ if(file.size>10*1024*1024){alert("Choose an image smaller than 10 MB.");e.target.value="";return;}
+ const button=document.getElementById("editAccountPictureBtn");button.disabled=true;
+ try{
+  const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});
+  const image=new Image();image.src=data;await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;});
+  const scale=Math.min(1,512/Math.max(image.naturalWidth,image.naturalHeight));const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
+  const picture=canvas.toDataURL("image/jpeg",.78);
+  localStorage.setItem(PROFILE_PICTURE_KEY,picture);
+  accountProfile=accountProfile||{};accountProfile.picture=picture;
+  renderAccountButton();
+  const avatar=document.getElementById("accountMenuAvatar");avatar.style.backgroundImage="url("+JSON.stringify(picture)+")";avatar.style.backgroundSize="cover";avatar.style.backgroundPosition="center";avatar.textContent="";
+  document.getElementById("accountStatus").textContent="Profile picture updated on this device.";
+ }catch(err){alert("That picture could not be opened. Please try another image.");}
+ finally{button.disabled=false;e.target.value="";}
+});
+
 document.getElementById("sideProfileBtn").addEventListener("click",openAccount);
 document.getElementById("closeAccountBtn").addEventListener("click",closeAccount);
 document.getElementById("accountOverlay").addEventListener("click",e=>{if(e.target.id==="accountOverlay")closeAccount();});
