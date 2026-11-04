@@ -229,14 +229,7 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 
   function download() {
-    const note = document.getElementById('downloadNote');
-    const url = window.NEXORA_CONFIG && window.NEXORA_CONFIG.apkUrl;
-
-    if (url && /^https:\/\//i.test(url)) {
-      window.location.href = url;
-    } else {
-      note.textContent = 'The APK download is not connected yet. Add your public HTTPS APK link in config.js after uploading the APK.';
-    }
+    window.location.href = 'install.html';
   }
 
   document.getElementById('downloadHero').addEventListener('click', download);
