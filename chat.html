@@ -591,6 +591,31 @@ body[data-theme="light"] .personalization-control{background:#f7f7fb;color:#2021
 
 /* Keep the supplied logo readable on the light theme. */
 body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
+
+/* AI Image Studio upgrade */
+.studio-tabs{display:flex;gap:7px;padding:5px;margin:0 0 18px;border-radius:14px;background:#f0edf8}
+.studio-tab{flex:1;min-height:42px;border:0;border-radius:10px;background:transparent;color:#625b72;font-weight:700;font-size:13px}
+.studio-tab.active{background:#fff;color:#6b42d9;box-shadow:0 2px 9px #24144a18}
+.studio-section[hidden]{display:none!important}
+.image-enhance-toggle{display:flex;align-items:center;gap:9px;margin:0 0 16px;padding:12px;border:1px solid #e7e1f4;border-radius:12px;color:#554b69;font-size:12px;font-weight:650}
+.image-enhance-toggle input{width:18px;height:18px;accent-color:#7546df}
+.studio-help{margin:-8px 0 16px;color:#777184;font-size:13px;line-height:1.5}
+.studio-upload-btn,.studio-primary-btn{width:100%;min-height:48px;border-radius:13px;font-weight:750;font-size:14px}
+.studio-upload-btn{border:1px dashed #9b83d9;background:#f6f2ff;color:#6845b5}
+.studio-edit-preview-wrap{margin:14px 0;border-radius:14px;overflow:hidden;background:#eee;text-align:center}
+.studio-edit-preview{display:block;max-width:100%;max-height:280px;margin:auto;object-fit:contain}
+.studio-field-label{display:block;margin:16px 0 7px;font-size:13px;font-weight:700;color:#40384f}
+#studioEditPrompt{display:block;width:100%;min-height:92px;resize:vertical;padding:12px;border:1px solid #ded8e9;border-radius:12px;background:#fff;color:#222;font:inherit;font-size:14px}
+.studio-primary-btn{margin-top:12px;border:0;background:linear-gradient(120deg,#6940d8,#9a55e8);color:#fff}
+.studio-primary-btn:disabled{opacity:.5}
+.studio-status{min-height:22px;color:#746b82;font-size:12px;line-height:1.45}
+.my-images-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.my-image-card{min-width:0;overflow:hidden;border:1px solid #e9e5ef;border-radius:13px;background:#fff}
+.my-image-thumb{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:0}
+.my-image-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:6px}
+.my-image-actions button{min-width:0;min-height:36px;padding:4px 2px;border:0;border-radius:8px;background:#f2eff8;color:#55436f;font-size:11px;font-weight:700}
+.my-image-actions button:last-child{color:#a33345;background:#fff0f1}
+@media(max-width:360px){.my-image-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body data-theme="light">
@@ -697,6 +722,13 @@ body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
         </header>
         <div class="images-page-scroll">
           <h2>Create an image</h2>
+          <div class="studio-tabs" role="tablist" aria-label="Image Studio sections">
+            <button type="button" class="studio-tab active" data-studio-tab="create" aria-selected="true">Create</button>
+            <button type="button" class="studio-tab" data-studio-tab="edit" aria-selected="false">Edit</button>
+            <button type="button" class="studio-tab" data-studio-tab="gallery" aria-selected="false">My gallery</button>
+          </div>
+          <section class="studio-section" id="imageStudioCreate">
+          <label class="image-enhance-toggle"><input type="checkbox" id="imagePromptEnhance" checked> Improve prompt for richer results</label>
           <div class="image-template-grid" id="imageTemplateGrid">
             <button class="image-template-card template-stickers" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Stickers</b></button>
             <button class="image-template-card template-poster" data-prompt="A beautiful celebratory event poster with elegant typography, warm golden lighting and detailed festive artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Event poster</b></button>
@@ -711,8 +743,23 @@ body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
             <button class="image-template-card template-interior" data-prompt="A modern cozy interior design concept, warm natural materials, tasteful furniture and sunlight"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Interior design</b></button>
             <button class="image-template-card template-infographic" data-prompt="A modern clean infographic poster with clear visual hierarchy, icons and concise educational labels"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Infographic poster</b></button>
           </div>
-          <h2 class="my-images-heading">My images</h2>
-          <div class="my-images-grid" id="myImagesGrid"><p class="my-images-empty">Your generated images will appear here.</p></div>
+          </section>
+          <section class="studio-section image-editor-section" id="imageStudioEdit" hidden>
+            <h2>Edit an image</h2>
+            <p class="studio-help">Choose a saved image or upload a photo, then describe the changes you want.</p>
+            <input type="file" id="studioEditFile" accept="image/*" hidden>
+            <button type="button" class="studio-upload-btn" id="studioEditUpload">＋ Choose a photo</button>
+            <div class="studio-edit-preview-wrap" id="studioEditPreviewWrap" hidden><img id="studioEditPreview" alt="Image selected for editing"></div>
+            <label class="studio-field-label" for="studioEditPrompt">What should NEXORA change?</label>
+            <textarea id="studioEditPrompt" rows="3" maxlength="1200" placeholder="Example: Replace the background with a peaceful beach at sunset."></textarea>
+            <button type="button" class="studio-primary-btn" id="studioEditRun" disabled>✦ Edit with AI</button>
+            <p class="studio-status" id="studioEditStatus" role="status" aria-live="polite">Your original image stays saved in your gallery.</p>
+          </section>
+          <section class="studio-section" id="imageStudioGallery" hidden>
+            <h2 class="my-images-heading">My images</h2>
+            <p class="studio-help">Your generated and edited images are saved on this device.</p>
+            <div class="my-images-grid" id="myImagesGrid"><p class="my-images-empty">Your generated images will appear here.</p></div>
+          </section>
         </div>
       </section>
       <form class="composer" id="chatForm">
@@ -814,7 +861,7 @@ function setImageMode(enabled) {
   document.body.classList.toggle("image-mode-open", enabled);
   input.placeholder = enabled ? "Describe an image" : "Message NEXORA AI";
   composerPlus.setAttribute("aria-label", enabled ? "Add a reference image" : "Add photos, files or create an image");
-  if (enabled) renderMyImages();
+  if (enabled) { showImageStudioTab("create"); renderMyImages(); }
   else {
     input.value = "";
     input.style.height = "auto";
@@ -832,42 +879,100 @@ document.getElementById("imageTemplateGrid").addEventListener("click", event => 
   input.dispatchEvent(new Event("input", {bubbles:true}));
   input.focus();
 });
+let studioEditImageData = "";
+function showImageStudioTab(tab) {
+  const sections = {create:document.getElementById("imageStudioCreate"),edit:document.getElementById("imageStudioEdit"),gallery:document.getElementById("imageStudioGallery")};
+  Object.entries(sections).forEach(([name,section]) => { section.hidden = name !== tab; });
+  document.querySelectorAll("[data-studio-tab]").forEach(button => {
+    const active = button.dataset.studioTab === tab;
+    button.classList.toggle("active",active);
+    button.setAttribute("aria-selected",String(active));
+  });
+  if(tab === "gallery") renderMyImages();
+}
+document.querySelectorAll("[data-studio-tab]").forEach(button => button.addEventListener("click",() => showImageStudioTab(button.dataset.studioTab)));
+function setStudioEditImage(data) {
+  studioEditImageData = data || "";
+  const previewWrap = document.getElementById("studioEditPreviewWrap");
+  const preview = document.getElementById("studioEditPreview");
+  preview.src = studioEditImageData;
+  previewWrap.hidden = !studioEditImageData;
+  document.getElementById("studioEditRun").disabled = !studioEditImageData;
+  document.getElementById("studioEditStatus").textContent = studioEditImageData ? "Image ready. Describe the changes you want." : "Choose a photo to begin editing.";
+}
+document.getElementById("studioEditUpload").addEventListener("click",() => document.getElementById("studioEditFile").click());
+document.getElementById("studioEditFile").addEventListener("change",event => {
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith("image/")) { document.getElementById("studioEditStatus").textContent = "Please choose an image file."; return; }
+  if(file.size > 1800000) { document.getElementById("studioEditStatus").textContent = "Please choose an image smaller than 1.8 MB."; return; }
+  const reader = new FileReader();
+  reader.onload = () => setStudioEditImage(String(reader.result || ""));
+  reader.onerror = () => { document.getElementById("studioEditStatus").textContent = "Could not read that photo. Please try another."; };
+  reader.readAsDataURL(file);
+});
+async function deleteGeneratedImage(id) {
+  const db = await openImageDB();
+  await new Promise((resolve,reject) => {
+    const tx = db.transaction("images","readwrite");
+    tx.objectStore("images").delete(id);
+    tx.oncomplete = resolve; tx.onerror = () => reject(tx.error);
+  });
+  db.close();
+  for(const session of sessions) for(const message of (session.messages || [])) if(message.imageId === id) delete message.imageId;
+  saveSessions(); renderHistory(); await renderMyImages();
+}
 async function renderMyImages() {
   myImagesGrid.innerHTML = "";
   const imageItems = [];
-  for (const session of sessions) {
-    for (const message of (session.messages || [])) {
-      if (message.imageId) imageItems.push({id:message.imageId,created:session.updatedAt || 0});
-    }
+  for (const session of sessions) for (const message of (session.messages || [])) {
+    if (message.imageId) imageItems.push({id:message.imageId,created:session.updatedAt || 0});
   }
-  const unique = [...new Map(imageItems.map(item => [item.id,item])).values()].reverse().slice(0,30);
-  if (!unique.length) {
-    myImagesGrid.innerHTML = '<p class="my-images-empty">Your generated images will appear here.</p>';
-    return;
-  }
+  const unique = [...new Map(imageItems.map(item => [item.id,item])).values()].reverse().slice(0,60);
+  if (!unique.length) { myImagesGrid.innerHTML = '<p class="my-images-empty">Your generated and edited images will appear here.</p>'; return; }
   for (const item of unique) {
     try {
       const src = await getGeneratedImage(item.id);
       if (!src) continue;
-      const img = document.createElement("img");
-      img.className = "my-image-thumb";
-      img.src = src;
-      img.alt = "Previously generated image";
-      img.loading = "lazy";
-      img.addEventListener("click", () => {
-        const preview = window.open();
-        if (preview) {
-          const image = preview.document.createElement("img");
-          image.src = src; image.style.cssText = "max-width:100%;height:auto;display:block;margin:auto";
-          preview.document.body.style.cssText = "margin:0;min-height:100vh;display:grid;place-items:center;background:#111";
-          preview.document.body.appendChild(image);
-        }
-      });
-      myImagesGrid.appendChild(img);
+      const card = document.createElement("article"); card.className = "my-image-card";
+      const img = document.createElement("img"); img.className = "my-image-thumb"; img.src = src; img.alt = "Saved NEXORA AI image"; img.loading = "lazy";
+      const actions = document.createElement("div"); actions.className = "my-image-actions";
+      const preview = document.createElement("button"); preview.type = "button"; preview.textContent = "View";
+      preview.addEventListener("click",() => { const win=window.open(); if(win){const image=win.document.createElement("img");image.src=src;image.style.cssText="max-width:100%;height:auto;display:block;margin:auto";win.document.body.style.cssText="margin:0;min-height:100vh;display:grid;place-items:center;background:#111";win.document.body.appendChild(image);} });
+      const download = document.createElement("button"); download.type = "button"; download.textContent = "Save";
+      download.addEventListener("click",() => downloadImage(src,"nexora-ai-image.jpg"));
+      const edit = document.createElement("button"); edit.type = "button"; edit.textContent = "Edit";
+      edit.addEventListener("click",() => { setStudioEditImage(src); showImageStudioTab("edit"); });
+      const remove = document.createElement("button"); remove.type = "button"; remove.textContent = "Delete";
+      remove.addEventListener("click",async() => { if(!confirm("Delete this saved image from this device?")) return; try{await deleteGeneratedImage(item.id);}catch(error){alert("Could not delete this image. Please try again.");} });
+      actions.append(preview,download,edit,remove); card.append(img,actions); myImagesGrid.appendChild(card);
     } catch (error) { /* Keep the gallery usable if local image storage is unavailable. */ }
   }
   if (!myImagesGrid.children.length) myImagesGrid.innerHTML = '<p class="my-images-empty">No saved images found on this device yet.</p>';
 }
+document.getElementById("studioEditRun").addEventListener("click",async() => {
+  const prompt = document.getElementById("studioEditPrompt").value.trim();
+  const status = document.getElementById("studioEditStatus");
+  const button = document.getElementById("studioEditRun");
+  if(!studioEditImageData || !prompt) { status.textContent = "Choose an image and describe the edit first."; return; }
+  button.disabled = true; status.textContent = "Editing your image with AI…";
+  try {
+    const result = await postBackend({action:"edit_image",image:studioEditImageData,prompt});
+    if(!result.image) throw new Error(result.error || "The image editor returned no image.");
+    const editedImage = result.image.startsWith("data:image/") ? result.image : "data:image/png;base64," + result.image;
+    const imageId = await saveGeneratedImage(editedImage);
+    const session = ensureSession("Image edit: " + prompt);
+    const caption = result.reply || "Your edited image is ready!";
+    session.messages.push({role:"user",text:"Edit image: " + prompt},{role:"bot",text:caption,imageId});
+    session.updatedAt = Date.now(); saveSessions(); renderHistory();
+    addMessage("user","✏️ Edit image: " + prompt);
+    addMessage("bot",caption,{imageData:editedImage});
+    status.textContent = "Your edited image is saved in My gallery.";
+    document.getElementById("studioEditPrompt").value = "";
+    await renderMyImages();
+  } catch(error) { status.textContent = "Image editing failed: " + (error.message || "Please try again."); }
+  finally { button.disabled = !studioEditImageData; }
+});
 
 const voiceBtn = document.getElementById("voiceBtn");
 const voiceLanguage = document.getElementById("voiceLanguage");
@@ -1799,6 +1904,8 @@ async function streamBackend(payload, onChunk) {
 }
 async function generateImage() {
   const prompt = input.value.trim();
+  const enhancePrompt = document.getElementById("imagePromptEnhance")?.checked;
+  const generationPrompt = enhancePrompt ? prompt + ", excellent visual quality, thoughtful composition, refined lighting, crisp details, rich but balanced colors" : prompt;
   if (!prompt || busy) {
     if (!prompt) alert("Type a description of the image you want, then tap Generate image.");
     return;
@@ -1815,7 +1922,7 @@ async function generateImage() {
   input.style.height = "auto";
   const typing = addMessage("bot", "", {typing:true});
   try {
-    const data = await postBackend({action:"generate_image",prompt});
+    const data = await postBackend({action:"generate_image",prompt:generationPrompt});
     if (!data.image) throw new Error(data.error || "The image service returned no image.");
     typing.bubble.innerHTML = "";
     const captionText = data.reply || "Your image is ready!";
