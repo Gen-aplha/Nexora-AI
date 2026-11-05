@@ -1092,7 +1092,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
             <input type="file" id="studioEditFile" accept="image/*" hidden>
             <button type="button" class="studio-upload-btn" id="studioEditUpload">＋ Choose a photo</button>
             <div class="studio-edit-preview-wrap" id="studioEditPreviewWrap" hidden><img id="studioEditPreview" alt="Image selected for editing"></div>
-            <div class="studio-edit-result" id="studioEditResult" hidden><h3>Your edited image is here</h3><img id="studioEditResultImage" alt="Your edited image"><p>It has also been saved in My gallery.</p></div>
+            <div class="studio-edit-result" id="studioEditResult" hidden><h3>Your edited image is here</h3><img id="studioEditResultImage" alt="Your edited image"></div>
             <label class="studio-field-label" for="studioEditPrompt">What should NEXORA change?</label>
             <textarea id="studioEditPrompt" rows="3" maxlength="1200" placeholder="Example: Replace the background with a peaceful beach at sunset."></textarea>
             <button type="button" class="studio-primary-btn" id="studioEditRun" disabled>✦ Edit with AI</button>
@@ -1354,7 +1354,7 @@ document.getElementById("studioEditRun").addEventListener("click",async() => {
     session.updatedAt = Date.now(); saveSessions(); renderHistory();
     addMessage("user","✏️ Edit image: " + prompt);
     addMessage("bot",caption,{imageData:editedImage});
-    status.textContent = "Your edited image is here. It has also been saved in My gallery.";
+    status.textContent = "Your edited image is here.";
     document.getElementById("studioEditPrompt").value = "";
     await renderMyImages();
   } catch(error) { status.textContent = "Image editing failed: " + (error.message || "Please try again."); }
