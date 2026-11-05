@@ -1318,7 +1318,23 @@ document.getElementById("studioEditRun").addEventListener("click",async() => {
   if(!studioEditImageData || !prompt) { status.textContent = "Choose an image and describe the edit first."; return; }
   button.disabled = true; status.textContent = "Editing your image with AI…";
   try {
-    const result = await postBackend({action:"edit_image",image:studioEditImageData,prompt});
+    const resizedImage = await new Promise((resolve,reject) => {
+      const source = new Image();
+      source.onload = () => {
+        const scale = Math.min(1,511 / Math.max(source.naturalWidth,source.naturalHeight));
+        const width = Math.max(1,Math.round(source.naturalWidth * scale));
+        const height = Math.max(1,Math.round(source.naturalHeight * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width; canvas.height = height;
+        const context = canvas.getContext("2d");
+        if(!context) { reject(new Error("Your browser could not prepare this image.")); return; }
+        context.drawImage(source,0,0,width,height);
+        resolve({data:canvas.toDataURL("image/jpeg",0.88),width,height});
+      };
+      source.onerror = () => reject(new Error("Could not read the selected image."));
+      source.src = studioEditImageData;
+    });
+    const result = await postBackend({action:"edit_image",image:resizedImage.data,prompt,width:resizedImage.width,height:resizedImage.height});
     if(!result.image) throw new Error(result.error || "The image editor returned no image.");
     const editedImage = result.image.startsWith("data:image/") ? result.image : "data:image/png;base64," + result.image;
     const imageId = await saveGeneratedImage(editedImage);
