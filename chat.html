@@ -381,6 +381,12 @@ body[data-theme="light"] #themeBtn{color:#555}
 .library-note{border-top:1px solid #eee;padding-top:12px;color:#777;font-size:12px;line-height:1.5}
 .library-guest-view{text-align:center;padding:34px 12px 22px}.library-guest-view p{margin:0 0 18px;font-size:17px;font-weight:600;color:#333}.library-guest-view button{min-height:48px;min-width:120px;cursor:pointer}
 @media(max-width:680px){body[data-theme="light"] .sidebar{width:min(80vw, 340px);padding:18px 22px 12px}.side-footer{padding-bottom:8px}.history-tools{margin-top:8px}}
+/* Tap the dimmed empty area beside the mobile drawer to return to the current chat. */
+.sidebar-backdrop{display:none;position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.38);touch-action:manipulation}
+@media(max-width:680px){
+  .sidebar-backdrop{display:block;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility .22s ease}
+  body:has(.sidebar.open) .sidebar-backdrop{opacity:1;visibility:visible;pointer-events:auto}
+}
 /* Reliable mobile drawer: keep it above chat and reveal it on touch. */
 @media(max-width:680px){
 .sidebar{position:fixed!important;top:0!important;bottom:0!important;left:0!important;right:auto!important;width:min(82vw,340px)!important;height:100dvh!important;z-index:9998!important;transform:translateX(-110%)!important;visibility:hidden!important;transition:transform .22s ease,visibility .22s ease!important;pointer-events:none!important;background:#fff!important;overflow-y:auto!important}
@@ -937,7 +943,8 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
     </div>
     <input type="file" id="importChatsFile" accept="application/json,.json" hidden>
     <button class="nav-btn" id="themeBtn"><span class="nav-icon">☾</span> Toggle theme</button>
-  </aside>  <div class="plugins-overlay" id="pluginsOverlay" aria-hidden="true">
+  </aside>  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+  <div class="plugins-overlay" id="pluginsOverlay" aria-hidden="true">
     <section class="plugins-panel" role="dialog" aria-modal="true" aria-labelledby="pluginsTitle">
       <header class="plugins-header"><div><p class="plugins-eyebrow">NEXORA AI ECOSYSTEM</p><h2 id="pluginsTitle">Plugin marketplace</h2><p>Discover tools that can extend what NEXORA AI can do.</p></div><button type="button" class="library-close" id="closePluginsBtn" aria-label="Close plugins">×</button></header>
       <div class="plugins-search-wrap"><span>⌕</span><input id="pluginsSearch" type="search" placeholder="Search plugins..." aria-label="Search plugins"></div>
@@ -1031,9 +1038,9 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
         <h2>What can I help with?</h2>
         <p>Ask anything, explore ideas, learn something new, or create something useful.</p>
         <div class="suggestions">
-          <button class="suggestion">Explain AI simply</button>
-          <button class="suggestion">Give me a project idea</button>
-          <button class="suggestion">Help me learn coding</button>
+          <button type="button" class="suggestion" data-welcome-suggestion>Explain AI simply</button>
+          <button type="button" class="suggestion" data-welcome-suggestion>Give me a project idea</button>
+          <button type="button" class="suggestion" data-welcome-suggestion>Help me learn coding</button>
         </div>
       </div>
     </section>
@@ -1512,11 +1519,22 @@ if (!SpeechRecognition) {
 
 const logoSVG = `<img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">`;
 
+const WELCOME_SUGGESTION_TEXTS = new Set(["explain ai simply","give me a project idea","help me learn coding"]);
+function isOldWelcomeSuggestionChat(session) {
+  if (!session || !WELCOME_SUGGESTION_TEXTS.has(String(session.title || "").trim().toLowerCase())) return false;
+  const firstUser = (session.messages || []).find(message => message && message.role === "user");
+  if (!firstUser) return false;
+  const prompt = String(firstUser.text || "").split("\n[Attachments:")[0].trim().toLowerCase();
+  return WELCOME_SUGGESTION_TEXTS.has(prompt);
+}
 function loadSessions() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : [];
-    return Array.isArray(parsed) ? parsed.filter(s => s && typeof s.id === "string" && Array.isArray(s.messages)) : [];
+    const valid = Array.isArray(parsed) ? parsed.filter(s => s && typeof s.id === "string" && Array.isArray(s.messages)) : [];
+    const cleaned = valid.filter(s => !isOldWelcomeSuggestionChat(s));
+    if (cleaned.length !== valid.length) localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+    return cleaned;
   } catch (error) {
     return [];
   }
@@ -1788,9 +1806,18 @@ async function syncNexoraCloudData() {
     if (readError) throw readError;
 
     const merged = new Map();
+    const staleSuggestionIds = [];
     for (const row of (remoteRows || [])) {
       const item = row.session_data;
-      if (item && typeof item.id === "string" && Array.isArray(item.messages)) merged.set(item.id, item);
+      if (item && typeof item.id === "string" && Array.isArray(item.messages)) {
+        if (isOldWelcomeSuggestionChat(item)) { staleSuggestionIds.push(row.session_id); continue; }
+        merged.set(item.id, item);
+      }
+    }
+    if (staleSuggestionIds.length) {
+      const {error:cleanupError} = await supabaseClient.from(NEXORA_CLOUD_TABLE)
+        .delete().eq("user_id", userId).in("session_id", staleSuggestionIds);
+      if (cleanupError) throw cleanupError;
     }
     for (const item of sessions) {
       const previous = merged.get(item.id);
@@ -2700,11 +2727,13 @@ input.addEventListener("keydown", event => {
     form.requestSubmit();
   }
 });
-document.querySelectorAll(".suggestion").forEach(button => {
-  button.addEventListener("click", () => {
+document.querySelectorAll("[data-welcome-suggestion]").forEach(button => {
+  button.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
     input.value = button.textContent.trim();
-    input.focus();
     input.dispatchEvent(new Event("input", {bubbles:true}));
+    input.focus();
   });
 });
 document.getElementById("newChat")?.addEventListener("click", startNewChat);
