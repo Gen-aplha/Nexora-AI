@@ -1096,7 +1096,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
             <label class="studio-field-label" for="studioEditPrompt">What should NEXORA change?</label>
             <textarea id="studioEditPrompt" rows="3" maxlength="1200" placeholder="Example: Replace the background with a peaceful beach at sunset."></textarea>
             <button type="button" class="studio-primary-btn" id="studioEditRun" disabled>✦ Edit with AI</button>
-            <p class="studio-status" id="studioEditStatus" role="status" aria-live="polite">Your original image stays saved in your gallery.</p>
+            <p class="studio-status" id="studioEditStatus" role="status" aria-live="polite">Choose a photo and describe the changes you want.</p>
           </section>
           <section class="studio-section" id="imageStudioGallery" hidden>
             <h2 class="my-images-heading">My images</h2>
@@ -1349,7 +1349,7 @@ document.getElementById("studioEditRun").addEventListener("click",async() => {
     document.getElementById("studioEditResultImage").src = editedImage;
     resultPanel.hidden = false;
     const session = ensureSession("Image edit: " + prompt);
-    const caption = result.reply || "Your edited image is ready!";
+    const caption = "Your edited image is here.";
     session.messages.push({role:"user",text:"Edit image: " + prompt},{role:"bot",text:caption,imageId});
     session.updatedAt = Date.now(); saveSessions(); renderHistory();
     addMessage("user","✏️ Edit image: " + prompt);
