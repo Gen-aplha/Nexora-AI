@@ -685,6 +685,7 @@ body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
 .my-image-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:6px}
 .my-image-actions button{min-width:0;min-height:36px;padding:4px 2px;border:0;border-radius:8px;background:#f2eff8;color:#55436f;font-size:11px;font-weight:700}
 .my-image-actions button:last-child{color:#a33345;background:#fff0f1}
+.image-viewer{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.94)}.image-viewer.open{display:flex}.image-viewer img{display:block;max-width:100%;max-height:85dvh;object-fit:contain}.image-viewer-close{position:absolute;top:14px;right:14px;width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:#222;font-size:26px;cursor:pointer}
 @media(max-width:360px){.my-image-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* Dedicated voice mode work-in-progress page */
@@ -1105,6 +1106,10 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
           </section>
         </div>
       </section>
+      <div class="image-viewer" id="imageViewer" role="dialog" aria-modal="true" aria-label="Image preview">
+        <button type="button" class="image-viewer-close" id="imageViewerClose" aria-label="Close image preview">×</button>
+        <img id="imageViewerImage" alt="Full-size saved image">
+      </div>
       <form class="composer" id="chatForm">
         <button class="plus-btn" id="composerPlus" type="button" aria-label="Add photos, files or create an image" aria-expanded="false">＋</button>
         <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI" aria-label="Your message"></textarea>
@@ -1238,6 +1243,8 @@ function showImageStudioTab(tab) {
   if(tab === "gallery") renderMyImages();
 }
 document.querySelectorAll("[data-studio-tab]").forEach(button => button.addEventListener("click",() => showImageStudioTab(button.dataset.studioTab)));
+document.getElementById("imageViewerClose").addEventListener("click",() => { document.getElementById("imageViewer").classList.remove("open"); document.getElementById("imageViewerImage").removeAttribute("src"); });
+document.getElementById("imageViewer").addEventListener("click",event => { if(event.target.id === "imageViewer") document.getElementById("imageViewerClose").click(); });
 function setStudioEditImage(data) {
   studioEditImageData = data || "";
   document.getElementById("studioEditResult").hidden = true;
@@ -1306,7 +1313,7 @@ async function renderMyImages() {
       const img = document.createElement("img"); img.className = "my-image-thumb"; img.src = src; img.alt = "Saved NEXORA AI image"; img.loading = "lazy";
       const actions = document.createElement("div"); actions.className = "my-image-actions";
       const preview = document.createElement("button"); preview.type = "button"; preview.textContent = "View";
-      preview.addEventListener("click",() => { const win=window.open(); if(win){const image=win.document.createElement("img");image.src=src;image.style.cssText="max-width:100%;height:auto;display:block;margin:auto";win.document.body.style.cssText="margin:0;min-height:100vh;display:grid;place-items:center;background:#111";win.document.body.appendChild(image);} });
+      preview.addEventListener("click",() => { document.getElementById("imageViewerImage").src=src; document.getElementById("imageViewer").classList.add("open"); });
       const download = document.createElement("button"); download.type = "button"; download.textContent = "Save";
       download.addEventListener("click",() => downloadImage(src,"nexora-ai-image.jpg"));
       const edit = document.createElement("button"); edit.type = "button"; edit.textContent = "Edit";
