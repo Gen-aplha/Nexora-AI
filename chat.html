@@ -311,6 +311,8 @@ body[data-theme="light"] .attachment-note{color:#777987}
 .my-images-empty{grid-column:1/-1;color:#888;font-size:13px;padding:8px 0}
 body:has(.image-mode-panel:not([hidden])) .composer-wrap{position:static}
 body:has(.image-mode-panel:not([hidden])) .composer{position:fixed;z-index:1002;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));width:auto;max-width:none;margin:0;background:#fff;border:1px solid #ececec;border-radius:28px;box-shadow:0 3px 18px #0001;color:#222}
+body.image-edit-tab-open:has(.image-mode-panel:not([hidden])) .composer{display:none!important}
+body.image-edit-tab-open .images-page-scroll{padding-bottom:24px}
 body:has(.image-mode-panel:not([hidden])) .composer textarea{color:#222}
 body:has(.image-mode-panel:not([hidden])) .composer textarea::placeholder{color:#888}
 body:has(.image-mode-panel:not([hidden])) .plus-btn{font-size:0}
@@ -1211,6 +1213,7 @@ function setImageMode(enabled) {
   imageMode = enabled;
   imageModePanel.hidden = !enabled;
   document.body.classList.toggle("image-mode-open", enabled);
+  if (!enabled) document.body.classList.remove("image-edit-tab-open");
   input.placeholder = enabled ? "Describe an image" : "Message NEXORA AI";
   composerPlus.setAttribute("aria-label", enabled ? "Add a reference image" : "Add photos, files or create an image");
   if (enabled) { showImageStudioTab("create"); renderMyImages(); }
@@ -1233,6 +1236,7 @@ document.getElementById("imageTemplateGrid").addEventListener("click", event => 
 });
 let studioEditImageData = "";
 function showImageStudioTab(tab) {
+  document.body.classList.toggle("image-edit-tab-open",tab === "edit");
   const sections = {create:document.getElementById("imageStudioCreate"),edit:document.getElementById("imageStudioEdit"),gallery:document.getElementById("imageStudioGallery")};
   Object.entries(sections).forEach(([name,section]) => { section.hidden = name !== tab; });
   document.querySelectorAll("[data-studio-tab]").forEach(button => {
