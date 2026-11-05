@@ -2881,7 +2881,13 @@ async function sendMessage(text) {
   input.style.height = "auto";
   const typing = addMessage("bot", "", {typing:true});
   try {
-    if (isCreatorQuestion(message) && !files.length) {
+    const pdfFiles = files.filter(item => item.kind === "text" && (/\.pdf$/i.test(item.name || "") || /^PDF CONTENT/i.test(item.text || "")));
+    if (pdfFiles.length) {
+      const pdfGuidance = "For help with PDF files, please use **PDF Assistant** instead of normal chat.\n\n**How to use it:**\n1. Tap the **＋** button beside the message box.\n2. Choose **PDF Assistant** and upload your PDF there.\n3. Select **Summarize PDF**, **Key points**, or **Explain simply**, or type your own question.\n\n**Tips for better results:**\n• Upload a text-based PDF where you can select and copy the words. Scanned/photo-only PDFs are not supported yet.\n• PDFs must be 12 MB or smaller.\n• PDF Assistant reads up to the first 40 pages, so split very long documents into smaller files.\n• Ask focused questions and mention a page number when you need details from a particular section.\n\nYour PDF was not sent to the normal chat AI.";
+      typing.bubble.innerHTML = renderMarkdown(pdfGuidance);
+      session.messages.push({role:"bot",text:pdfGuidance});
+      voiceReplyToSpeak = pdfGuidance;
+    } else if (isCreatorQuestion(message) && !files.length) {
       typing.bubble.innerHTML = renderMarkdown(CREATOR_REPLY);
       session.messages.push({role:"bot",text:CREATOR_REPLY});
       voiceReplyToSpeak = CREATOR_REPLY;
