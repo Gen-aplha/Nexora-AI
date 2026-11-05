@@ -2957,14 +2957,14 @@ async function initializeNexoraAuth(){
    }catch(error){console.warn("Could not restore NEXORA sign-in session:",error);}
  }
  if(authCallbackError){
-   openAccount();
-   document.getElementById("accountStatus").textContent="Google sign-in did not finish: "+authCallbackError+". The Google provider credentials need to be corrected.";
+   showFirstLaunch();
+   document.getElementById("firstLaunchStatus").textContent="Google sign-in did not finish: "+authCallbackError+". Please check the Google provider setup.";
    return;
  }
  if(hasSupabaseSession){queueNexoraCloudSync(true);return;}
  if(googleAuthPending){
-   openAccount();
-   document.getElementById("accountStatus").textContent="Google sign-in was not completed. Please try again after the Google provider setup is fixed.";
+   showFirstLaunch();
+   document.getElementById("firstLaunchStatus").textContent="Google sign-in was not completed. Please check the Google provider setup and try again.";
    return;
  }
  if(authToken){
