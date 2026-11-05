@@ -328,6 +328,7 @@ body:has(.image-mode-panel:not([hidden])) .footnote{display:none}
 .composer-menu-item{width:100%;display:flex;align-items:center;gap:13px;padding:12px 11px;border:0;border-radius:11px;background:transparent;color:#eee;text-align:left}
 .composer-menu-item:hover{background:#3a3a3a}
 .composer-menu-item>span:first-child{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:#414141;font-size:20px}
+.composer-menu-item>span:first-child svg{display:block;width:23px;height:23px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;opacity:1}
 .composer-menu-item strong,.composer-menu-item small{display:block}
 .composer-menu-item strong{font-size:13px;font-weight:600}
 .composer-menu-item small{margin-top:3px;color:#aaa;font-size:11px}
@@ -1041,9 +1042,9 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <input type="file" id="filesInput" accept=".pdf,.docx,.xlsx,.xls,.txt,.md,.csv,.json" multiple hidden>
       <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
       <div class="composer-menu" id="composerMenu" hidden>
-        <button class="composer-menu-item" type="button" id="attachBtn"><span>▧</span><span><strong>Photos and videos</strong><small>Choose photos or videos from your device</small></span></button>
-        <button class="composer-menu-item" type="button" id="filesBtn"><span>📄</span><span><strong>Files</strong><small>PDFs and documents</small></span></button>
-        <button class="composer-menu-item" type="button" id="generateImageBtn"><span>✧</span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
+        <button class="composer-menu-item" type="button" id="attachBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="17" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3.5 3.5 2.5-2.5L20 17"/><path d="M16.5 3.5v5l2-1.5 2 1.5v-5"/></svg></span><span><strong>Photos and videos</strong><small>Choose photos or videos from your device</small></span></button>
+        <button class="composer-menu-item" type="button" id="filesBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2.75h8l4 4V21H6a2 2 0 0 1-2-2V4.75a2 2 0 0 1 2-2Z"/><path d="M14 2.75v4h4M8 12h8M8 15.5h8M8 19h5"/></svg></span><span><strong>Files</strong><small>PDFs and documents</small></span></button>
+        <button class="composer-menu-item" type="button" id="generateImageBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.5 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-3L12 2.5Z"/><path d="m19 2 .8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2Z"/></svg></span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
       </div>
       <section class="image-mode-panel" id="imageModePanel" hidden aria-label="Image creation">
         <header class="images-page-header">
