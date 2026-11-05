@@ -1345,9 +1345,12 @@ document.getElementById("studioEditRun").addEventListener("click",async() => {
     if(!result.image) throw new Error(result.error || "The image editor returned no image.");
     const editedImage = result.image.startsWith("data:image/") ? result.image : "data:image/png;base64," + result.image;
     const imageId = await saveGeneratedImage(editedImage);
+    showImageStudioTab("edit");
     const resultPanel = document.getElementById("studioEditResult");
-    document.getElementById("studioEditResultImage").src = editedImage;
+    const resultImage = document.getElementById("studioEditResultImage");
+    resultImage.src = editedImage;
     resultPanel.hidden = false;
+    resultPanel.scrollIntoView({behavior:"smooth",block:"nearest"});
     const session = ensureSession("Image edit: " + prompt);
     const caption = "Your edited image is here.";
     session.messages.push({role:"user",text:"Edit image: " + prompt},{role:"bot",text:caption,imageId});
