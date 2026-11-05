@@ -3076,12 +3076,11 @@ clearChatsBtn?.addEventListener("click", () => {
   sessions = []; activeSessionId = null; saveSessions(); showWelcome(); renderHistory();
 });
 
-if (sessions.length) {
-  const mostRecent = sessions.slice().sort((a,b) => b.updatedAt - a.updatedAt)[0];
-  openSession(mostRecent.id);
-} else {
-  showWelcome();
-}
+// Always show the welcome screen on a fresh page load.
+ // Saved conversations remain in History and open only when the user selects one.
+activeSessionId = null;
+showWelcome();
+renderHistory();
 </script>
  
 
