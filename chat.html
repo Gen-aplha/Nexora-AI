@@ -385,7 +385,7 @@ body[data-theme="light"] #themeBtn{color:#555}
 .sidebar-backdrop{display:none;position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.38);touch-action:manipulation}
 @media(max-width:680px){
   .sidebar-backdrop{display:block;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility .22s ease}
-  body:has(.sidebar.open) .sidebar-backdrop{opacity:1;visibility:visible;pointer-events:auto}
+  .sidebar.open + .sidebar-backdrop{opacity:1;visibility:visible;pointer-events:auto}
 }
 /* Reliable mobile drawer: keep it above chat and reveal it on touch. */
 @media(max-width:680px){
@@ -2738,6 +2738,11 @@ document.querySelectorAll("[data-welcome-suggestion]").forEach(button => {
 });
 document.getElementById("newChat")?.addEventListener("click", startNewChat);
 const menuButton = document.getElementById("menuBtn");
+document.getElementById("sidebarBackdrop")?.addEventListener("click", () => {
+  sidebar.classList.remove("open");
+  menuButton.setAttribute("aria-expanded","false");
+  menuButton.setAttribute("aria-label","Open menu");
+});
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && sidebar.classList.contains("open")) {
     sidebar.classList.remove("open");
