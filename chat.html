@@ -118,6 +118,7 @@ textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;bord
 .attachment-note{max-width:930px;margin:0 auto 7px;color:var(--muted);font-size:10px;line-height:1.4}
 .generated-image{display:block;width:min(100%,520px);height:auto;border-radius:12px;margin-top:10px;border:1px solid var(--line)}
 .history-search{width:100%;margin:0 0 8px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-size:12px;outline:none}
+.history-management{display:flex;gap:6px;margin:0 0 7px}.history-management button{min-height:34px;padding:6px 9px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);color:var(--text);font-size:11px}.history-management button:disabled{opacity:.45}.history-select{width:17px;height:17px;flex:0 0 17px;accent-color:#7955e8}.history-pin{border:0;background:transparent;color:#999;padding:4px 5px;border-radius:6px;font-size:15px}.history-pin[aria-pressed="true"]{color:#e4a928}.history-pin:hover{background:rgba(125,95,220,.14)}
 .message-actions button{min-height:30px}
 .download-image{display:inline-flex;margin-top:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:8px;padding:7px 10px;font-size:12px;text-decoration:none}
 .voice-speaking{color:#8ee8c4!important;border-color:#00d49a!important}
@@ -942,6 +943,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
     <div class="side-divider"></div>
     <div class="history-heading">RECENT CHATS</div>
     <input id="historySearch" class="history-search" type="search" placeholder="Search chats..." aria-label="Search conversations">
+    <div class="history-management"><button type="button" id="selectChatsBtn" aria-pressed="false">Select</button><button type="button" id="deleteSelectedChatsBtn" hidden disabled>Delete selected (0)</button></div>
     <div id="historyList" class="history-list"></div>
     <button class="see-all-chats" id="seeAllChatsBtn">See all…</button>
     <div class="side-footer">
@@ -1179,6 +1181,10 @@ const STORAGE_KEY = "nexora_ai_chat_sessions_v1";
 let busy = false;
 let sessions = loadSessions();
 let activeSessionId = null;
+let historySelectionMode = false;
+const selectedHistoryIds = new Set();
+const selectChatsBtn = document.getElementById("selectChatsBtn");
+const deleteSelectedChatsBtn = document.getElementById("deleteSelectedChatsBtn");
 
 // Voice input uses the browser's Web Speech API when available.
 // Recognition is local to the browser interface; the recognized text is only sent
@@ -1611,26 +1617,62 @@ function ensureSession(firstMessage = "") {
 }
 function renderHistory() {
   historyList.innerHTML = "";
-  if (!sessions.length) {
-    const empty = document.createElement("div");
-    empty.style.cssText = "padding:5px 12px;color:#727ba8;font-size:12px";
-    empty.textContent = "Your chats will appear here";
-    historyList.appendChild(empty);
-    return;
-  }
-  sessions.slice().sort((a,b) => b.updatedAt - a.updatedAt)
+  const matchingSessions = sessions.slice().sort((a,b) => Number(!!b.pinned)-Number(!!a.pinned) || (Number(b.updatedAt)||0)-(Number(a.updatedAt)||0))
     .filter(session => {
       const q = (historySearch?.value || "").trim().toLowerCase();
       return !q || (session.title || "").toLowerCase().includes(q) ||
         session.messages.some(m => String(m.text || "").toLowerCase().includes(q));
-    }).forEach(session => {
+    });
+  if (selectChatsBtn) {
+    selectChatsBtn.textContent = historySelectionMode ? "Cancel selection" : "Select";
+    selectChatsBtn.setAttribute("aria-pressed",String(historySelectionMode));
+  }
+  if (deleteSelectedChatsBtn) {
+    deleteSelectedChatsBtn.hidden = !historySelectionMode;
+    deleteSelectedChatsBtn.disabled = selectedHistoryIds.size === 0;
+    deleteSelectedChatsBtn.textContent = "Delete selected (" + selectedHistoryIds.size + ")";
+  }
+  if (!matchingSessions.length) {
+    const empty = document.createElement("div");
+    empty.style.cssText = "padding:5px 12px;color:#727ba8;font-size:12px";
+    empty.textContent = sessions.length ? "No matching conversations" : "Your chats will appear here";
+    historyList.appendChild(empty);
+    return;
+  }
+  matchingSessions.forEach(session => {
     const row = document.createElement("div");
     row.style.cssText = "display:flex;align-items:center;gap:2px";
+    if (historySelectionMode) {
+      const select = document.createElement("input");
+      select.type = "checkbox";
+      select.className = "history-select";
+      select.checked = selectedHistoryIds.has(session.id);
+      select.setAttribute("aria-label","Select " + (session.title || "chat"));
+      select.addEventListener("change",() => {
+        if (select.checked) selectedHistoryIds.add(session.id);
+        else selectedHistoryIds.delete(session.id);
+        renderHistory();
+      });
+      row.appendChild(select);
+    }
     const open = document.createElement("button");
     open.className = "history-item" + (session.id === activeSessionId ? " active" : "");
     open.innerHTML = '<span class="history-symbol">◷</span><span></span>';
     open.querySelector("span:nth-child(2)").textContent = session.title || "New chat";
     open.addEventListener("click", () => openSession(session.id));
+    const pin = document.createElement("button");
+    pin.className = "history-pin";
+    pin.type = "button";
+    pin.title = session.pinned ? "Unpin this chat" : "Pin this chat";
+    pin.setAttribute("aria-label",pin.title);
+    pin.setAttribute("aria-pressed",String(!!session.pinned));
+    pin.textContent = session.pinned ? "★" : "☆";
+    pin.addEventListener("click",event => {
+      event.stopPropagation();
+      session.pinned = !session.pinned;
+      saveSessions();
+      renderHistory();
+    });
     const rename = document.createElement("button");
     rename.className = "history-delete";
     rename.type = "button";
@@ -1658,15 +1700,32 @@ function renderHistory() {
       event.stopPropagation();
       if (!confirm("Delete this conversation? This cannot be undone.")) return;
       sessions = sessions.filter(s => s.id !== session.id);
+      selectedHistoryIds.delete(session.id);
       if (activeSessionId === session.id) activeSessionId = null;
       saveSessions();
       if (!activeSessionId) showWelcome();
       renderHistory();
     });
-    row.append(open, rename, del);
+    row.append(open, pin, rename, del);
     historyList.appendChild(row);
   });
 }
+selectChatsBtn?.addEventListener("click",() => {
+  historySelectionMode = !historySelectionMode;
+  selectedHistoryIds.clear();
+  renderHistory();
+});
+deleteSelectedChatsBtn?.addEventListener("click",() => {
+  const ids = new Set(selectedHistoryIds);
+  if (!ids.size) return;
+  if (!confirm("Delete " + ids.size + " selected conversation" + (ids.size === 1 ? "" : "s") + "? This cannot be undone.")) return;
+  sessions = sessions.filter(session => !ids.has(session.id));
+  if (ids.has(activeSessionId)) { activeSessionId = null; showWelcome(); }
+  selectedHistoryIds.clear();
+  historySelectionMode = false;
+  saveSessions();
+  renderHistory();
+});
 historySearch?.addEventListener("input", renderHistory);
 function showWelcome() {
   chat.classList.remove("has-messages");
