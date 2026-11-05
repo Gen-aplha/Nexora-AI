@@ -1506,7 +1506,7 @@ function loadSessions() {
 function saveSessions() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-    if (!cloudSyncApplying) queueNexoraCloudSync();
+    queueNexoraCloudSync();
     return true;
   } catch (error) {
     alert("Chat history could not be saved by this preview. Try opening the HTML in a browser or Acode preview with storage enabled.");
@@ -1727,6 +1727,7 @@ function setLibraryStatus(message, isError = false) {
 }
 function queueNexoraCloudSync(immediate = false) {
   if (!supabaseSession?.user?.id || !supabaseClient) return;
+  if (cloudSyncRunning) { cloudSyncAgain = true; return; }
   clearTimeout(cloudSyncTimer);
   cloudSyncTimer = setTimeout(() => syncNexoraCloudData(), immediate ? 50 : 1800);
 }
@@ -1757,6 +1758,12 @@ async function syncNexoraCloudData() {
   cloudSyncApplying = true;
   const userId = supabaseSession.user.id;
   try {
+    const cloudOwnerKey = "nexora_cloud_owner_v1";
+    const previousOwner = localStorage.getItem(cloudOwnerKey);
+    if (previousOwner && previousOwner !== userId) {
+      setLibraryStatus("This device's saved chats are linked to another account. Sign back into that account to sync them. Nothing has been transferred or deleted.", true);
+      return;
+    }
     setLibraryStatus("Syncing your chats and saved images…");
     const {data: remoteRows, error: readError} = await supabaseClient
       .from(NEXORA_CLOUD_TABLE).select("session_id,session_data").eq("user_id", userId);
@@ -1769,7 +1776,15 @@ async function syncNexoraCloudData() {
     }
     for (const item of sessions) {
       const previous = merged.get(item.id);
-      if (!previous || (Number(item.updatedAt) || 0) >= (Number(previous.updatedAt) || 0)) merged.set(item.id, item);
+      if (!previous) { merged.set(item.id, item); continue; }
+      const messages = Array.isArray(previous.messages) ? previous.messages.slice() : [];
+      const signatures = new Set(messages.map(message => JSON.stringify([message.role,message.text,message.imageId || null])));
+      for (const message of (item.messages || [])) {
+        const signature = JSON.stringify([message.role,message.text,message.imageId || null]);
+        if (!signatures.has(signature)) { messages.push(message); signatures.add(signature); }
+      }
+      const newest = (Number(item.updatedAt)||0) >= (Number(previous.updatedAt)||0) ? item : previous;
+      merged.set(item.id, {...newest, messages, updatedAt:Math.max(Number(item.updatedAt)||0,Number(previous.updatedAt)||0)});
     }
     const combined = [...merged.values()].sort((a,b) => (Number(b.updatedAt)||0) - (Number(a.updatedAt)||0));
     const imageIds = imageIdsInSessions(combined);
@@ -1815,6 +1830,7 @@ async function syncNexoraCloudData() {
     sessions = combined;
     if (!sessions.some(item => item.id === activeSessionId)) activeSessionId = sessions[0]?.id || null;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    localStorage.setItem("nexora_cloud_owner_v1", userId);
     renderHistory();
     const totalImages = imageIds.length;
     setLibraryStatus("Synced " + sessions.length + " chats and " + totalImages + " image records. " +
