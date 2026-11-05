@@ -464,7 +464,11 @@ body[data-theme="dark"] .account-panel{background:#202124;color:#f1f1f1}body[dat
 .first-launch-logo{width:76px;height:76px;object-fit:contain;margin-bottom:10px}
 .first-launch-panel h2{font-size:25px;margin:4px 0 8px}.first-launch-panel p{color:#777987;line-height:1.55;margin:0 0 22px;font-size:14px}
 .first-launch-actions{display:grid;gap:11px}.first-launch-actions button{width:100%;padding:14px 16px;border-radius:13px;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
-.first-launch-account{border:0;color:white;background:linear-gradient(120deg,#603cff,#a23cff)}.first-launch-guest{border:1px solid #dedee8;color:#333;background:#f7f7fb}
+.first-launch-account{border:0;color:white;background:linear-gradient(120deg,#603cff,#a23cff)}
+.first-launch-existing,.first-launch-google{border:1px solid #dedee8;color:#333;background:#fff}
+.first-launch-google{border-color:#cfd2dc;background:#fff}
+.first-launch-guest{border:1px solid #dedee8;color:#333;background:#f7f7fb}
+body[data-theme="dark"] .first-launch-existing,body[data-theme="dark"] .first-launch-google{background:#252941;color:#eee;border-color:#454968}
 body[data-theme="dark"] .first-launch-panel{background:#171a30;color:#f5f6ff;border-color:rgba(139,111,255,.35)}body[data-theme="dark"] .first-launch-panel p{color:#a6aac4}body[data-theme="dark"] .first-launch-guest{background:#252941;color:#eee;border-color:#454968}
 
 /* NEXORA AI — professional chat polish (visual-only; existing app logic is unchanged) */
@@ -891,7 +895,12 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
     <img class="first-launch-logo" src="nexora-logo.svg" alt="NEXORA logo">
     <h2 id="firstLaunchTitle">Welcome to NEXORA AI</h2>
     <p>Choose how you'd like to get started.</p>
-    <div class="first-launch-actions"><button type="button" class="first-launch-account" id="firstLaunchAccount">Create account</button><button type="button" class="first-launch-guest" id="firstLaunchGuest">Continue as guest</button></div>
+    <div class="first-launch-actions">
+      <button type="button" class="first-launch-account" id="firstLaunchAccount">Create account</button>
+      <button type="button" class="first-launch-existing" id="firstLaunchSignIn">Already have an account</button>
+      <button type="button" class="first-launch-google" id="firstLaunchGoogle">Continue with Google</button>
+      <button type="button" class="first-launch-guest" id="firstLaunchGuest">Continue as guest</button>
+    </div>
   </section>
 </div>
 <div class="app">
@@ -2765,6 +2774,8 @@ const firstLaunchOverlay=document.getElementById("firstLaunchOverlay");
 function closeFirstLaunch(){firstLaunchOverlay.classList.remove("open");firstLaunchOverlay.setAttribute("aria-hidden","true");}
 function showFirstLaunch(){firstLaunchOverlay.classList.add("open");firstLaunchOverlay.setAttribute("aria-hidden","false");}
 document.getElementById("firstLaunchAccount").addEventListener("click",()=>{closeFirstLaunch();openAccount();});
+document.getElementById("firstLaunchSignIn").addEventListener("click",()=>{closeFirstLaunch();openAccount();accountMode="login";setAccountMode("login");document.getElementById("accountStatus").textContent="Sign in to your existing NEXORA account.";});
+document.getElementById("firstLaunchGoogle").addEventListener("click",()=>{closeFirstLaunch();openAccount();signInWithGoogle();});
 document.getElementById("firstLaunchGuest").addEventListener("click",()=>{localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");closeFirstLaunch();});
 
 let accountProfile=loadAccountProfile(),pendingAccountPicture="";
