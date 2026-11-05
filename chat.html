@@ -938,10 +938,8 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
   </div>
   <div class="library-overlay" id="libraryOverlay" aria-hidden="true">
     <section class="library-panel" role="dialog" aria-modal="true" aria-labelledby="libraryTitle">
-      <div class="library-head"><div><h2 id="libraryTitle">Library</h2><p>Saved memories and notes on this device</p></div><button id="closeLibraryBtn" class="library-close" aria-label="Close library">×</button></div>
-      <div class="library-actions"><button id="addMemoryBtn" class="add-memory-btn">＋ Save a memory</button></div>
-      <div id="memoryList" class="memory-list"></div>
-      <p class="library-note">Memories are stored in this browser on this device. They are included with your future text chats on this device only.</p>
+      <div class="library-head"><div><h2 id="libraryTitle">Library</h2><p>Your uploaded files and images</p></div><button id="closeLibraryBtn" class="library-close" aria-label="Close library">×</button></div>
+      <div class="memory-empty">Your personal file library is coming soon. Uploaded files and images will be collected here automatically once cloud storage is connected.</div>
     </section>
   </div>
 <div class="account-info-overlay" id="accountInfoOverlay" aria-hidden="true"><section class="account-info-panel" role="dialog" aria-modal="true" aria-labelledby="accountInfoTitle"><div class="account-head"><div><h2 id="accountInfoTitle">Settings</h2><p>NEXORA AI account centre</p></div><button type="button" id="closeAccountInfo" class="library-close" aria-label="Close">×</button></div><div id="accountInfoContent"></div></section></div>
@@ -1103,7 +1101,11 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <div class="voice-settings-actions"><button type="button" id="voicePreviewBtn">▶ Preview voice</button><button type="button" id="voiceResetBtn">Reset</button></div>
       <p class="voice-settings-note" id="voiceSettingsNote">Available voices depend on your Android device and browser.</p>
     </section>
-    <p class="personalization-hint">These preferences are saved only in this browser on this device.</p>
+    <div class="personalization-section-title">Saved memories</div>
+    <p class="personalization-hint">Add notes and preferences you want NEXORA AI to remember.</p>
+    <div class="library-actions"><button type="button" id="addMemoryBtn" class="add-memory-btn">＋ Save a memory</button></div>
+    <div id="memoryList" class="memory-list"></div>
+    <p class="personalization-hint">Saved memories are stored in this browser on this device.</p>
     <div class="personalization-actions"><button type="button" id="resetPersonalizationBtn">Reset</button><button type="button" id="savePersonalizationBtn">Save preferences</button></div>
   </section>
 </div>
@@ -2542,7 +2544,7 @@ const personalizationLanguage=document.getElementById("personalizationLanguage")
 const personalizationInstructions=document.getElementById("personalizationInstructions");
 function readPersonalization(){try{const value=JSON.parse(localStorage.getItem(PERSONALIZATION_KEY)||"{}");return value&&typeof value==="object"?value:{};}catch(_){return {};}}
 function loadPersonalizationForm(){const p=readPersonalization();personalizationTone.value=p.tone||"balanced";personalizationLanguage.value=p.language||"auto";personalizationInstructions.value=typeof p.instructions==="string"?p.instructions:"";}
-function openPersonalization(){loadPersonalizationForm();personalizationOverlay.classList.add("open");personalizationOverlay.setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
+function openPersonalization(){loadPersonalizationForm();renderMemories();personalizationOverlay.classList.add("open");personalizationOverlay.setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
 function closePersonalization(){personalizationOverlay.classList.remove("open");personalizationOverlay.setAttribute("aria-hidden","true");}
 document.getElementById("personalizationBtn").addEventListener("click",openPersonalization);
 document.getElementById("closePersonalizationBtn").addEventListener("click",closePersonalization);
@@ -2765,7 +2767,7 @@ function renderMemories(){
  if(!savedMemories.length){const empty=document.createElement("div");empty.className="memory-empty";empty.textContent="No saved memories yet. Save a preference or detail you want NEXORA to remember.";list.appendChild(empty);return;}
  savedMemories.forEach((item,index)=>{const card=document.createElement("article");card.className="memory-card";const title=document.createElement("strong");title.textContent=item.title||"Saved memory";const body=document.createElement("p");body.textContent=item.text;const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>{const next=prompt("Edit this memory",item.text);if(next&&next.trim()){item.text=next.trim();persistMemories();renderMemories();}};const remove=document.createElement("button");remove.textContent="Delete";remove.onclick=()=>{if(confirm("Delete this saved memory?")){savedMemories.splice(index,1);persistMemories();renderMemories();}};card.append(title,body,edit,remove);list.appendChild(card);});
 }
-function openLibrary(){renderMemories();document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
+function openLibrary(){document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
 function closeLibrary(){document.getElementById("libraryOverlay").classList.remove("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","true");}
 
 function setTheme(theme) {
