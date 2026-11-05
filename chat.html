@@ -951,7 +951,6 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <button class="side-link" id="sideImagesBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4.5 17 5-5 3.5 3 2.5-2 4 4"/></svg></span><span>Images</span></button>
       <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
       <button class="side-link" id="pluginsBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3"/><path d="M6 7h12v3a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6V7Z"/><path d="M12 16v2a4 4 0 0 1-4 4"/></svg></span><span>Plugins</span><span class="plugins-nav-count">7</span></button>
-      <button class="side-link" id="openPdfAssistantBtn" type="button"><span class="side-icon">▤</span><span>PDF Assistant</span></button>
       <button class="side-link" data-coming="Projects"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
       <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
       <button class="side-link" id="personalizationBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
@@ -1076,6 +1075,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <div class="composer-menu" id="composerMenu" hidden>
         <button class="composer-menu-item" type="button" id="attachBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="17" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3.5 3.5 2.5-2.5L20 17"/><path d="M16.5 3.5v5l2-1.5 2 1.5v-5"/></svg></span><span><strong>Photos and videos</strong><small>Choose photos or videos from your device</small></span></button>
         <button class="composer-menu-item" type="button" id="filesBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2.75h8l4 4V21H6a2 2 0 0 1-2-2V4.75a2 2 0 0 1 2-2Z"/><path d="M14 2.75v4h4M8 12h8M8 15.5h8M8 19h5"/></svg></span><span><strong>Files</strong><small>PDFs and documents</small></span></button>
+        <button class="composer-menu-item" type="button" id="pdfAssistantMenuBtn"><span aria-hidden="true">▤</span><span><strong>PDF Assistant</strong><small>Summarize and ask questions about PDFs</small></span></button>
         <button class="composer-menu-item" type="button" id="generateImageBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.5 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-3L12 2.5Z"/><path d="m19 2 .8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2Z"/></svg></span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
       </div>
       <section class="image-mode-panel" id="imageModePanel" hidden aria-label="Image creation">
@@ -2503,8 +2503,8 @@ function closePdfAssistant() {
   pdfAssistantResult.innerHTML = "";
   pdfAssistantStatus.textContent = "Your PDF is processed in this browser and is not saved to your NEXORA chat history.";
 }
-document.getElementById("openPdfAssistantBtn").addEventListener("click",openPdfAssistant);
 document.getElementById("pdfPluginLaunchBtn").addEventListener("click",()=>{closePlugins();openPdfAssistant();});
+document.getElementById("pdfAssistantMenuBtn").addEventListener("click",()=>{composerMenu.hidden=true;composerPlus.setAttribute("aria-expanded","false");openPdfAssistant();});
 document.getElementById("closePdfAssistantBtn").addEventListener("click",closePdfAssistant);
 pdfAssistantOverlay.addEventListener("click",event=>{if(event.target===pdfAssistantOverlay)closePdfAssistant();});
 document.getElementById("pdfAssistantChooseBtn").addEventListener("click",()=>pdfAssistantFileInput.click());
