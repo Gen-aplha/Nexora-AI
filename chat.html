@@ -2701,7 +2701,11 @@ input.addEventListener("keydown", event => {
   }
 });
 document.querySelectorAll(".suggestion").forEach(button => {
-  button.addEventListener("click", () => sendMessage(button.textContent));
+  button.addEventListener("click", () => {
+    input.value = button.textContent.trim();
+    input.focus();
+    input.dispatchEvent(new Event("input", {bubbles:true}));
+  });
 });
 document.getElementById("newChat")?.addEventListener("click", startNewChat);
 const menuButton = document.getElementById("menuBtn");
