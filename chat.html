@@ -902,6 +902,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
 .topbar,.voice-mode-bar,.composer-wrap{flex:0 0 auto}
 .chat{flex:1 1 0;min-height:0;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body data-theme="light">
 <div class="first-launch-overlay" id="firstLaunchOverlay" aria-hidden="true">
@@ -958,6 +959,24 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
         <article class="plugin-card" data-category="Learning" data-search="translator translate language hindi marathi"><div class="plugin-card-top"><span class="plugin-card-icon translate">文</span><span class="plugin-status">Planned</span></div><h3>Translator</h3><p>Translate text and understand phrases in other languages.</p><small>LEARNING</small><button type="button" disabled>Coming soon</button></article>
         <article class="plugin-card" data-category="Creative" data-search="coding programming developer code helper"><div class="plugin-card-top"><span class="plugin-card-icon code">&lt;/&gt;</span><span class="plugin-status">Planned</span></div><h3>Coding Helper</h3><p>Explain code, find bugs and help build projects.</p><small>CREATIVE</small><button type="button" disabled>Coming soon</button></article>
         <article class="plugin-card" data-category="Creative" data-search="voice speech talk audio assistant"><div class="plugin-card-top"><span class="plugin-card-icon voice">♫</span><span class="plugin-status">Planned</span></div><h3>Voice Assistant</h3><p>Have natural hands-free conversations with NEXORA AI.</p><small>CREATIVE</small><button type="button" disabled>Coming soon</button></article>
+      </div>
+        <article class="plugin-card" data-category="Productivity" data-search="gmail google email inbox read search summarize reply send"><div class="plugin-card-top"><span class="plugin-card-icon" style="background:#fff0ec;color:#c74634">✉</span><span class="plugin-status">Setup required</span></div><h3>Gmail</h3><p>Connect your Gmail to search, read, summarize and prepare email replies.</p><small>PRODUCTIVITY · GOOGLE</small><button type="button" id="openGmailPluginBtn">Set up Gmail</button></article>
+      <section id="nexora-gmail-plugin-v1" hidden style="margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--panel)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div><strong style="font-size:16px">Gmail workspace</strong><p style="margin:4px 0;color:var(--muted);font-size:12px">Your mailbox stays under your Google account permissions.</p></div><button type="button" id="gmailBackBtn" class="library-close" aria-label="Back to plugins">×</button></div>
+        <p id="gmailPluginStatus" role="status" aria-live="polite" style="font-size:12px;color:var(--muted);line-height:1.5">Connect Gmail to begin. NEXORA will only request the email permissions shown by Google.</p>
+        <button type="button" id="gmailConnectBtn" class="studio-primary-btn" style="margin-top:4px">Connect Gmail with Google</button>
+        <div id="gmailTools" hidden style="margin-top:14px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="gmailSearchInput" type="search" placeholder="Search your emails (e.g. from:someone)" style="flex:1;min-width:150px;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)"><button type="button" id="gmailSearchBtn" class="studio-primary-btn" style="width:auto;margin:0;padding:0 16px">Search</button></div>
+          <div id="gmailResults" style="margin-top:12px;display:grid;gap:8px"></div>
+          <div id="gmailMessageView" hidden style="margin-top:14px;padding:13px;border:1px solid var(--line);border-radius:12px">
+            <strong id="gmailMessageSubject"></strong><p id="gmailMessageFrom" style="font-size:11px;color:var(--muted)"></p><div id="gmailMessageBody" style="font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto"></div>
+            <label for="gmailReplyText" style="display:block;margin-top:14px;font-size:12px;font-weight:700">Reply draft</label><textarea id="gmailReplyText" rows="4" style="display:block;width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)"></textarea>
+            <button type="button" id="gmailSendReplyBtn" class="studio-primary-btn">Review and send reply</button>
+          </div>
+          <button type="button" id="gmailDisconnectBtn" style="margin-top:12px;border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:var(--panel2);color:var(--text)">Disconnect Gmail</button>
+        </div>
+        <p style="margin:12px 0 0;font-size:10px;color:var(--muted);line-height:1.5">Privacy: Gmail access token is kept in memory for this page only. NEXORA does not save your Google password. Sending always requires your confirmation. Disconnect or close the page to clear the token.</p>
+      </section>
       </div>
       <p class="plugins-footnote">This is a preview of planned integrations. Plugins are not active yet; each one will be enabled only after its service and privacy controls are ready.</p>
     </section>
@@ -2751,6 +2770,33 @@ document.addEventListener("keydown", event => {
   }
 });
 
+
+
+/* NEXORA Gmail plugin v1: Google Identity Services, read/search and confirmed replies. */
+const GMAIL_OAUTH_CLIENT_ID = "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com";
+let nexoraGmailAccessToken = "";
+let nexoraGmailTokenClient = null;
+let nexoraGmailSelectedMessage = null;
+const gmailPanel = document.getElementById("nexora-gmail-plugin-v1");
+const gmailStatus = document.getElementById("gmailPluginStatus");
+function gmailSetStatus(message,isError=false){gmailStatus.textContent=message;gmailStatus.style.color=isError?"#c43d52":"var(--muted)";}
+function gmailB64Decode(value){const normalized=(value||"").replace(/-/g,"+").replace(/_/g,"/");const binary=atob(normalized);const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));return new TextDecoder().decode(bytes);}
+function gmailFindBody(payload){if(!payload)return "";if(payload.body?.data)return gmailB64Decode(payload.body.data);for(const part of (payload.parts||[])){const found=gmailFindBody(part);if(found)return found;}return "";}
+function gmailHeader(message,name){return (message.payload?.headers||[]).find(h=>h.name?.toLowerCase()===name.toLowerCase())?.value||"";}
+function gmailApi(path,options={}){return fetch("https://gmail.googleapis.com/gmail/v1/users/me/"+path,{...options,headers:{Authorization:"Bearer "+nexoraGmailAccessToken,...(options.headers||{})}}).then(async response=>{const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error?.message||"Gmail request failed ("+response.status+")");return data;});}
+function gmailShowConnected(){document.getElementById("gmailConnectBtn").hidden=true;document.getElementById("gmailTools").hidden=false;gmailSetStatus("Gmail is connected for this page. Search or select a message to read it.");}
+function gmailConnect(){if(GMAIL_OAUTH_CLIENT_ID.startsWith("YOUR_")){gmailSetStatus("Google OAuth setup is still required. Add the Gmail OAuth Client ID after the Google Cloud app is configured.",true);return;}if(!window.google?.accounts?.oauth2){gmailSetStatus("Google sign-in library is loading. Wait a moment and try again.",true);return;}nexoraGmailTokenClient=google.accounts.oauth2.initTokenClient({client_id:GMAIL_OAUTH_CLIENT_ID,scope:"https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send",include_granted_scopes:true,callback:response=>{if(response.error){gmailSetStatus("Google authorization failed: "+response.error,true);return;}nexoraGmailAccessToken=response.access_token||"";if(nexoraGmailAccessToken)gmailShowConnected();else gmailSetStatus("Google did not return an access token.",true);}});nexoraGmailTokenClient.requestAccessToken({prompt:"consent"});}
+async function gmailSearch(){const query=document.getElementById("gmailSearchInput").value.trim()||"newer_than:30d";const results=document.getElementById("gmailResults");results.replaceChildren();gmailSetStatus("Searching Gmail…");try{const data=await gmailApi("messages?maxResults=15&q="+encodeURIComponent(query));if(!data.messages?.length){gmailSetStatus("No matching emails found.");return;}for(const item of data.messages){const msg=await gmailApi("messages/"+encodeURIComponent(item.id)+"?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date");const btn=document.createElement("button");btn.type="button";btn.style.cssText="text-align:left;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)";const subject=gmailHeader(msg,"Subject")||"(No subject)";const from=gmailHeader(msg,"From")||"Unknown sender";const snippet=msg.snippet||"";const strong=document.createElement("strong");strong.textContent=subject;const small=document.createElement("small");small.style.cssText="display:block;color:var(--muted);margin-top:4px";small.textContent=from+" · "+snippet;btn.append(strong,small);btn.addEventListener("click",()=>gmailReadMessage(item.id));results.append(btn);}gmailSetStatus("Found "+data.messages.length+" email(s). Select one to read or reply.");}catch(error){gmailSetStatus(error.message,true);}}
+async function gmailReadMessage(id){gmailSetStatus("Opening email…");try{const msg=await gmailApi("messages/"+encodeURIComponent(id)+"?format=full");const subject=gmailHeader(msg,"Subject")||"(No subject)";const from=gmailHeader(msg,"From");const to=gmailHeader(msg,"To");const body=gmailFindBody(msg.payload)||msg.snippet||"(No readable message text.)";nexoraGmailSelectedMessage={id,subject,from,to,threadId:msg.threadId};document.getElementById("gmailMessageSubject").textContent=subject;document.getElementById("gmailMessageFrom").textContent="From: "+from;document.getElementById("gmailMessageBody").textContent=body.slice(0,12000);document.getElementById("gmailReplyText").value="";document.getElementById("gmailMessageView").hidden=false;gmailSetStatus("Email opened. Review its contents before replying.");}catch(error){gmailSetStatus(error.message,true);}}
+function gmailBase64Url(text){const bytes=new TextEncoder().encode(text);let binary="";bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary).replace(/\\+/g,"-").replace(/\\//g,"_").replace(/=+$/,"");}
+async function gmailSendReply(){if(!nexoraGmailSelectedMessage)return;const body=document.getElementById("gmailReplyText").value.trim();if(!body){gmailSetStatus("Write a reply first.",true);return;}const recipient=(nexoraGmailSelectedMessage.from.match(/<([^>]+)>/)||[])[1]||nexoraGmailSelectedMessage.from;if(!recipient||!recipient.includes("@")){gmailSetStatus("Could not identify the sender's email address.",true);return;}if(!confirm("Send this reply to "+recipient+"?"))return;const subject=nexoraGmailSelectedMessage.subject.toLowerCase().startsWith("re:")?nexoraGmailSelectedMessage.subject:"Re: "+nexoraGmailSelectedMessage.subject;const raw=["To: "+recipient,"Subject: "+subject,"Content-Type: text/plain; charset=UTF-8","MIME-Version: 1.0","","",body].join("\r\n");try{await gmailApi("messages/send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({raw:gmailBase64Url(raw),threadId:nexoraGmailSelectedMessage.threadId})});gmailSetStatus("Reply sent successfully.");document.getElementById("gmailReplyText").value="";}catch(error){gmailSetStatus(error.message,true);}}
+document.getElementById("openGmailPluginBtn").addEventListener("click",()=>{gmailPanel.hidden=false;document.getElementById("openGmailPluginBtn").scrollIntoView({block:"nearest"});});
+document.getElementById("gmailBackBtn").addEventListener("click",()=>{gmailPanel.hidden=true;});
+document.getElementById("gmailConnectBtn").addEventListener("click",gmailConnect);
+document.getElementById("gmailSearchBtn").addEventListener("click",gmailSearch);
+document.getElementById("gmailSearchInput").addEventListener("keydown",e=>{if(e.key==="Enter")gmailSearch();});
+document.getElementById("gmailSendReplyBtn").addEventListener("click",gmailSendReply);
+document.getElementById("gmailDisconnectBtn").addEventListener("click",()=>{nexoraGmailAccessToken="";nexoraGmailTokenClient=null;nexoraGmailSelectedMessage=null;document.getElementById("gmailTools").hidden=true;document.getElementById("gmailConnectBtn").hidden=false;document.getElementById("gmailResults").replaceChildren();document.getElementById("gmailMessageView").hidden=true;gmailSetStatus("Gmail disconnected. Its access token was cleared from this page.");});
 
 const pluginsOverlay=document.getElementById("pluginsOverlay");
 function openPlugins(){pluginsOverlay.classList.add("open");pluginsOverlay.setAttribute("aria-hidden","false");sidebar.classList.remove("open");document.getElementById("pluginsSearch").focus();}
