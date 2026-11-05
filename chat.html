@@ -1858,6 +1858,12 @@ async function renderLibraryContents() {
     imageList.textContent = "";
     return;
   }
+  const linkedOwner = localStorage.getItem("nexora_cloud_owner_v1");
+  if (linkedOwner && linkedOwner !== supabaseSession.user.id) {
+    chatList.textContent = "This device's saved library belongs to a different NEXORA account. Sign back into that account to view and sync it.";
+    imageList.textContent = "";
+    return;
+  }
   const sorted = sessions.slice().sort((a,b) => (Number(b.updatedAt)||0) - (Number(a.updatedAt)||0));
   if (!sorted.length) chatList.textContent = "No saved conversations yet.";
   for (const session of sorted) {
