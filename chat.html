@@ -436,6 +436,21 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
 .plugins-nav-count{margin-left:auto;padding:2px 7px;border-radius:20px;background:#eeeafc;color:#6546c8;font:600 10px Arial,sans-serif}
 .plugins-overlay{display:none;position:fixed;z-index:2500;inset:0;background:rgba(7,6,15,.68);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:14px}.plugins-overlay.open{display:flex}
 .plugins-panel{width:min(100%,820px);max-height:91dvh;overflow:auto;border:1px solid #ded8f2;border-radius:22px;padding:22px;background:#fbfaff;color:#242232;box-shadow:0 24px 90px #0006}
+.pdf-assistant-panel{width:min(100%,720px)}
+.pdf-assistant-upload{display:grid;justify-items:center;gap:9px;margin:20px 0;padding:24px 14px;border:1px dashed #b9a8e8;border-radius:16px;background:#f5f1ff;text-align:center}
+.pdf-assistant-upload strong{font-size:15px;overflow-wrap:anywhere}.pdf-assistant-upload p{margin:0;color:#716b82;font-size:12px}
+.pdf-assistant-upload button,.pdf-assistant-ask{min-height:44px;padding:10px 17px;border:0;border-radius:11px;background:#7048d8;color:white;font-weight:650}
+.pdf-assistant-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.pdf-assistant-actions button{min-height:40px;padding:8px 12px;border:1px solid #ded6ef;border-radius:10px;background:#fff;color:#51436e;font-size:12px}
+.pdf-assistant-actions button:disabled,.pdf-assistant-ask:disabled{opacity:.5}
+.pdf-assistant-label{display:block;margin:16px 0 7px;font-size:13px;font-weight:650}
+#pdfAssistantQuestion{width:100%;min-height:82px;padding:12px;border:1px solid #ded8ed;border-radius:12px;background:#fff;color:#252235;font:inherit;resize:vertical}
+.pdf-assistant-ask{width:100%;margin-top:9px}
+.pdf-assistant-status{margin-top:12px;color:#777187;font-size:12px;line-height:1.5}
+.pdf-assistant-result{margin-top:16px;padding:15px;border:1px solid #e4deef;border-radius:14px;background:#fff;color:#292638;line-height:1.6;overflow-wrap:anywhere}
+.pdf-assistant-result[hidden],.pdf-assistant-actions[hidden]{display:none}
+@media(max-width:520px){.pdf-assistant-panel{padding:17px}.pdf-assistant-actions button{flex:1 1 42%}}
+
 .plugins-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.plugins-eyebrow{margin:0 0 6px;color:#7955d6;font-size:10px;font-weight:800;letter-spacing:1.5px}.plugins-header h2{margin:0;font-size:25px}.plugins-header p:last-child{margin:7px 0 0;color:#777487;font-size:13px}
 .plugins-search-wrap{display:flex;align-items:center;gap:10px;margin:18px 0 12px;padding:0 13px;min-height:44px;border:1px solid #e2deed;border-radius:12px;background:#fff;color:#766b93}.plugins-search-wrap input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#292638;font:inherit}
 .plugins-categories{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}.plugins-filter{border:1px solid #e3dfed;border-radius:30px;padding:7px 13px;background:#fff;color:#625d70;font-size:12px}.plugins-filter.active{background:#251b43;border-color:#251b43;color:white}
@@ -936,6 +951,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <button class="side-link" id="sideImagesBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4.5 17 5-5 3.5 3 2.5-2 4 4"/></svg></span><span>Images</span></button>
       <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
       <button class="side-link" id="pluginsBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3"/><path d="M6 7h12v3a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6V7Z"/><path d="M12 16v2a4 4 0 0 1-4 4"/></svg></span><span>Plugins</span><span class="plugins-nav-count">7</span></button>
+      <button class="side-link" id="openPdfAssistantBtn" type="button"><span class="side-icon">▤</span><span>PDF Assistant</span></button>
       <button class="side-link" data-coming="Projects"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
       <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
       <button class="side-link" id="personalizationBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
@@ -961,7 +977,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <div class="plugins-featured"><div class="plugins-featured-art">✦</div><div><span>COMING TO NEXORA</span><strong>Your AI, with more superpowers.</strong><p>Connect useful tools directly to your conversations.</p></div></div>
       <div class="plugins-grid" id="pluginsGrid">
         <article class="plugin-card" data-category="Productivity" data-search="web search internet news websites"><div class="plugin-card-top"><span class="plugin-card-icon web">⌕</span><span class="plugin-status">Planned</span></div><h3>Web Search</h3><p>Find current information and useful websites from across the internet.</p><small>PRODUCTIVITY</small><button type="button" disabled>Coming soon</button></article>
-        <article class="plugin-card" data-category="Productivity" data-search="pdf documents files summarize reader"><div class="plugin-card-top"><span class="plugin-card-icon docs">▤</span><span class="plugin-status">Planned</span></div><h3>PDF Assistant</h3><p>Read documents, explain sections and create quick summaries.</p><small>PRODUCTIVITY</small><button type="button" disabled>Coming soon</button></article>
+        <article class="plugin-card" data-category="Productivity" data-search="pdf documents files summarize reader"><div class="plugin-card-top"><span class="plugin-card-icon docs">▤</span><span class="plugin-status">Available</span></div><h3>PDF Assistant</h3><p>Read documents, explain sections and create quick summaries.</p><small>PRODUCTIVITY</small><button type="button" id="pdfPluginLaunchBtn">Open assistant</button></article>
         <article class="plugin-card" data-category="Learning" data-search="calculator maths math equations"><div class="plugin-card-top"><span class="plugin-card-icon calc">＋</span><span class="plugin-status">Planned</span></div><h3>Smart Calculator</h3><p>Work through calculations and understand each step.</p><small>LEARNING</small><button type="button" disabled>Coming soon</button></article>
         <article class="plugin-card" data-category="Productivity" data-search="weather forecast temperature rain"><div class="plugin-card-top"><span class="plugin-card-icon weather">☼</span><span class="plugin-status">Planned</span></div><h3>Weather</h3><p>Check local conditions and upcoming forecasts.</p><small>PRODUCTIVITY</small><button type="button" disabled>Coming soon</button></article>
         <article class="plugin-card" data-category="Learning" data-search="translator translate language hindi marathi"><div class="plugin-card-top"><span class="plugin-card-icon translate">文</span><span class="plugin-status">Planned</span></div><h3>Translator</h3><p>Translate text and understand phrases in other languages.</p><small>LEARNING</small><button type="button" disabled>Coming soon</button></article>
@@ -1130,6 +1146,29 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<div class="plugins-overlay" id="pdfAssistantOverlay" aria-hidden="true">
+  <section class="plugins-panel pdf-assistant-panel" role="dialog" aria-modal="true" aria-labelledby="pdfAssistantTitle">
+    <header class="plugins-header"><div><p class="plugins-eyebrow">NEXORA AI DOCUMENT TOOLS</p><h2 id="pdfAssistantTitle">PDF Assistant</h2><p>Upload a document, then ask questions or generate a summary.</p></div><button type="button" class="library-close" id="closePdfAssistantBtn" aria-label="Close PDF Assistant">×</button></header>
+    <div class="pdf-assistant-upload" id="pdfAssistantUploadArea">
+      <div class="plugin-card-icon docs">▤</div>
+      <strong id="pdfAssistantFileName">Choose a PDF document</strong>
+      <p id="pdfAssistantFileInfo">PDF files up to 12 MB. Text-based PDFs, up to 40 pages.</p>
+      <input type="file" id="pdfAssistantFileInput" accept="application/pdf,.pdf" hidden>
+      <button type="button" id="pdfAssistantChooseBtn">Choose PDF</button>
+    </div>
+    <div class="pdf-assistant-actions" id="pdfAssistantActions" hidden>
+      <button type="button" data-pdf-task="summary">Summarize PDF</button>
+      <button type="button" data-pdf-task="keypoints">Key points</button>
+      <button type="button" data-pdf-task="explain">Explain simply</button>
+      <button type="button" id="pdfAssistantRemoveBtn">Remove PDF</button>
+    </div>
+    <label class="pdf-assistant-label" for="pdfAssistantQuestion">Ask a question about your PDF</label>
+    <textarea id="pdfAssistantQuestion" rows="3" placeholder="Example: Explain the main topic in chapter 2…" disabled></textarea>
+    <button type="button" class="pdf-assistant-ask" id="pdfAssistantAskBtn" disabled>Ask NEXORA AI</button>
+    <div class="pdf-assistant-status" id="pdfAssistantStatus" role="status" aria-live="polite">Your PDF is processed in this browser and is not saved to your NEXORA chat history.</div>
+    <section class="pdf-assistant-result" id="pdfAssistantResult" hidden aria-live="polite"></section>
+  </section>
+</div>
 <div class="personalization-overlay" id="personalizationOverlay" aria-hidden="true">
   <section class="personalization-panel" role="dialog" aria-modal="true" aria-labelledby="personalizationTitle">
     <div class="personalization-head"><div><h2 id="personalizationTitle">Personalization</h2><p>Make NEXORA AI respond the way you prefer.</p></div><button type="button" id="closePersonalizationBtn" class="personalization-close" aria-label="Close personalization">×</button></div>
@@ -2405,7 +2444,115 @@ async function extractPdfText(file) {
   }
   if (pdf.numPages > pagesToRead) result += "\n[Only the first 40 pages were read.]";
   return result.slice(0, MAX_TEXT_CHARS);
+} 
+// PDF Assistant keeps extracted text in memory only; it is cleared when the panel closes or the PDF is removed.
+let pdfAssistantText = "";
+let pdfAssistantName = "";
+let pdfAssistantBusy = false;
+const pdfAssistantOverlay = document.getElementById("pdfAssistantOverlay");
+const pdfAssistantFileInput = document.getElementById("pdfAssistantFileInput");
+const pdfAssistantStatus = document.getElementById("pdfAssistantStatus");
+const pdfAssistantResult = document.getElementById("pdfAssistantResult");
+const pdfAssistantQuestion = document.getElementById("pdfAssistantQuestion");
+const pdfAssistantAskBtn = document.getElementById("pdfAssistantAskBtn");
+function openPdfAssistant() {
+  pdfAssistantOverlay.classList.add("open");
+  pdfAssistantOverlay.setAttribute("aria-hidden","false");
+  sidebar.classList.remove("open");
 }
+function closePdfAssistant() {
+  pdfAssistantOverlay.classList.remove("open");
+  pdfAssistantOverlay.setAttribute("aria-hidden","true");
+  pdfAssistantText = "";
+  pdfAssistantName = "";
+  pdfAssistantFileInput.value = "";
+  document.getElementById("pdfAssistantFileName").textContent = "Choose a PDF document";
+  document.getElementById("pdfAssistantFileInfo").textContent = "PDF files up to 12 MB. Text-based PDFs, up to 40 pages.";
+  document.getElementById("pdfAssistantActions").hidden = true;
+  pdfAssistantQuestion.value = "";
+  pdfAssistantQuestion.disabled = true;
+  pdfAssistantAskBtn.disabled = true;
+  pdfAssistantResult.hidden = true;
+  pdfAssistantResult.innerHTML = "";
+  pdfAssistantStatus.textContent = "Your PDF is processed in this browser and is not saved to your NEXORA chat history.";
+}
+document.getElementById("openPdfAssistantBtn").addEventListener("click",openPdfAssistant);
+document.getElementById("pdfPluginLaunchBtn").addEventListener("click",()=>{closePlugins();openPdfAssistant();});
+document.getElementById("closePdfAssistantBtn").addEventListener("click",closePdfAssistant);
+pdfAssistantOverlay.addEventListener("click",event=>{if(event.target===pdfAssistantOverlay)closePdfAssistant();});
+document.getElementById("pdfAssistantChooseBtn").addEventListener("click",()=>pdfAssistantFileInput.click());
+pdfAssistantFileInput.addEventListener("change",async()=>{
+  const file=pdfAssistantFileInput.files?.[0];
+  if(!file)return;
+  pdfAssistantStatus.textContent="Reading your PDF on this device…";
+  document.getElementById("pdfAssistantChooseBtn").disabled=true;
+  try{
+    if(file.size>12*1024*1024)throw new Error("This PDF is too large. Choose a file under 12 MB.");
+    if(file.type!=="application/pdf"&&!file.name.toLowerCase().endsWith(".pdf"))throw new Error("Please choose a PDF file.");
+    const text=await extractPdfText(file);
+    if(!text.trim())throw new Error("No selectable text was found. Scanned PDFs are not supported yet.");
+    pdfAssistantText=text;
+    pdfAssistantName=file.name;
+    document.getElementById("pdfAssistantFileName").textContent=file.name;
+    document.getElementById("pdfAssistantFileInfo").textContent="Text extracted successfully · "+Math.min(40, (text.match(/\[Page /g)||[]).length)+" pages read";
+    document.getElementById("pdfAssistantActions").hidden=false;
+    pdfAssistantQuestion.disabled=false;
+    pdfAssistantAskBtn.disabled=false;
+    pdfAssistantStatus.textContent="Ready. Ask about the document or choose a quick action. Extracted text stays in this page's memory.";
+    pdfAssistantResult.hidden=true;
+  }catch(error){
+    pdfAssistantText="";
+    pdfAssistantStatus.textContent=error.message||"Could not read this PDF.";
+    document.getElementById("pdfAssistantActions").hidden=true;
+    pdfAssistantQuestion.disabled=true;
+    pdfAssistantAskBtn.disabled=true;
+  }finally{
+    document.getElementById("pdfAssistantChooseBtn").disabled=false;
+    pdfAssistantFileInput.value="";
+  }
+});
+document.getElementById("pdfAssistantRemoveBtn").addEventListener("click",()=>{
+  pdfAssistantText="";pdfAssistantName="";
+  document.getElementById("pdfAssistantFileName").textContent="Choose a PDF document";
+  document.getElementById("pdfAssistantFileInfo").textContent="PDF files up to 12 MB. Text-based PDFs, up to 40 pages.";
+  document.getElementById("pdfAssistantActions").hidden=true;
+  pdfAssistantQuestion.value="";pdfAssistantQuestion.disabled=true;pdfAssistantAskBtn.disabled=true;
+  pdfAssistantResult.hidden=true;pdfAssistantResult.innerHTML="";
+  pdfAssistantStatus.textContent="PDF removed from this session.";
+});
+async function runPdfAssistant(task){
+  if(!pdfAssistantText||pdfAssistantBusy)return;
+  const prompts={
+    summary:"Summarize this PDF clearly. Include its main purpose, important sections, key findings and conclusion. Do not invent details.",
+    keypoints:"Extract the most important key points from this PDF as an organized list. Include page references where possible.",
+    explain:"Explain the main ideas in this PDF in simple, beginner-friendly language. Define difficult terms and use examples grounded in the document."
+  };
+  const question=task==="question"?pdfAssistantQuestion.value.trim():prompts[task];
+  if(!question){pdfAssistantQuestion.focus();return;}
+  pdfAssistantBusy=true;pdfAssistantAskBtn.disabled=true;
+  document.querySelectorAll("[data-pdf-task]").forEach(button=>button.disabled=true);
+  pdfAssistantResult.hidden=false;
+  pdfAssistantResult.textContent="NEXORA AI is reading the document and preparing an answer…";
+  pdfAssistantStatus.textContent="Working…";
+  try{
+    const answer=await streamBackend({
+      action:"attachment",
+      message:"You are NEXORA AI's PDF Assistant. Answer using only the supplied PDF text. Be accurate, clear and helpful. Cite page labels such as [Page 3] when available. If the answer is not in the supplied text, say that it is not stated. The extracted text may be truncated after 60,000 characters.\n\nDOCUMENT: "+pdfAssistantName+"\n\nTASK: "+question,
+      fileText:pdfAssistantText.slice(0,MAX_TEXT_CHARS)
+    },partial=>{pdfAssistantResult.textContent=partial;});
+    pdfAssistantResult.innerHTML=renderMarkdown(answer);
+    pdfAssistantStatus.textContent="Answer ready.";
+  }catch(error){
+    pdfAssistantResult.textContent=error.message||"Could not get an answer. Please try again.";
+    pdfAssistantStatus.textContent="Something went wrong.";
+  }finally{
+    pdfAssistantBusy=false;pdfAssistantAskBtn.disabled=!pdfAssistantText;
+    document.querySelectorAll("[data-pdf-task]").forEach(button=>button.disabled=false);
+  }
+}
+document.querySelectorAll("[data-pdf-task]").forEach(button=>button.addEventListener("click",()=>runPdfAssistant(button.dataset.pdfTask)));
+pdfAssistantAskBtn.addEventListener("click",()=>runPdfAssistant("question"));
+
 const filesInput = document.getElementById("filesInput");
 attachBtn.addEventListener("click", () => {
   composerMenu.hidden = true;
