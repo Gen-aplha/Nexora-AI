@@ -410,7 +410,7 @@ body[data-theme="light"] .history-item{font-size:14px!important;padding:8px 2px!
 
 /* Local account profile */
 .account-overlay{display:none;position:fixed;z-index:30;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}.account-overlay.open{display:flex}.account-panel{width:min(100%,480px);max-height:90dvh;overflow:auto;background:#fff;color:#202124;border-radius:20px;padding:20px;box-shadow:0 20px 70px #0004}.account-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}.account-head h2{margin:0;font-size:23px}.account-head p{margin:5px 0 0;color:#777;font-size:13px}.account-form{display:flex;flex-direction:column;gap:8px}.account-form label{font-size:13px;font-weight:650;color:#333;margin-top:5px}.account-form label span{font-weight:400;color:#777}.account-form input:not([type=file]){width:100%;min-height:43px;border:1px solid #ddd;border-radius:10px;padding:10px 12px;background:#fff;color:#222;font:inherit}.account-form input[type=file]{width:100%;font-size:13px;color:#444}.account-preview-wrap{min-height:76px;display:flex;align-items:center;gap:12px;color:#888;font-size:12px}#accountPreview{width:68px;height:68px;border-radius:50%;object-fit:cover;border:1px solid #ddd}.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.account-save,.account-secondary,.account-delete{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-size:13px;cursor:pointer}.account-save{background:#25252d;color:#fff}.account-secondary{background:#eee;color:#333}.account-social-actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px}.account-social-actions button{width:100%;min-height:42px;font-weight:600}.account-delete{background:transparent;color:#b42336;text-align:left;padding-left:0;margin-top:3px}.account-note{font-size:11px;line-height:1.5;color:#777;margin:8px 0 0}.account-status{font-size:12px;color:#28764d;min-height:16px;margin:0}
-.account-overlay{align-items:flex-end;justify-content:flex-start;padding:16px 16px 82px}
+\n.account-overlay.auth-only{align-items:center;justify-content:center;padding:18px}\n.account-overlay.auth-only .account-panel{width:min(100%,420px);max-height:88dvh}\n.account-overlay.auth-only #accountCentreMenu,.account-overlay.auth-only #accountSignedSummary,.account-overlay.auth-only #accountSocialActions,.account-overlay.auth-only #accountModeToggle,.account-overlay.auth-only #deleteAccountProfile{display:none!important}\n#accountSocialActions[hidden]{display:none!important}\n.account-overlay{align-items:flex-end;justify-content:flex-start;padding:16px 16px 82px}
 .account-panel{width:min(100%,360px);border:1px solid #e5e5e9;border-radius:18px;padding:18px}
 .account-avatar-edit-wrap{position:relative;flex:0 0 44px;width:44px;height:44px}.account-avatar-edit{position:absolute;right:-3px;bottom:-3px;width:22px;height:22px;display:grid;place-items:center;border:2px solid #fff;border-radius:50%;background:#f1ebff;color:#6741bd;font-size:12px;line-height:1;box-shadow:0 2px 8px #0003;cursor:pointer;padding:0}.account-avatar-edit:active{transform:scale(.94)}body[data-theme="dark"] .account-avatar-edit{background:#33264f;color:#e5d8ff;border-color:#242329}
 .account-signed-summary{display:flex;align-items:center;gap:12px;padding:8px 2px 17px;margin-bottom:12px;border-bottom:1px solid #e8e8ec}
@@ -902,6 +902,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <button type="button" class="first-launch-existing" id="firstLaunchSignIn">Already have an account</button>
       <button type="button" class="first-launch-google" id="firstLaunchGoogle"><svg class="google-g-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.8 6.1-15Z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4.1 2-6.9 2-5.3 0-9.8-3.6-11.4-8.4H5.8v5.3A20 20 0 0 0 24 44Z"/><path fill="#FBBC05" d="M12.6 27.6a12 12 0 0 1 0-7.2v-5.3H5.8a20 20 0 0 0 0 17.8l6.8-5.3Z"/><path fill="#EA4335" d="M24 12.0c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6 29.5 4 24 4A20 20 0 0 0 5.8 15.1l6.8 5.3C14.2 15.6 18.7 12 24 12Z"/></svg><span>Continue with Google</span></button>
       <button type="button" class="first-launch-guest" id="firstLaunchGuest">Continue as guest</button>
+    <p id="firstLaunchStatus" role="status" aria-live="polite" style="min-height:16px;margin:8px 0 0;color:#b42336;font-size:12px"></p>
     </div>
   </section>
 </div>
@@ -988,7 +989,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
         <label id="accountPictureLabel" for="accountPicture">Profile picture <span>(optional)</span></label><input id="accountPicture" type="file" accept="image/*">
         <div class="account-preview-wrap" id="accountPicturePreviewWrap"><img id="accountPreview" alt="Profile picture preview" hidden><span id="accountNoPicture">No picture selected</span></div>
         <div class="account-actions"><button type="submit" class="account-save" id="accountSubmitBtn">Create account</button><button type="button" id="removeAccountPicture" class="account-secondary">Remove picture</button></div>
-        <div class="account-social-actions"><button type="button" id="googleSignInBtn" class="account-secondary">Continue with Google</button></div>
+        <div class="account-social-actions" id="accountSocialActions"><button type="button" id="googleSignInBtn" class="account-secondary">Continue with Google</button></div>
         <button type="button" id="accountModeToggle" class="account-secondary">Already have an account? Sign in</button>
         <button type="button" id="accountSignOut" class="account-secondary" hidden>Sign out</button>
         <button type="button" id="deleteAccountProfile" class="account-delete">Delete saved profile</button>
@@ -2863,6 +2864,7 @@ document.getElementById("accountForm").addEventListener("submit",async e=>{
    if(!error&&data.user){
      supabaseSession=data.session;
      accountProfile={name:data.user.user_metadata?.name||email.split("@")[0],email};
+     if(pendingAccountPicture){accountProfile.picture=pendingAccountPicture;localStorage.setItem(PROFILE_PICTURE_KEY,pendingAccountPicture);}
      localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
      localStorage.removeItem(ACCOUNT_STORAGE_KEY);
      renderAccountButton();
@@ -2876,6 +2878,7 @@ document.getElementById("accountForm").addEventListener("submit",async e=>{
    authToken=legacy.token;
    localStorage.setItem(AUTH_TOKEN_KEY,authToken);
    accountProfile=legacy.user;
+   if(pendingAccountPicture){accountProfile.picture=pendingAccountPicture;localStorage.setItem(PROFILE_PICTURE_KEY,pendingAccountPicture);}
    localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
    localStorage.removeItem(ACCOUNT_STORAGE_KEY);
    renderAccountButton();
@@ -2918,6 +2921,7 @@ if(supabaseClient){
    supabaseSession=session;
    if(session?.user){
      accountProfile={name:session.user.user_metadata?.name||session.user.email?.split("@")[0]||"NEXORA user",email:session.user.email};
+     closeFirstLaunch();closeAccount();
      localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
      localStorage.removeItem("nexora_google_auth_pending");
      renderAccountButton();
@@ -2935,6 +2939,7 @@ async function initializeNexoraAuth(){
      if(supabaseSession?.user){
        hasSupabaseSession=true;
        accountProfile={name:supabaseSession.user.user_metadata?.name||supabaseSession.user.email?.split("@")[0]||"NEXORA user",email:supabaseSession.user.email};
+       closeFirstLaunch();closeAccount();
        localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
        localStorage.removeItem("nexora_google_auth_pending");
        renderAccountButton();
