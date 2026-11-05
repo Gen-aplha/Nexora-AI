@@ -1670,6 +1670,7 @@ function renderHistory() {
     pin.addEventListener("click",event => {
       event.stopPropagation();
       session.pinned = !session.pinned;
+      session.updatedAt = Date.now();
       saveSessions();
       renderHistory();
     });
