@@ -981,6 +981,36 @@ body[data-theme="light"] .history-entry .history-item{font-family:Georgia,serif;
 body[data-theme="light"] .history-actions button{color:#777}
 body[data-theme="dark"] .history-search{border-color:#37364a;background:#1a1a2b;color:#eee}
 @media(max-width:680px){.chat-history-panel{min-height:120px}.history-list{max-height:34vh}.chat-sync-status{font-size:10px}}
+
+/* NEXORA AI all-in-one workspace upgrade */
+.nexora-upgrade-bar{max-width:790px;margin:0 auto 8px;display:flex;gap:7px;overflow-x:auto;padding:2px 1px 7px;scrollbar-width:thin}
+.nexora-upgrade-bar button,.nexora-upgrade-bar select{flex:0 0 auto;min-height:36px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);padding:7px 10px;font-size:11px}
+.nexora-upgrade-bar button:active{transform:scale(.98)}
+.nexora-upgrade-bar .nexora-search-launch{background:#292044;border-color:#7656bf;color:#fff}
+.nexora-panel-overlay{position:fixed;inset:0;z-index:10020;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;padding:14px}
+.nexora-panel-overlay.open{display:flex}
+.nexora-panel{width:min(620px,100%);max-height:min(82dvh,760px);overflow:auto;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 20px 70px #0008}
+.nexora-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.nexora-panel-head h2{font-size:19px;margin:0}.nexora-panel-head p{font-size:12px;color:var(--muted);margin:5px 0 0}
+.nexora-panel-close{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-size:22px}
+.nexora-panel-body{display:grid;gap:12px}
+.nexora-panel-body input,.nexora-panel-body textarea,.nexora-panel-body select{width:100%;min-height:42px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:10px;font:inherit}
+.nexora-panel-body textarea{min-height:100px;resize:vertical}
+.nexora-panel-body button,.nexora-panel-action{min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:9px 12px;font-size:12px}
+.nexora-panel-body button.primary{background:linear-gradient(120deg,#633cff,#9c46df);color:#fff;border:0}
+.nexora-panel-note{font-size:11px;color:var(--muted);line-height:1.5;margin:0}
+.nexora-panel-list{display:grid;gap:7px}
+.nexora-panel-row{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:11px;padding:9px 10px;background:var(--panel2)}
+.nexora-panel-row strong{font-size:12px}.nexora-panel-row small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.nexora-panel-row button{min-height:32px;padding:6px 9px}
+.nexora-stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.nexora-stat{border:1px solid var(--line);border-radius:13px;padding:13px;background:var(--panel2)}
+.nexora-stat strong{display:block;font-size:23px}.nexora-stat span{font-size:11px;color:var(--muted)}
+.nexora-inline-actions{display:flex;gap:8px;flex-wrap:wrap}
+.nexora-panel-body .nexora-empty{color:var(--muted);font-size:12px;padding:12px;border:1px dashed var(--line);border-radius:10px}
+@media(max-width:680px){.nexora-upgrade-bar{margin-left:2px;margin-right:2px}.nexora-panel{padding:14px;border-radius:16px}.nexora-panel-overlay{padding:8px}.nexora-stat-grid{grid-template-columns:1fr 1fr}}
+body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35245b}
+
 </style>
 </head>
 <body data-theme="light">
@@ -1008,7 +1038,7 @@ body[data-theme="dark"] .history-search{border-color:#37364a;background:#1a1a2b;
       <button class="side-link" id="sideImagesBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4.5 17 5-5 3.5 3 2.5-2 4 4"/></svg></span><span>Images</span></button>
       <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
       <button class="side-link" id="pluginsBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3"/><path d="M6 7h12v3a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6V7Z"/><path d="M12 16v2a4 4 0 0 1-4 4"/></svg></span><span>Plugins</span><span class="plugins-nav-count">7</span></button>
-      <button class="side-link" data-coming="Projects"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
+      <button class="side-link" id="projectsBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
       <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
       <button class="side-link" id="personalizationBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
     </div>
@@ -1219,6 +1249,29 @@ body[data-theme="dark"] .history-search{border-color:#37364a;background:#1a1a2b;
         <button type="button" class="image-viewer-close" id="imageViewerClose" aria-label="Close image preview">×</button>
         <img id="imageViewerImage" alt="Full-size saved image">
       </div>
+      
+<div class="nexora-upgrade-bar" aria-label="NEXORA AI tools">
+  <button type="button" class="nexora-search-launch" id="nexoraWebSearchBtn">🌐 Web search</button>
+  <select id="nexoraPersonality" aria-label="AI personality">
+    <option value="default">Personality: Default</option><option value="teacher">Teacher</option><option value="programmer">Programmer</option><option value="researcher">Researcher</option><option value="writer">Writer</option><option value="creative">Creative assistant</option>
+  </select>
+  <select id="nexoraModel" aria-label="AI model selector" title="Only the currently connected model is available">
+    <option value="default">Model: NEXORA default</option>
+  </select>
+  <button type="button" id="nexoraProjectsBtn">📁 Projects</button>
+  <button type="button" id="nexoraPromptsBtn">✧ Prompts</button>
+  <button type="button" id="nexoraStudyBtn">🎓 Study mode</button>
+  <button type="button" id="nexoraPresentationBtn">▤ Presentations</button>
+  <button type="button" id="nexoraExportBtn">↓ Export</button>
+  <button type="button" id="nexoraDashboardBtn">▦ Dashboard</button>
+</div>
+<div class="nexora-panel-overlay" id="nexoraPanelOverlay" aria-hidden="true">
+  <section class="nexora-panel" role="dialog" aria-modal="true" aria-labelledby="nexoraPanelTitle">
+    <header class="nexora-panel-head"><div><h2 id="nexoraPanelTitle">NEXORA AI</h2><p id="nexoraPanelSubtitle">Workspace tools</p></div><button type="button" class="nexora-panel-close" id="nexoraPanelClose" aria-label="Close panel">×</button></header>
+    <div class="nexora-panel-body" id="nexoraPanelBody"></div>
+  </section>
+</div>
+
       <form class="composer" id="chatForm">
         <button class="plus-btn" id="composerPlus" type="button" aria-label="Add photos, files or create an image" aria-expanded="false">＋</button>
         <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI" aria-label="Your message"></textarea>
@@ -3434,6 +3487,172 @@ document.body.dataset.theme = "light";
 
 // Always show the welcome screen on a fresh page load.
  activeSessionId=null; sessions=[]; showWelcome();
+
+/* NEXORA AI workspace upgrade: web search, projects, personalities, prompts,
+   message sharing, exports, study tools, slide-deck export and dashboard. */
+(function initNexoraWorkspaceUpgrade(){
+ const panel=document.getElementById("nexoraPanelOverlay");
+ const panelTitle=document.getElementById("nexoraPanelTitle");
+ const panelSubtitle=document.getElementById("nexoraPanelSubtitle");
+ const panelBody=document.getElementById("nexoraPanelBody");
+ const personality=document.getElementById("nexoraPersonality");
+ const modelSelect=document.getElementById("nexoraModel");
+ const PROJECTS_KEY="nexora_projects_v1";
+ const PROMPTS_KEY="nexora_prompt_library_v1";
+ const PERSONALITY_KEY="nexora_personality_v1";
+ let projects=readList(PROJECTS_KEY),prompts=readList(PROMPTS_KEY);
+ const personalities={
+  default:"Respond naturally and clearly.",
+  teacher:"Act as a patient, encouraging teacher. Explain concepts step by step, use simple examples, and check understanding.",
+  programmer:"Act as a careful senior programming mentor. Explain code clearly, point out assumptions, and provide maintainable solutions.",
+  researcher:"Act as a careful research assistant. Separate verified facts from uncertainty and cite sources when available.",
+  writer:"Act as a skilled writing assistant. Improve clarity, structure, grammar, and tone while preserving the user's meaning.",
+  creative:"Act as a creative collaborator. Offer original, practical ideas and vivid but clear explanations."
+ };
+ function readList(key){try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[];}catch(e){return [];}}
+ function storeList(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch(e){console.warn("NEXORA local storage is full:",e);}}
+ function esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+ function openPanel(title,subtitle,content){panelTitle.textContent=title;panelSubtitle.textContent=subtitle||"";panelBody.replaceChildren();if(typeof content==="string")panelBody.innerHTML=content;else if(content)panelBody.appendChild(content);panel.classList.add("open");panel.setAttribute("aria-hidden","false");}
+ function closePanel(){panel.classList.remove("open");panel.setAttribute("aria-hidden","true");}
+ document.getElementById("nexoraPanelClose").addEventListener("click",closePanel);
+ panel.addEventListener("click",e=>{if(e.target===panel)closePanel();});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("open"))closePanel();});
+ personality.value=localStorage.getItem(PERSONALITY_KEY)||"default";
+ personality.addEventListener("change",()=>{localStorage.setItem(PERSONALITY_KEY,personality.value);if(typeof showToast==="function")showToast("AI personality saved on this device.");});
+ modelSelect.addEventListener("change",()=>{modelSelect.value="default";if(typeof showToast==="function")showToast("Only the connected NEXORA default model is currently configured.");});
+ // Wrap the existing send function so all assistant personalities work without changing the backend contract.
+ const originalSendMessage=sendMessage;
+ sendMessage=function(text,options={}){
+   const preset=personalities[personality.value]||personalities.default;
+   if(!options.webSearch&&personality.value!=="default"){
+     const visible=options.displayText||text;
+     return originalSendMessage("ASSISTANT STYLE INSTRUCTIONS: "+preset+"\n\nUSER REQUEST:\n"+text,{...options,displayText:visible});
+   }
+   return originalSendMessage(text,options);
+ };
+ // Live search uses the existing Cloudflare web_search / web_summarize backend actions.
+ document.getElementById("nexoraWebSearchBtn").addEventListener("click",()=>{
+   openPanel("Live web search","Search current web information through the connected NEXORA backend.",
+    '<label for="nexoraSearchQuery">What should NEXORA search for?</label><input id="nexoraSearchQuery" type="search" placeholder="Search the latest information..."><p class="nexora-panel-note">Search results depend on the web-search service configured in your NEXORA backend.</p><button class="primary" id="nexoraRunSearch">Search the web</button>');
+   const field=document.getElementById("nexoraSearchQuery");field.focus();
+   const run=()=>{const q=field.value.trim();if(!q)return;closePanel();sendMessage(q,{webSearch:true,displayText:"🌐 Search the web: "+q});};
+   document.getElementById("nexoraRunSearch").addEventListener("click",run);
+   field.addEventListener("keydown",e=>{if(e.key==="Enter")run();});
+ });
+ // Project folders are attached to chat-session records, so their labels travel with cloud-synced chats.
+ function openProjects(){
+   const current=currentSession();
+   const wrap=document.createElement("div");
+   const intro=document.createElement("p");intro.className="nexora-panel-note";intro.textContent="Create folders and assign the open conversation. Folder names are stored with each conversation.";wrap.appendChild(intro);
+   const createRow=document.createElement("div");createRow.className="nexora-inline-actions";
+   const name=document.createElement("input");name.id="nexoraProjectName";name.placeholder="New project name";name.setAttribute("aria-label","New project name");
+   const create=document.createElement("button");create.className="primary";create.textContent="＋ Create project";createRow.append(name,create);wrap.appendChild(createRow);
+   const assign=document.createElement("select");assign.id="nexoraProjectAssign";assign.setAttribute("aria-label","Assign current chat to project");
+   assign.innerHTML='<option value="">No project</option>'+projects.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join("");
+   if(current?.projectName)assign.value=current.projectName;
+   const assignLabel=document.createElement("label");assignLabel.textContent="Current conversation folder";assignLabel.appendChild(assign);wrap.appendChild(assignLabel);
+   const assignBtn=document.createElement("button");assignBtn.textContent="Save folder assignment";wrap.appendChild(assignBtn);
+   const list=document.createElement("div");list.className="nexora-panel-list";wrap.appendChild(list);
+   function renderProjectList(){
+     list.replaceChildren();
+     const names=[...new Set([...projects,...sessions.map(s=>s.projectName).filter(Boolean)])];
+     if(!names.length){const empty=document.createElement("p");empty.className="nexora-empty";empty.textContent="No projects yet. Create one above.";list.appendChild(empty);return;}
+     names.forEach(projectName=>{
+       const count=sessions.filter(s=>s.projectName===projectName).length;
+       const row=document.createElement("div");row.className="nexora-panel-row";
+       const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=projectName;const small=document.createElement("small");small.textContent=count+" conversation"+(count===1?"":"s");info.append(strong,small);
+       const open=document.createElement("button");open.textContent="Open";open.addEventListener("click",()=>{const match=[...sessions].filter(s=>s.projectName===projectName).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0))[0];if(!match){if(typeof showToast==="function")showToast("Assign a chat to this project first.");return;}activeSessionId=match.id;renderSession(match);renderHistory();closePanel();});
+       row.append(info,open);list.appendChild(row);
+     });
+   }
+   create.addEventListener("click",()=>{const value=name.value.trim().slice(0,48);if(!value)return;if(!projects.includes(value))projects.push(value);storeList(PROJECTS_KEY,projects);name.value="";assign.innerHTML='<option value="">No project</option>'+projects.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join("");renderProjectList();});
+   assignBtn.addEventListener("click",()=>{let session=currentSession();if(!session)session=ensureSession("Project conversation");session.projectName=assign.value||"";session.updatedAt=Date.now();saveSessions();renderProjectList();if(typeof showToast==="function")showToast(session.projectName?"Conversation added to "+session.projectName:"Project folder removed.");});
+   renderProjectList();openPanel("Projects & folders","Keep related chats organized.",wrap);
+ }
+ document.getElementById("nexoraProjectsBtn").addEventListener("click",openProjects);
+ document.getElementById("projectsBtn")?.addEventListener("click",openProjects);
+ // Prompt library: save, insert, and run reusable prompts.
+ function openPrompts(){
+   const wrap=document.createElement("div");
+   const field=document.createElement("textarea");field.placeholder="Write a prompt to save...";field.setAttribute("aria-label","Prompt text");
+   const save=document.createElement("button");save.className="primary";save.textContent="Save prompt";
+   const list=document.createElement("div");list.className="nexora-panel-list";
+   function render(){
+     list.replaceChildren();
+     if(!prompts.length){const empty=document.createElement("p");empty.className="nexora-empty";empty.textContent="Your saved prompts will appear here.";list.appendChild(empty);return;}
+     prompts.forEach((item,index)=>{const row=document.createElement("div");row.className="nexora-panel-row";const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=item.title||"Saved prompt";const small=document.createElement("small");small.textContent=item.text.slice(0,100);info.append(strong,small);const actions=document.createElement("div");actions.className="nexora-inline-actions";const use=document.createElement("button");use.textContent="Use";use.addEventListener("click",()=>{input.value=item.text;input.dispatchEvent(new Event("input"));closePanel();input.focus();});const run=document.createElement("button");run.textContent="Send";run.addEventListener("click",()=>{closePanel();sendMessage(item.text);});const del=document.createElement("button");del.textContent="Delete";del.addEventListener("click",()=>{prompts.splice(index,1);storeList(PROMPTS_KEY,prompts);render();});actions.append(use,run,del);row.append(info,actions);list.appendChild(row);});
+   }
+   save.addEventListener("click",()=>{const value=field.value.trim();if(!value)return;prompts.unshift({title:value.split(/\s+/).slice(0,5).join(" ").slice(0,48),text:value});prompts=prompts.slice(0,100);storeList(PROMPTS_KEY,prompts);field.value="";render();});
+   wrap.append(field,save,list);render();openPanel("Prompt library","Save and reuse your best prompts.",wrap);
+ }
+ document.getElementById("nexoraPromptsBtn").addEventListener("click",openPrompts);
+ // Study mode uses the same connected AI, with a clear tutoring instruction.
+ document.getElementById("nexoraStudyBtn").addEventListener("click",()=>{
+   openPanel("Study mode","Turn a topic or homework question into a guided learning session.",
+    '<label for="nexoraStudyInput">What are you studying?</label><textarea id="nexoraStudyInput" placeholder="Enter a topic, question or exercise..."></textarea><div class="nexora-inline-actions"><button class="primary" id="nexoraStudyExplain">Explain it</button><button id="nexoraStudyQuiz">Make a practice quiz</button><button id="nexoraStudyCards">Create flashcards</button></div>');
+   const field=document.getElementById("nexoraStudyInput");
+   function launch(kind){const q=field.value.trim();if(!q)return;closePanel();const instruction=kind==="quiz"?"Create a practice quiz with answers and brief explanations at the end.":kind==="cards"?"Create concise flashcards with a question on the front and answer on the back.":"Teach this patiently in clear steps, explain key terms, and include a simple example.";sendMessage(instruction+"\n\nStudy topic or question:\n"+q,{displayText:"🎓 Study mode: "+q});}
+   document.getElementById("nexoraStudyExplain").addEventListener("click",()=>launch("explain"));
+   document.getElementById("nexoraStudyQuiz").addEventListener("click",()=>launch("quiz"));
+   document.getElementById("nexoraStudyCards").addEventListener("click",()=>launch("cards"));
+ });
+ // Export current chat in portable formats.
+ function getCurrentMarkdown(){const session=currentSession();if(!session)return "";return "# "+(session.title||"NEXORA AI conversation")+"\n\n"+(session.messages||[]).map(m=>(m.role==="user"?"## You":"## NEXORA AI")+"\n\n"+String(m.text||"")).join("\n\n---\n\n");}
+ function downloadText(content,filename,type){const blob=new Blob([content],{type:type||"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+ document.getElementById("nexoraExportBtn").addEventListener("click",()=>{
+   openPanel("Export center","Download the currently open conversation.",
+    '<p class="nexora-panel-note">Choose a format. PDF export opens the browser print dialog, where you can choose Save as PDF.</p><div class="nexora-inline-actions"><button class="primary" id="nexoraExportMd">Download Markdown</button><button id="nexoraExportTxt">Download TXT</button><button id="nexoraExportHtml">Download HTML</button><button id="nexoraExportPdf">Print / Save PDF</button></div>');
+   const md=getCurrentMarkdown();
+   document.getElementById("nexoraExportMd").addEventListener("click",()=>downloadText(md,"nexora-conversation.md","text/markdown;charset=utf-8"));
+   document.getElementById("nexoraExportTxt").addEventListener("click",()=>downloadText(md.replace(/^#+ /gm,""),"nexora-conversation.txt"));
+   document.getElementById("nexoraExportHtml").addEventListener("click",()=>downloadText("<!doctype html><meta charset=utf-8><title>NEXORA conversation</title><pre style='white-space:pre-wrap;font:16px system-ui;line-height:1.6'>"+esc(md)+"</pre>","nexora-conversation.html","text/html;charset=utf-8"));
+   document.getElementById("nexoraExportPdf").addEventListener("click",()=>{const w=window.open("","_blank");if(!w){if(typeof showToast==="function")showToast("Allow pop-ups to print this conversation.");return;}w.document.write("<!doctype html><meta charset=utf-8><title>NEXORA conversation</title><style>body{font:14px system-ui;max-width:850px;margin:40px auto;line-height:1.6;white-space:pre-wrap}</style>"+esc(md));w.document.close();w.focus();w.print();});
+ });
+ // Presentation maker: generate slide content with AI, then export it as a self-contained HTML slide deck.
+ document.getElementById("nexoraPresentationBtn").addEventListener("click",()=>{
+   openPanel("AI presentation maker","Generate a slide-by-slide outline, then export it as a browser-based presentation.",
+    '<label for="nexoraPresentationTopic">Presentation topic</label><input id="nexoraPresentationTopic" placeholder="e.g. Renewable energy"><label for="nexoraPresentationCount">Number of slides</label><select id="nexoraPresentationCount"><option>5</option><option selected>8</option><option>10</option><option>12</option></select><button class="primary" id="nexoraCreatePresentation">Generate presentation content</button><button id="nexoraDownloadPresentation">Download slides from latest AI answer</button><p class="nexora-panel-note">The download is a standalone HTML slideshow, not a PowerPoint file.</p>');
+   document.getElementById("nexoraCreatePresentation").addEventListener("click",()=>{const topic=document.getElementById("nexoraPresentationTopic").value.trim();const count=document.getElementById("nexoraPresentationCount").value;if(!topic)return;closePanel();sendMessage("Create a polished "+count+"-slide presentation about "+topic+". Use a title slide, concise slide headings, 3–5 clear bullet points per slide, useful examples, and a final summary slide. Separate each slide with a heading like '## Slide 1: Title'. Avoid inventing statistics or sources.",{displayText:"▤ Create a "+count+"-slide presentation: "+topic});});
+   document.getElementById("nexoraDownloadPresentation").addEventListener("click",()=>{
+     const session=currentSession();const latest=[...(session?.messages||[])].reverse().find(m=>m.role==="bot");if(!latest){if(typeof showToast==="function")showToast("Generate presentation content first.");return;}
+     const parts=String(latest.text||"").split(/(?=^#{1,3}\s*(?:Slide\s*)?\d+\s*[:.-])/gmi).filter(x=>x.trim());
+     const slides=(parts.length?parts:[latest.text]).map((part,i)=>{const lines=part.trim().split(/\r?\n/);const title=(lines.shift()||("Slide "+(i+1))).replace(/^#+\s*/,"");return {title,body:lines.join("\n").trim()};});
+     const body=slides.map((slide,i)=>"<section class='slide'><small>NEXORA AI · "+(i+1)+" / "+slides.length+"</small><h1>"+esc(slide.title)+"</h1><div>"+esc(slide.body).replace(/\n/g,"<br>")+"</div></section>").join("");
+     const deck="<!doctype html><html><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>NEXORA AI Presentation</title><style>*{box-sizing:border-box}body{margin:0;background:#090914;color:#f7f4ff;font:20px/1.6 system-ui}.slide{min-height:100vh;padding:10vh 10vw;display:flex;flex-direction:column;justify-content:center;page-break-after:always;background:radial-gradient(circle at 85% 10%,#38206b,transparent 40%),#101020}.slide h1{font-size:clamp(34px,6vw,64px);line-height:1.1;color:#d9c7ff}.slide small{color:#b49aff;letter-spacing:2px}.slide div{max-width:900px;white-space:normal} @media print{.slide{min-height:100vh;break-after:page}}</style></head><body>"+body+"</body></html>";
+     downloadText(deck,"nexora-presentation.html","text/html;charset=utf-8");closePanel();
+   });
+ });
+ // Dashboard uses the user's own local chat data; it does not transmit analytics.
+ document.getElementById("nexoraDashboardBtn").addEventListener("click",()=>{
+   const messageCount=sessions.reduce((sum,s)=>sum+(s.messages||[]).length,0);
+   const userCount=sessions.reduce((sum,s)=>sum+(s.messages||[]).filter(m=>m.role==="user").length,0);
+   const botCount=sessions.reduce((sum,s)=>sum+(s.messages||[]).filter(m=>m.role==="bot").length,0);
+   const imageCount=sessions.reduce((sum,s)=>sum+(s.messages||[]).filter(m=>m.imageId).length,0);
+   openPanel("Your NEXORA dashboard","A private overview calculated from chats currently loaded in this browser.",
+    '<div class="nexora-stat-grid"><div class="nexora-stat"><strong>'+sessions.length+'</strong><span>Conversations</span></div><div class="nexora-stat"><strong>'+messageCount+'</strong><span>Total messages</span></div><div class="nexora-stat"><strong>'+userCount+'</strong><span>Your messages</span></div><div class="nexora-stat"><strong>'+botCount+'</strong><span>AI replies</span></div><div class="nexora-stat"><strong>'+imageCount+'</strong><span>Saved image messages</span></div><div class="nexora-stat"><strong>'+projects.length+'</strong><span>Project names on this device</span></div></div><p class="nexora-panel-note">Counts reflect conversations loaded in this session. No analytics are sent to a third party.</p>');
+ });
+ // Add Share to the existing message actions, retaining copy, read aloud, regenerate and edit.
+ const originalAddMessage=addMessage;
+ addMessage=function(role,text,options={}){
+   const result=originalAddMessage(role,text,options);
+   if(role==="bot"&&!options.typing){
+     const actions=result.row.querySelector(".message-actions");
+     if(actions&&!actions.querySelector(".nexora-share-reply")){
+       const share=document.createElement("button");share.type="button";share.className="nexora-share-reply";share.textContent="↗ Share";
+       share.addEventListener("click",async()=>{
+         const shareData={title:"NEXORA AI response",text:String(text)};
+         try{if(navigator.share)await navigator.share(shareData);else{await navigator.clipboard.writeText(String(text));share.textContent="Copied to share";setTimeout(()=>share.textContent="↗ Share",1500);}}
+         catch(error){if(error?.name!=="AbortError"&&typeof showToast==="function")showToast("Could not share this response.");}
+       });
+       actions.appendChild(share);
+     }
+   }
+   return result;
+ };
+ // Model selector is intentionally honest: current Worker exposes its configured default model only.
+ modelSelect.title="The current Cloudflare Worker exposes one configured model. Add model routing to the Worker before enabling more choices.";
+})();
+
 </script>
  
 
