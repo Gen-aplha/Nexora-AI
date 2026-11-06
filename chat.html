@@ -967,16 +967,10 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <button class="side-link" id="personalizationBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
     </div>
     <div class="side-divider"></div>
-    <div class="history-heading">RECENT CHATS</div>
-    <input id="historySearch" class="history-search" type="search" placeholder="Search chats..." aria-label="Search conversations">
-    <div class="history-management"><button type="button" id="cancelHistorySelectionBtn" hidden>Cancel</button><button type="button" id="deleteSelectedChatsBtn" hidden disabled>Delete selected (0)</button></div>
-    <div id="historyList" class="history-list"></div>
-    <button class="see-all-chats" id="seeAllChatsBtn">See all…</button>
     <div class="side-footer">
       <button class="side-chat-btn" id="sideNewChatBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>New chat</span></button>
       <button class="side-profile" id="sideProfileBtn" aria-label="NEXORA profile" title="NEXORA AI">N</button>
     </div>
-    <input type="file" id="importChatsFile" accept="application/json,.json" hidden>
     <button class="nav-btn" id="themeBtn"><span class="nav-icon">☾</span> Toggle theme</button>
   </aside>  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
   <div class="plugins-overlay" id="pluginsOverlay" aria-hidden="true">
@@ -1002,12 +996,8 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <div class="library-head"><div><h2 id="libraryTitle">Library</h2><p>Your uploaded files and images</p></div><button id="closeLibraryBtn" class="library-close" aria-label="Close library">×</button></div>
       <div id="libraryGuestView" class="library-guest-view" hidden><p>Sign in to see your data</p><button type="button" id="librarySignInBtn" class="add-memory-btn">Sign in</button></div>
       <div id="librarySignedView" class="library-signed-view" hidden>
-        <p>Your NEXORA chats and generated images sync to your account and can be restored on another device.</p>
-        <p id="librarySyncStatus" role="status" aria-live="polite">Checking your cloud library…</p>
-        <button type="button" id="librarySyncNowBtn" class="add-memory-btn">Sync now</button>
-        <h3 style="margin:18px 0 8px">Saved chats</h3><div id="libraryChatList"></div>
+        <p>Your generated images are available in your NEXORA gallery on this device.</p>
         <h3 style="margin:18px 0 8px">Generated images</h3><div id="libraryImageList" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-        <p style="font-size:12px;opacity:.75;margin-top:14px">Older uploaded attachments were not saved in previous chat records, so only chats and generated images that still exist on this device can be transferred.</p>
       </div>
     </section>
   </div>
@@ -1254,19 +1244,18 @@ webSearchPluginLaunchBtn?.addEventListener("click", () => {
 });
 const sendBtn = document.getElementById("sendBtn");
 const sidebar = document.getElementById("sidebar");
-const historyList = document.getElementById("historyList");
-const historySearch = document.getElementById("historySearch");
-const STORAGE_KEY = "nexora_ai_chat_sessions_v1";
-let busy = false;
-let sessions = loadSessions();
-let activeSessionId = null;
-let historySelectionMode = false;
-let historyLongPressTimer = null;
-let historyLongPressTriggeredId = null;
-const selectedHistoryIds = new Set();
-const deleteSelectedChatsBtn = document.getElementById("deleteSelectedChatsBtn");
-const cancelHistorySelectionBtn = document.getElementById("cancelHistorySelectionBtn");
-
+// Chat history is disabled; the active conversation exists only in memory.
+let busy=false, sessions=[], activeSessionId=null;
+function makeId(){return "chat_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8);}
+function currentSession(){return sessions.find(s=>s.id===activeSessionId)||null;}
+function ensureSession(firstMessage=""){
+ let session=currentSession();
+ if(!session){session={id:makeId(),title:firstMessage.trim().slice(0,36)||"Current chat",updatedAt:Date.now(),messages:[]};sessions=[session];activeSessionId=session.id;}
+ else if(!session.messages.length&&firstMessage.trim())session.title=firstMessage.trim().slice(0,36);
+ session.updatedAt=Date.now();return session;
+}
+function saveSessions(){return true;}
+function renderHistory(){}
 // Voice input uses the browser's Web Speech API when available.
 // Recognition is local to the browser interface; the recognized text is only sent
 // to the existing Cloudflare backend after the user presses Send.
@@ -1646,212 +1635,6 @@ if (!SpeechRecognition) {
 
 const logoSVG = `<img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">`;
 
-// History v2: validate records, preserve existing chats, and never let a local
-// storage failure prevent the independent Supabase backup from running.
-function safeHistoryGet(key) {
-  try { return window.localStorage ? localStorage.getItem(key) : null; }
-  catch (error) { console.warn("NEXORA local storage is unavailable:", error); return null; }
-}
-function safeHistorySet(key, value) {
-  try {
-    if (!window.localStorage) return false;
-    localStorage.setItem(key, value);
-    return true;
-  } catch (error) {
-    console.warn("NEXORA could not write local history:", error);
-    return false;
-  }
-}
-function validHistorySession(item) {
-  return !!item && typeof item === "object" &&
-    typeof item.id === "string" && item.id.length > 0 &&
-    Array.isArray(item.messages) &&
-    item.messages.every(message => message && typeof message === "object" &&
-      ["user","bot"].includes(message.role) && typeof message.text === "string");
-}
-function loadSessions() {
-  const saved = safeHistoryGet(STORAGE_KEY);
-  if (!saved) return [];
-  try {
-    const parsed = JSON.parse(saved);
-    return Array.isArray(parsed) ? parsed.filter(validHistorySession) : [];
-  } catch (error) {
-    console.warn("NEXORA history data could not be parsed:", error);
-    return [];
-  }
-}
-function saveSessions() {
-  let localSaved = false;
-  try {
-    const snapshot = JSON.stringify(sessions.filter(validHistorySession));
-    localSaved = safeHistorySet(STORAGE_KEY, snapshot);
-  } catch (error) {
-    console.warn("NEXORA history could not be serialized:", error);
-  }
-  // Queue cloud sync even when WebView/local storage is unavailable.
-  try { queueNexoraCloudSync(); } catch (error) {
-    console.warn("NEXORA cloud history sync could not be queued:", error);
-  }
-  return localSaved;
-}
-function makeId() {
-  return "chat_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
-}
-function currentSession() {
-  return sessions.find(s => s.id === activeSessionId) || null;
-}
-function ensureSession(firstMessage = "") {
-  let session = currentSession();
-  if (!session) {
-    session = { id: makeId(), title: firstMessage.trim().slice(0, 36) || "New chat", updatedAt: Date.now(), messages: [] };
-    sessions.unshift(session);
-    activeSessionId = session.id;
-  } else if (session.messages.length === 0 && firstMessage.trim()) {
-    session.title = firstMessage.trim().slice(0, 36);
-  }
-  session.updatedAt = Date.now();
-  saveSessions();
-  renderHistory();
-  return session;
-}
-function renderHistory() {
-  historyList.innerHTML = "";
-  const matchingSessions = sessions.slice().sort((a,b) => Number(!!b.pinned)-Number(!!a.pinned) || (Number(b.updatedAt)||0)-(Number(a.updatedAt)||0))
-    .filter(session => {
-      const q = (historySearch?.value || "").trim().toLowerCase();
-      return !q || (session.title || "").toLowerCase().includes(q) ||
-        session.messages.some(m => String(m.text || "").toLowerCase().includes(q));
-    });
-  if (cancelHistorySelectionBtn) cancelHistorySelectionBtn.hidden = !historySelectionMode;
-  if (deleteSelectedChatsBtn) {
-    deleteSelectedChatsBtn.hidden = !historySelectionMode;
-    deleteSelectedChatsBtn.disabled = selectedHistoryIds.size === 0;
-    deleteSelectedChatsBtn.textContent = "Delete selected (" + selectedHistoryIds.size + ")";
-  }
-  if (!matchingSessions.length) {
-    const empty = document.createElement("div");
-    empty.style.cssText = "padding:5px 12px;color:#727ba8;font-size:12px";
-    empty.textContent = sessions.length ? "No matching conversations" : "Your chats will appear here";
-    historyList.appendChild(empty);
-    return;
-  }
-  matchingSessions.forEach(session => {
-    const row = document.createElement("div");
-    row.style.cssText = "display:flex;align-items:center;gap:2px";
-    if (historySelectionMode) {
-      const select = document.createElement("input");
-      select.type = "checkbox";
-      select.className = "history-select";
-      select.checked = selectedHistoryIds.has(session.id);
-      select.setAttribute("aria-label","Select " + (session.title || "chat"));
-      select.addEventListener("change",() => {
-        if (select.checked) selectedHistoryIds.add(session.id);
-        else selectedHistoryIds.delete(session.id);
-        renderHistory();
-      });
-      row.appendChild(select);
-    }
-    const open = document.createElement("button");
-    open.className = "history-item" + (session.id === activeSessionId ? " active" : "");
-    open.innerHTML = '<span class="history-symbol">◷</span><span></span>';
-    open.querySelector("span:nth-child(2)").textContent = session.title || "New chat";
-
-    open.addEventListener("pointerdown",() => {
-      if (historySelectionMode) return;
-      clearTimeout(historyLongPressTimer);
-      historyLongPressTimer = setTimeout(() => {
-        historyLongPressTriggeredId = session.id;
-        setTimeout(() => { if (historyLongPressTriggeredId === session.id) historyLongPressTriggeredId = null; },1500);
-        historySelectionMode = true;
-        selectedHistoryIds.add(session.id);
-        renderHistory();
-      },1000);
-    });
-    ["pointerup","pointercancel","pointerleave"].forEach(type => open.addEventListener(type,() => {
-      clearTimeout(historyLongPressTimer);
-      historyLongPressTimer = null;
-    }));
-    open.addEventListener("contextmenu",event => event.preventDefault());
-    open.addEventListener("click",() => {
-      if (historyLongPressTriggeredId === session.id) {
-        historyLongPressTriggeredId = null;
-        return;
-      }
-      if (historySelectionMode) {
-        if (selectedHistoryIds.has(session.id)) selectedHistoryIds.delete(session.id);
-        else selectedHistoryIds.add(session.id);
-        renderHistory();
-      } else openSession(session.id);
-    });
-    const pin = document.createElement("button");
-    pin.className = "history-pin";
-    pin.type = "button";
-    pin.title = session.pinned ? "Unpin this chat" : "Pin this chat";
-    pin.setAttribute("aria-label",pin.title);
-    pin.setAttribute("aria-pressed",String(!!session.pinned));
-    pin.textContent = session.pinned ? "★" : "☆";
-    pin.addEventListener("click",event => {
-      event.stopPropagation();
-      session.pinned = !session.pinned;
-      session.updatedAt = Date.now();
-      saveSessions();
-      renderHistory();
-    });
-    const rename = document.createElement("button");
-    rename.className = "history-delete";
-    rename.type = "button";
-    rename.title = "Rename this chat";
-    rename.setAttribute("aria-label", "Rename this chat");
-    rename.textContent = "✎";
-    rename.addEventListener("click", event => {
-      event.stopPropagation();
-      const next = prompt("Enter a new title for this chat:", session.title || "New chat");
-      if (next === null) return;
-      const title = next.trim().slice(0, 80);
-      if (!title) { alert("Chat title cannot be empty."); return; }
-      session.title = title;
-      session.updatedAt = Date.now();
-      saveSessions();
-      renderHistory();
-    });
-    const del = document.createElement("button");
-    del.className = "history-delete";
-    del.type = "button";
-    del.title = "Delete this chat";
-    del.setAttribute("aria-label", "Delete this chat");
-    del.textContent = "×";
-    del.addEventListener("click", event => {
-      event.stopPropagation();
-      if (!confirm("Delete this conversation? This cannot be undone.")) return;
-      sessions = sessions.filter(s => s.id !== session.id);
-      selectedHistoryIds.delete(session.id);
-      if (activeSessionId === session.id) activeSessionId = null;
-      saveSessions();
-      if (!activeSessionId) showWelcome();
-      renderHistory();
-    });
-    if (historySelectionMode) row.append(open);
-    else row.append(open, pin, rename, del);
-    historyList.appendChild(row);
-  });
-}
-cancelHistorySelectionBtn?.addEventListener("click",() => {
-  historySelectionMode = false;
-  selectedHistoryIds.clear();
-  renderHistory();
-});
-deleteSelectedChatsBtn?.addEventListener("click",() => {
-  const ids = new Set(selectedHistoryIds);
-  if (!ids.size) return;
-  if (!confirm("Delete " + ids.size + " selected conversation" + (ids.size === 1 ? "" : "s") + "? This cannot be undone.")) return;
-  sessions = sessions.filter(session => !ids.has(session.id));
-  if (ids.has(activeSessionId)) { activeSessionId = null; showWelcome(); }
-  selectedHistoryIds.clear();
-  historySelectionMode = false;
-  saveSessions();
-  renderHistory();
-});
-historySearch?.addEventListener("input", renderHistory);
 function showWelcome() {
   chat.classList.remove("has-messages");
   chat.innerHTML = "";
@@ -1986,12 +1769,8 @@ function setLibraryStatus(message, isError = false) {
     status.style.color = isError ? "#b42318" : "";
   }
 }
-function queueNexoraCloudSync(immediate = false) {
-  if (!supabaseSession?.user?.id || !supabaseClient) return;
-  if (cloudSyncRunning) { cloudSyncAgain = true; return; }
-  clearTimeout(cloudSyncTimer);
-  cloudSyncTimer = setTimeout(() => syncNexoraCloudData(), immediate ? 50 : 1800);
-}
+function queueNexoraCloudSync() { /* conversation backup disabled */ }
+
 function imageIdsInSessions(items) {
   const ids = new Set();
   for (const session of items || []) for (const message of (session.messages || [])) {
@@ -2009,166 +1788,17 @@ async function storeImageWithId(id, dataURL) {
   });
   db.close();
 }
-async function syncNexoraCloudData() {
-  if (!supabaseClient || !supabaseSession?.user?.id) {
-    setLibraryStatus("Sign in with your NEXORA account to sync your chats and images.", true);
-    return;
-  }
-  if (cloudSyncRunning) { cloudSyncAgain = true; return; }
-  cloudSyncRunning = true;
-  cloudSyncApplying = true;
-  const userId = supabaseSession.user.id;
-  try {
-    const cloudOwnerKey = "nexora_cloud_owner_v1";
-    // A WebView may block localStorage entirely. Only enforce account ownership
-    // when a previous owner can actually be read; never block cloud recovery on a
-    // storage-access exception.
-    const previousOwner = safeHistoryGet(cloudOwnerKey);
-    if (previousOwner && previousOwner !== userId) {
-      setLibraryStatus("This device's saved chats are linked to another account. Sign back into that account to sync them. Nothing has been transferred or deleted.", true);
-      return;
-    }
-    setLibraryStatus("Syncing your chats and saved images…");
-    const {data: remoteRows, error: readError} = await supabaseClient
-      .from(NEXORA_CLOUD_TABLE).select("session_id,session_data").eq("user_id", userId);
-    if (readError) throw readError;
+async function syncNexoraCloudData() { setLibraryStatus("Chat history and chat cloud sync are disabled."); }
 
-    const merged = new Map();
-    // Import every valid cloud conversation. History recovery must never silently
-    // remove older conversations or delete rows from the user's account.
-    for (const row of (remoteRows || [])) {
-      const item = row.session_data;
-      if (validHistorySession(item)) merged.set(item.id, item);
-    }
-    for (const item of sessions) {
-      const previous = merged.get(item.id);
-      if (!previous) { merged.set(item.id, item); continue; }
-      const messages = Array.isArray(previous.messages) ? previous.messages.slice() : [];
-      const signatures = new Set(messages.map(message => JSON.stringify([message.role,message.text,message.imageId || null])));
-      for (const message of (item.messages || [])) {
-        const signature = JSON.stringify([message.role,message.text,message.imageId || null]);
-        if (!signatures.has(signature)) { messages.push(message); signatures.add(signature); }
-      }
-      const newest = (Number(item.updatedAt)||0) >= (Number(previous.updatedAt)||0) ? item : previous;
-      merged.set(item.id, {...newest, messages, updatedAt:Math.max(Number(item.updatedAt)||0,Number(previous.updatedAt)||0)});
-    }
-    const combined = [...merged.values()].sort((a,b) => (Number(b.updatedAt)||0) - (Number(a.updatedAt)||0));
-    const imageIds = imageIdsInSessions(combined);
-    let uploadedImages = 0;
-    let restoredImages = 0;
-
-    for (const imageId of imageIds) {
-      const path = userId + "/" + imageId + ".image";
-      let localImage = null;
-      try { localImage = await getGeneratedImage(imageId); } catch (_) {}
-      if (localImage && typeof localImage === "string" && localImage.startsWith("data:image/")) {
-        const blob = await (await fetch(localImage)).blob();
-        const {error} = await supabaseClient.storage.from(NEXORA_CLOUD_BUCKET).upload(path, blob, {
-          contentType: blob.type || "image/jpeg", upsert: true
-        });
-        if (error) throw error;
-        uploadedImages++;
-      } else {
-        const {data:blob, error} = await supabaseClient.storage.from(NEXORA_CLOUD_BUCKET).download(path);
-        if (!error && blob) {
-          const dataURL = await new Promise((resolve,reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(String(reader.result || ""));
-            reader.onerror = () => reject(new Error("Could not restore a saved image."));
-            reader.readAsDataURL(blob);
-          });
-          await storeImageWithId(imageId, dataURL);
-          restoredImages++;
-        }
-      }
-    }
-
-    const rows = combined.map(item => ({
-      user_id: userId,
-      session_id: item.id,
-      session_data: item,
-      updated_at: new Date(Number(item.updatedAt) || Date.now()).toISOString()
-    }));
-    if (rows.length) {
-      const {error} = await supabaseClient.from(NEXORA_CLOUD_TABLE).upsert(rows, {onConflict:"user_id,session_id"});
-      if (error) throw error;
-    }
-    sessions = combined;
-    if (!sessions.some(item => item.id === activeSessionId)) activeSessionId = sessions[0]?.id || null;
-    safeHistorySet(STORAGE_KEY, JSON.stringify(sessions));
-    safeHistorySet("nexora_cloud_owner_v1", userId);
-    renderHistory();
-    const totalImages = imageIds.length;
-    setLibraryStatus("Synced " + sessions.length + " chats and " + totalImages + " image records. " +
-      (uploadedImages ? uploadedImages + " images backed up. " : "") +
-      (restoredImages ? restoredImages + " images restored to this device." : "Your data is backed up to your account."));
-    if (document.getElementById("libraryOverlay")?.classList.contains("open")) renderLibraryContents();
-  } catch (error) {
-    console.error("NEXORA cloud sync failed:", error);
-    setLibraryStatus("Sync paused: " + (error.message || "Please try again. Your original device data has not been deleted."), true);
-  } finally {
-    cloudSyncApplying = false;
-    cloudSyncRunning = false;
-    if (cloudSyncAgain) { cloudSyncAgain = false; queueNexoraCloudSync(true); }
-  }
-}
 async function renderLibraryContents() {
-  const chatList = document.getElementById("libraryChatList");
-  const imageList = document.getElementById("libraryImageList");
-  if (!chatList || !imageList) return;
-  chatList.replaceChildren();
-  imageList.replaceChildren();
-  const signedIn = !!(supabaseSession?.user?.id);
-  if (!signedIn) {
-    chatList.textContent = "Cloud sync is available after signing in with an email or Google NEXORA account.";
-    imageList.textContent = "";
-    return;
-  }
-  const linkedOwner = safeHistoryGet("nexora_cloud_owner_v1");
-  if (linkedOwner && linkedOwner !== supabaseSession.user.id) {
-    chatList.textContent = "This device's saved library belongs to a different NEXORA account. Sign back into that account to view and sync it.";
-    imageList.textContent = "";
-    return;
-  }
-  const sorted = sessions.slice().sort((a,b) => (Number(b.updatedAt)||0) - (Number(a.updatedAt)||0));
-  if (!sorted.length) chatList.textContent = "No saved conversations yet.";
-  for (const session of sorted) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "account-centre-link";
-    button.style.cssText = "width:100%;text-align:left;margin:6px 0;cursor:pointer";
-    const title = document.createElement("strong");
-    title.textContent = session.title || "New chat";
-    const detail = document.createElement("small");
-    detail.textContent = (session.messages || []).length + " messages";
-    const body = document.createElement("span");
-    body.append(title, detail);
-    button.append(body);
-    button.addEventListener("click", () => { closeLibrary(); openSession(session.id); });
-    chatList.appendChild(button);
-  }
-  const ids = imageIdsInSessions(sorted);
-  if (!ids.length) { imageList.textContent = "No saved generated images yet."; return; }
-  for (const id of ids.slice(0,30)) {
-    try {
-      let src = await getGeneratedImage(id);
-      if (!src) {
-        const {data:blob} = await supabaseClient.storage.from(NEXORA_CLOUD_BUCKET).download(supabaseSession.user.id + "/" + id + ".image");
-        if (blob) {
-          src = await new Promise((resolve,reject) => {
-            const reader = new FileReader(); reader.onload = () => resolve(String(reader.result||"")); reader.onerror = reject; reader.readAsDataURL(blob);
-          });
-          await storeImageWithId(id, src);
-        }
-      }
-      if (!src) continue;
-      const img = document.createElement("img");
-      img.src = src; img.alt = "Saved NEXORA image"; img.loading = "lazy";
-      img.style.cssText = "width:100%;max-width:110px;aspect-ratio:1;object-fit:cover;border-radius:12px;margin:5px";
-      img.addEventListener("click", () => downloadImage(src, "nexora-ai-image.jpg"));
-      imageList.appendChild(img);
-    } catch (_) {}
-  }
+ const imageList=document.getElementById("libraryImageList");if(!imageList)return;
+ imageList.replaceChildren();const ids=imageIdsInSessions(sessions);
+ if(!ids.length){imageList.textContent="No generated images in this current chat.";return;}
+ for(const id of ids.slice(0,30)){try{const src=await getGeneratedImage(id);if(!src)continue;
+ const img=document.createElement("img");img.src=src;img.alt="Generated image";img.loading="lazy";
+ img.style.cssText="width:100%;max-width:110px;aspect-ratio:1;object-fit:cover;border-radius:12px;margin:5px";
+ img.addEventListener("click",()=>downloadImage(src,"nexora-ai-image.jpg"));imageList.appendChild(img);
+ }catch(_){}}
 }
 
 function downloadImage(dataURL, filename) {
@@ -2384,20 +2014,9 @@ async function renderSession(session) {
   }
   chat.scrollTop = chat.scrollHeight;
 }
-function openSession(id) {
-  stopSpeaking();
-  activeSessionId = id;
-  renderSession(currentSession());
-  renderHistory();
-  sidebar.classList.remove("open");
-}
 function startNewChat() {
-  stopSpeaking();
-  activeSessionId = null;
-  showWelcome();
-  renderHistory();
-  sidebar.classList.remove("open");
-  input.focus();
+  stopSpeaking(); sessions=[]; activeSessionId=null; showWelcome();
+  sidebar.classList.remove("open"); input.focus();
 }
 
 // Attachment support: multiple files per message. Images are analyzed one at a time;
@@ -3486,7 +3105,6 @@ function renderMemories(){
 function openLibrary(){const signedIn=!!((supabaseSession||authToken)&&accountProfile);document.getElementById("libraryGuestView").hidden=signedIn;document.getElementById("librarySignedView").hidden=!signedIn;document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");if(supabaseSession?.user?.id){renderLibraryContents();queueNexoraCloudSync(true);}else{setLibraryStatus("This account uses the older sign-in service. Sign in with your Supabase email or Google account to enable cloud backup.",true);renderLibraryContents();}}
 function closeLibrary(){document.getElementById("libraryOverlay").classList.remove("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","true");}
 document.getElementById("librarySignInBtn").addEventListener("click",()=>{closeLibrary();openAccount();accountMode="login";setAccountMode("login");document.getElementById("accountStatus").textContent="Sign in to access your personal library.";});
-document.getElementById("librarySyncNowBtn")?.addEventListener("click",()=>syncNexoraCloudData());
 
 function setTheme(theme) {
   const light = theme === "light";
@@ -3507,57 +3125,8 @@ document.getElementById("themeBtn").addEventListener("click", () => {
 setTheme("light");
 document.body.dataset.theme = "light";
 
-// Restore the most recently used conversation on page load.
-renderHistory();
-
-// Chat backup tools: export/import JSON and clear all local conversations.
-const exportChatsBtn = document.getElementById("exportChatsBtn");
-const importChatsBtn = document.getElementById("importChatsBtn");
-const importChatsFile = document.getElementById("importChatsFile");
-const clearChatsBtn = document.getElementById("clearChatsBtn");
-function exportChats(){
-  const blob = new Blob([JSON.stringify({app:"NEXORA AI",version:1,exportedAt:new Date().toISOString(),sessions}, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "nexora-ai-chat-backup.json"; a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-importChatsBtn?.addEventListener("click", () => importChatsFile?.click());
-importChatsFile?.addEventListener("change", async () => {
-  const file = importChatsFile.files && importChatsFile.files[0];
-  if (!file) return;
-  try {
-    const parsed = JSON.parse(await file.text());
-    const incoming = Array.isArray(parsed) ? parsed : parsed.sessions;
-    if (!Array.isArray(incoming)) throw new Error("This file does not contain a NEXORA AI chat backup.");
-    const clean = incoming.filter(s => s && typeof s.id === "string" && Array.isArray(s.messages))
-      .map(s => ({
-        id: s.id, title: String(s.title || "Imported chat").slice(0,80),
-        updatedAt: Number(s.updatedAt) || Date.now(),
-        messages: s.messages.filter(m => m && ["user","bot"].includes(m.role) && typeof m.text === "string")
-          .map(m => ({role:m.role,text:m.text}))
-      }));
-    if (!clean.length) throw new Error("No valid conversations were found in that backup.");
-    if (!confirm("Import " + clean.length + " conversations? Existing chats with matching IDs will be replaced.")) return;
-    const map = new Map(sessions.map(s => [s.id,s]));
-    clean.forEach(s => map.set(s.id,s));
-    sessions = Array.from(map.values()).sort((a,b) => b.updatedAt-a.updatedAt);
-    saveSessions(); renderHistory();
-    alert("Chat backup imported successfully.");
-  } catch (err) { alert("Could not import this backup: " + (err.message || "Invalid file")); }
-  finally { importChatsFile.value = ""; }
-});
-clearChatsBtn?.addEventListener("click", () => {
-  if (!sessions.length) { alert("There are no saved chats to clear."); return; }
-  if (!confirm("Delete ALL saved NEXORA AI conversations from this browser? Export a backup first if you may need them.")) return;
-  sessions = []; activeSessionId = null; saveSessions(); showWelcome(); renderHistory();
-});
-
 // Always show the welcome screen on a fresh page load.
- // Saved conversations remain in History and open only when the user selects one.
-activeSessionId = null;
-showWelcome();
-renderHistory();
+ activeSessionId=null; sessions=[]; showWelcome();
 </script>
  
 
