@@ -1262,7 +1262,6 @@ body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35
   <button type="button" id="nexoraPromptsBtn">✧ Prompts</button>
   <button type="button" id="nexoraStudyBtn">🎓 Study mode</button>
   <button type="button" id="nexoraPresentationBtn">▤ Presentations</button>
-  <button type="button" id="nexoraExportBtn">↓ Export</button>
   <button type="button" id="nexoraDashboardBtn">▦ Dashboard</button>
 </div>
 <div class="nexora-panel-overlay" id="nexoraPanelOverlay" aria-hidden="true">
@@ -3597,17 +3596,6 @@ document.body.dataset.theme = "light";
    document.getElementById("nexoraStudyCards").addEventListener("click",()=>launch("cards"));
  });
  // Export current chat in portable formats.
- function getCurrentMarkdown(){const session=currentSession();if(!session)return "";return "# "+(session.title||"NEXORA AI conversation")+"\n\n"+(session.messages||[]).map(m=>(m.role==="user"?"## You":"## NEXORA AI")+"\n\n"+String(m.text||"")).join("\n\n---\n\n");}
- function downloadText(content,filename,type){const blob=new Blob([content],{type:type||"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
- document.getElementById("nexoraExportBtn").addEventListener("click",()=>{
-   openPanel("Export center","Download the currently open conversation.",
-    '<p class="nexora-panel-note">Choose a format. PDF export opens the browser print dialog, where you can choose Save as PDF.</p><div class="nexora-inline-actions"><button class="primary" id="nexoraExportMd">Download Markdown</button><button id="nexoraExportTxt">Download TXT</button><button id="nexoraExportHtml">Download HTML</button><button id="nexoraExportPdf">Print / Save PDF</button></div>');
-   const md=getCurrentMarkdown();
-   document.getElementById("nexoraExportMd").addEventListener("click",()=>downloadText(md,"nexora-conversation.md","text/markdown;charset=utf-8"));
-   document.getElementById("nexoraExportTxt").addEventListener("click",()=>downloadText(md.replace(/^#+ /gm,""),"nexora-conversation.txt"));
-   document.getElementById("nexoraExportHtml").addEventListener("click",()=>downloadText("<!doctype html><meta charset=utf-8><title>NEXORA conversation</title><pre style='white-space:pre-wrap;font:16px system-ui;line-height:1.6'>"+esc(md)+"</pre>","nexora-conversation.html","text/html;charset=utf-8"));
-   document.getElementById("nexoraExportPdf").addEventListener("click",()=>{const w=window.open("","_blank");if(!w){if(typeof showToast==="function")showToast("Allow pop-ups to print this conversation.");return;}w.document.write("<!doctype html><meta charset=utf-8><title>NEXORA conversation</title><style>body{font:14px system-ui;max-width:850px;margin:40px auto;line-height:1.6;white-space:pre-wrap}</style>"+esc(md));w.document.close();w.focus();w.print();});
- });
  // Presentation maker: generate slide content with AI, then export it as a self-contained HTML slide deck.
  document.getElementById("nexoraPresentationBtn").addEventListener("click",()=>{
    openPanel("AI presentation maker","Generate a slide-by-slide outline, then export it as a browser-based presentation.",
