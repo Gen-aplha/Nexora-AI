@@ -1646,35 +1646,53 @@ if (!SpeechRecognition) {
 
 const logoSVG = `<img class="logo-mark" src="nexora-logo.svg" alt="NEXORA logo">`;
 
-const WELCOME_SUGGESTION_TEXTS = new Set(["explain ai simply","give me a project idea","help me learn coding"]);
-function isOldWelcomeSuggestionChat(session) {
-  if (!session || !WELCOME_SUGGESTION_TEXTS.has(String(session.title || "").trim().toLowerCase())) return false;
-  const firstUser = (session.messages || []).find(message => message && message.role === "user");
-  if (!firstUser) return false;
-  const prompt = String(firstUser.text || "").split("\n[Attachments:")[0].trim().toLowerCase();
-  return WELCOME_SUGGESTION_TEXTS.has(prompt);
+// History v2: validate records, preserve existing chats, and never let a local
+// storage failure prevent the independent Supabase backup from running.
+function safeHistoryGet(key) {
+  try { return window.localStorage ? localStorage.getItem(key) : null; }
+  catch (error) { console.warn("NEXORA local storage is unavailable:", error); return null; }
+}
+function safeHistorySet(key, value) {
+  try {
+    if (!window.localStorage) return false;
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    console.warn("NEXORA could not write local history:", error);
+    return false;
+  }
+}
+function validHistorySession(item) {
+  return !!item && typeof item === "object" &&
+    typeof item.id === "string" && item.id.length > 0 &&
+    Array.isArray(item.messages) &&
+    item.messages.every(message => message && typeof message === "object" &&
+      ["user","bot"].includes(message.role) && typeof message.text === "string");
 }
 function loadSessions() {
+  const saved = safeHistoryGet(STORAGE_KEY);
+  if (!saved) return [];
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const parsed = saved ? JSON.parse(saved) : [];
-    const valid = Array.isArray(parsed) ? parsed.filter(s => s && typeof s.id === "string" && Array.isArray(s.messages)) : [];
-    const cleaned = valid.filter(s => !isOldWelcomeSuggestionChat(s));
-    if (cleaned.length !== valid.length) localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
-    return cleaned;
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed.filter(validHistorySession) : [];
   } catch (error) {
+    console.warn("NEXORA history data could not be parsed:", error);
     return [];
   }
 }
 function saveSessions() {
+  let localSaved = false;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-    queueNexoraCloudSync();
-    return true;
+    const snapshot = JSON.stringify(sessions.filter(validHistorySession));
+    localSaved = safeHistorySet(STORAGE_KEY, snapshot);
   } catch (error) {
-    alert("Chat history could not be saved by this preview. Try opening the HTML in a browser or Acode preview with storage enabled.");
-    return false;
+    console.warn("NEXORA history could not be serialized:", error);
   }
+  // Queue cloud sync even when WebView/local storage is unavailable.
+  try { queueNexoraCloudSync(); } catch (error) {
+    console.warn("NEXORA cloud history sync could not be queued:", error);
+  }
+  return localSaved;
 }
 function makeId() {
   return "chat_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
@@ -2002,7 +2020,10 @@ async function syncNexoraCloudData() {
   const userId = supabaseSession.user.id;
   try {
     const cloudOwnerKey = "nexora_cloud_owner_v1";
-    const previousOwner = localStorage.getItem(cloudOwnerKey);
+    // A WebView may block localStorage entirely. Only enforce account ownership
+    // when a previous owner can actually be read; never block cloud recovery on a
+    // storage-access exception.
+    const previousOwner = safeHistoryGet(cloudOwnerKey);
     if (previousOwner && previousOwner !== userId) {
       setLibraryStatus("This device's saved chats are linked to another account. Sign back into that account to sync them. Nothing has been transferred or deleted.", true);
       return;
@@ -2013,18 +2034,11 @@ async function syncNexoraCloudData() {
     if (readError) throw readError;
 
     const merged = new Map();
-    const staleSuggestionIds = [];
+    // Import every valid cloud conversation. History recovery must never silently
+    // remove older conversations or delete rows from the user's account.
     for (const row of (remoteRows || [])) {
       const item = row.session_data;
-      if (item && typeof item.id === "string" && Array.isArray(item.messages)) {
-        if (isOldWelcomeSuggestionChat(item)) { staleSuggestionIds.push(row.session_id); continue; }
-        merged.set(item.id, item);
-      }
-    }
-    if (staleSuggestionIds.length) {
-      const {error:cleanupError} = await supabaseClient.from(NEXORA_CLOUD_TABLE)
-        .delete().eq("user_id", userId).in("session_id", staleSuggestionIds);
-      if (cleanupError) throw cleanupError;
+      if (validHistorySession(item)) merged.set(item.id, item);
     }
     for (const item of sessions) {
       const previous = merged.get(item.id);
@@ -2081,8 +2095,8 @@ async function syncNexoraCloudData() {
     }
     sessions = combined;
     if (!sessions.some(item => item.id === activeSessionId)) activeSessionId = sessions[0]?.id || null;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-    localStorage.setItem("nexora_cloud_owner_v1", userId);
+    safeHistorySet(STORAGE_KEY, JSON.stringify(sessions));
+    safeHistorySet("nexora_cloud_owner_v1", userId);
     renderHistory();
     const totalImages = imageIds.length;
     setLibraryStatus("Synced " + sessions.length + " chats and " + totalImages + " image records. " +
@@ -2110,7 +2124,7 @@ async function renderLibraryContents() {
     imageList.textContent = "";
     return;
   }
-  const linkedOwner = localStorage.getItem("nexora_cloud_owner_v1");
+  const linkedOwner = safeHistoryGet("nexora_cloud_owner_v1");
   if (linkedOwner && linkedOwner !== supabaseSession.user.id) {
     chatList.textContent = "This device's saved library belongs to a different NEXORA account. Sign back into that account to view and sync it.";
     imageList.textContent = "";
