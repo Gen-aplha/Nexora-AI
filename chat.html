@@ -1353,6 +1353,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
     <label class="coding-assistant-label" for="codingAssistantCode">Your code (optional for code generation)</label>
     <textarea id="codingAssistantCode" class="coding-assistant-control coding-assistant-code" rows="8" maxlength="30000" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="Paste your existing code here…"></textarea>
     <div class="coding-assistant-actions"><button type="button" class="pdf-assistant-ask" id="codingAssistantSubmitBtn">Ask NEXORA AI</button></div>
+    <div class="coding-assistant-actions"><button type="button" class="account-secondary" id="codingAssistantPlaygroundBtn">Open Code Playground</button></div>
     <p class="coding-assistant-status" id="codingAssistantStatus" role="status" aria-live="polite">NEXORA AI will reply in your chat. Review and test generated code before using it in a project.</p>
   </section>
 </div>
@@ -3688,13 +3689,12 @@ document.body.dataset.theme = "light";
  };
  const openToolHub=()=>{
    const wrap=document.createElement("div");
-   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="code">⌘ <strong>Code Playground</strong><small>Write and preview HTML, CSS and JS locally</small></button><button data-tool="memory">✦ <strong>Smart Memory</strong><small>Review and manage saved memories</small></button><button data-tool="notifications">♧ <strong>Notification Centre</strong><small>Recent activity stored on this device</small></button><button data-tool="customize">◐ <strong>Customize appearance</strong><small>Accent color, text size and chat background</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
+   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="memory">✦ <strong>Smart Memory</strong><small>Review and manage saved memories</small></button><button data-tool="notifications">♧ <strong>Notification Centre</strong><small>Recent activity stored on this device</small></button><button data-tool="customize">◐ <strong>Customize appearance</strong><small>Accent color, text size and chat background</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
    openPanel("NEXORA Tools","Useful upgrades in one place",wrap);
    wrap.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>runTool(b.dataset.tool)));
  };
  function runTool(which){
    if(which==="compare")return openCompare();
-   if(which==="code")return openCodePlayground();
    if(which==="memory")return openMemoryManager();
    if(which==="notifications")return openNotifications();
    if(which==="customize")return openCustomization();
@@ -3735,6 +3735,7 @@ document.body.dataset.theme = "light";
    wrap.querySelector("#nexoraCodeClear").addEventListener("click",()=>{editor.value="";frame.srcdoc="";});
    run();
  }
+ document.getElementById("codingAssistantPlaygroundBtn")?.addEventListener("click",()=>{closeCodingAssistant();openCodePlayground();});
  function openMemoryManager(){
    const wrap=document.createElement("div");
    const render=()=>{
