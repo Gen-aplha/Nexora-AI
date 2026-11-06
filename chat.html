@@ -2726,6 +2726,7 @@ const SUPABASE_REDIRECT_URL="https://gen-aplha.github.io/Nexora-AI/chat.html";
 const supabaseClient=window.supabase?.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let supabaseSession=null;
 let pendingVerificationEmail="";
+renderHistory();
 async function accountRequest(payload){
  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json",...(authToken?{"Authorization":"Bearer "+authToken}:{})},body:JSON.stringify(payload)});
  const data=await response.json().catch(()=>({}));
@@ -3395,6 +3396,8 @@ async function initializeNexoraAuth(){
  }
 }
 initializeNexoraAuth();
+window.addEventListener("focus",()=>{if(supabaseSession?.user)queueNexoraCloudSync(true);});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&supabaseSession?.user)queueNexoraCloudSync(true);});
 document.getElementById("exploreBtn")?.addEventListener("click", () => {
   sendMessage("What are some useful things you can help me with?");
   sidebar.classList.remove("open");
