@@ -3781,6 +3781,7 @@ document.body.dataset.theme = "light";
    try{recognition.lang=voiceLanguage?.value||"en-IN";recognition.start();if(voiceStatus)voiceStatus.textContent="Voice conversation is listening…";}
    catch(_){if(voiceStatus)voiceStatus.textContent="Could not start the microphone. Check browser permissions and try again.";}
  }
+ document.getElementById("voiceWipBack")?.addEventListener("click",stopVoiceConversation);document.getElementById("voiceWipReturn")?.addEventListener("click",stopVoiceConversation);
  voiceStart.addEventListener("click",()=>{
    if(voiceModeEnabled){stopVoiceConversation();voiceStart.textContent="Start voice conversation";if(voiceStatus)voiceStatus.textContent="Voice conversation stopped.";return;}
    if(!SpeechRecognition||!recognition){if(voiceStatusNote)voiceStatusNote.textContent="Speech recognition is unavailable in this browser. Use the microphone button for voice input if supported.";return;}
