@@ -2613,7 +2613,7 @@ codingAssistantSubmitBtn.addEventListener("click",()=>{
   closeCodingAssistant();
   codingAssistantStatus.textContent="Your request was sent to the chat.";
   codingAssistantSubmitBtn.disabled=true;
-  sendMessage(prompt).finally(()=>{codingAssistantSubmitBtn.disabled=false;});
+  sendMessage(prompt,{displayText:"Coding Assistant: "+(taskNames[task]||"Help with code")+" ("+language+")"}).finally(()=>{codingAssistantSubmitBtn.disabled=false;});
 });
 
 document.getElementById("pdfAssistantMenuBtn").addEventListener("click",()=>{composerMenu.hidden=true;composerPlus.setAttribute("aria-expanded","false");openPdfAssistant();});
@@ -2978,7 +2978,7 @@ async function sendMessage(text, options = {}) {
   busy = true;
   sendBtn.disabled = true;
   generateImageBtn.disabled = true;
-  const shownText = message || "Please examine the attached file(s).";
+  const shownText = options.displayText || message || "Please examine the attached file(s).";
   const names = attachmentSummary(files);
   const session = ensureSession(shownText);
   session.messages.push({role:"user",text:shownText + (names ? "\n[Attachments: " + names + "]" : "")});
