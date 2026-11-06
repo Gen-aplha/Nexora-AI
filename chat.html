@@ -1012,6 +1012,26 @@ body[data-theme="dark"] .history-search{border-color:#37364a;background:#1a1a2b;
 body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35245b}
 
 </style>
+
+<style id="nexora-upgrade-styles">
+.nexora-upgrade-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.nexora-upgrade-grid button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:88px;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:var(--text);text-align:left;font-size:18px}
+.nexora-upgrade-grid button strong{font-size:13px}.nexora-upgrade-grid button small{font-size:11px;color:var(--muted);line-height:1.4}
+.nexora-tool-label{display:block;margin:12px 0 6px;color:var(--muted);font-size:12px}
+.nexora-tool-primary,.nexora-tool-actions button{border:0;border-radius:10px;padding:10px 14px;background:var(--nexora-accent,#8b5cf6);color:white;font-weight:650;margin:8px 6px 8px 0}
+#nexoraComparePrompt,#nexoraCodeInput{box-sizing:border-box;width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);font:inherit;resize:vertical}
+.nexora-compare-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.nexora-compare-card,.nexora-notification,.nexora-memory-row{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);min-width:0}
+.nexora-compare-card h3{font-size:13px;margin:0 0 8px}.nexora-compare-body{font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.nexora-memory-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:8px}.nexora-memory-row span{overflow-wrap:anywhere;font-size:13px}
+.nexora-notification{margin:8px 0}.nexora-notification p{margin:5px 0;font-size:13px}.nexora-notification small{color:var(--muted)}
+#nexoraCodePreview{width:100%;height:260px;margin-top:12px;border:1px solid var(--line);border-radius:12px;background:white}
+.nexora-gallery-filters{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap}.nexora-gallery-filters button{padding:7px 12px;border:1px solid var(--line);border-radius:20px;background:var(--panel2);color:var(--text)}
+body{--nexora-chat-size:15px}.bubble{font-size:var(--nexora-chat-size)}
+body[data-chat-wall="soft"] .chat{background:radial-gradient(ellipse at 50% 0%,rgba(139,92,246,.10),transparent 65%)}
+body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,20,40,.65),transparent 70%)}
+@media(max-width:600px){.nexora-upgrade-grid,.nexora-compare-results{grid-template-columns:1fr}.nexora-upgrade-grid button{min-height:70px}}
+</style>
 </head>
 <body data-theme="light">
 <div class="first-launch-overlay" id="firstLaunchOverlay" aria-hidden="true">
@@ -1138,7 +1158,7 @@ body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35
         <div class="voice-wip-orb" aria-hidden="true"><span>🎙</span></div>
         <p class="voice-wip-eyebrow">NEXORA AI · VOICE</p>
         <h2 id="voiceWipTitle">Work in Progress</h2>
-        <p>Voice mode is coming soon.</p>
+        <p>Start a hands-free conversation with NEXORA AI.</p>
         <p class="voice-wip-description">We're working on hands-free conversations so you can talk with NEXORA AI and hear replies naturally.</p>
         <div class="voice-wip-note"><span aria-hidden="true">✦</span> This feature is being prepared for a future update.</div>
         <button type="button" class="voice-wip-return" id="voiceWipReturn">Back to chat</button>
@@ -1652,7 +1672,7 @@ async function renderMyImages() {
     try {
       const src = await getGeneratedImage(item.id);
       if (!src) continue;
-      const card = document.createElement("article"); card.className = "my-image-card";
+      const card = document.createElement("article"); card.className = "my-image-card"; card.dataset.created=String(item.created||0);
       const img = document.createElement("img"); img.className = "my-image-thumb"; img.src = src; img.alt = "Saved NEXORA AI image"; img.loading = "lazy";
       const actions = document.createElement("div"); actions.className = "my-image-actions";
       const preview = document.createElement("button"); preview.type = "button"; preview.textContent = "View";
@@ -3634,6 +3654,159 @@ document.body.dataset.theme = "light";
  };
  // Model selector is intentionally honest: current Worker exposes its configured default model only.
  modelSelect.title="The current Cloudflare Worker exposes one configured model. Add model routing to the Worker before enabling more choices.";
+
+/* NEXORA 10-feature upgrade suite — local-first tools, reusing existing services. */
+(function(){
+ const STORE="nexora_upgrade_suite_v1";
+ const readStore=()=>{try{return JSON.parse(localStorage.getItem(STORE)||"{}")}catch(_){return {}}};
+ const writeStore=v=>{try{localStorage.setItem(STORE,JSON.stringify(v))}catch(_){}};
+ let upgradeData=readStore();
+ const notify=(title,detail="")=>{
+   const list=Array.isArray(upgradeData.notifications)?upgradeData.notifications:[];
+   list.unshift({title:String(title).slice(0,90),detail:String(detail).slice(0,160),at:Date.now()});
+   upgradeData.notifications=list.slice(0,40);writeStore(upgradeData);
+ };
+ const openToolHub=()=>{
+   const wrap=document.createElement("div");
+   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="code">⌘ <strong>Code Playground</strong><small>Write and preview HTML, CSS and JS locally</small></button><button data-tool="memory">✦ <strong>Smart Memory</strong><small>Review and manage saved memories</small></button><button data-tool="notifications">♧ <strong>Notification Centre</strong><small>Recent activity stored on this device</small></button><button data-tool="customize">◐ <strong>Customize appearance</strong><small>Accent color, text size and chat background</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
+   openPanel("NEXORA Tools","Useful upgrades in one place",wrap);
+   wrap.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>runTool(b.dataset.tool)));
+ };
+ function runTool(which){
+   if(which==="compare")return openCompare();
+   if(which==="code")return openCodePlayground();
+   if(which==="memory")return openMemoryManager();
+   if(which==="notifications")return openNotifications();
+   if(which==="customize")return openCustomization();
+   if(which==="files"){closePanel();document.getElementById("filesBtn")?.click();return;}
+   if(which==="gallery"){closePanel();document.getElementById("sideImagesBtn")?.click();return;}
+   if(which==="dashboard"){closePanel();openNexoraDashboard();return;}
+ }
+ function openCompare(){
+   const wrap=document.createElement("div");
+   wrap.innerHTML='<p class="nexora-panel-note">This compares two prompting approaches using the same connected NEXORA AI model. It does not compare different AI models.</p><label class="nexora-tool-label" for="nexoraComparePrompt">Question or task</label><textarea id="nexoraComparePrompt" rows="4" placeholder="Enter a question to compare…"></textarea><button class="nexora-tool-primary" id="nexoraCompareRun">Compare responses</button><p id="nexoraCompareStatus" role="status" aria-live="polite"></p><div class="nexora-compare-results" id="nexoraCompareResults"></div>';
+   openPanel("Response Comparison","Compare concise and detailed answer styles",wrap);
+   wrap.querySelector("#nexoraCompareRun").addEventListener("click",async()=>{
+     const prompt=wrap.querySelector("#nexoraComparePrompt").value.trim(),status=wrap.querySelector("#nexoraCompareStatus"),results=wrap.querySelector("#nexoraCompareResults"),button=wrap.querySelector("#nexoraCompareRun");
+     if(!prompt){status.textContent="Enter a question first.";return;}
+     button.disabled=true;status.textContent="Generating two approaches…";results.replaceChildren();
+     const makeColumn=(title)=>{const box=document.createElement("section");box.className="nexora-compare-card";const head=document.createElement("h3");head.textContent=title;const body=document.createElement("div");body.className="nexora-compare-body";body.textContent="Generating…";box.append(head,body);results.appendChild(box);return body;};
+     const a=makeColumn("Approach A · concise"),b=makeColumn("Approach B · detailed");
+     try{
+       await Promise.all([
+         streamBackend({action:"chat",message:"Answer concisely in a few clear points. User request: "+prompt},t=>{a.textContent=t;}),
+         streamBackend({action:"chat",message:"Give a thorough, structured answer with reasoning and useful examples. User request: "+prompt},t=>{b.textContent=t;})
+       ]);
+       notify("Response comparison completed","Two answer styles generated.");
+       status.textContent="Comparison complete. Both answers use the same connected model.";
+     }catch(e){status.textContent="Comparison failed: "+(e.message||"Please try again.");}
+     finally{button.disabled=false;}
+   });
+ }
+ function openCodePlayground(){
+   const wrap=document.createElement("div");
+   wrap.innerHTML='<p class="nexora-panel-note">Runs in a sandboxed preview inside this page. Do not paste secrets or passwords into code.</p><label class="nexora-tool-label" for="nexoraCodeInput">HTML, CSS and JavaScript</label><textarea id="nexoraCodeInput" rows="12" spellcheck="false" placeholder="<!doctype html>\n<html>\n<body>\n<h1>Hello NEXORA!</h1>\n</body>\n</html>"></textarea><div class="nexora-tool-actions"><button class="nexora-tool-primary" id="nexoraCodeRun">Run preview</button><button id="nexoraCodeSave">Save on this device</button><button id="nexoraCodeClear">Clear</button></div><iframe id="nexoraCodePreview" title="Code preview" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>';
+   openPanel("Code Playground","Build and preview small web projects",wrap);
+   const editor=wrap.querySelector("#nexoraCodeInput"),frame=wrap.querySelector("#nexoraCodePreview");
+   editor.value=localStorage.getItem("nexora_playground_code_v1")||'<!doctype html>\n<html><head><style>body{font-family:system-ui;padding:24px;background:#111;color:white}h1{color:#a78bfa}</style></head><body><h1>Hello NEXORA AI!</h1><p>Your preview is ready.</p></body></html>';
+   const run=()=>{frame.srcdoc=editor.value;notify("Code preview opened","The playground preview was run locally.");};
+   wrap.querySelector("#nexoraCodeRun").addEventListener("click",run);
+   wrap.querySelector("#nexoraCodeSave").addEventListener("click",()=>{localStorage.setItem("nexora_playground_code_v1",editor.value);notify("Playground code saved","Saved in this browser.");if(typeof showToast==="function")showToast("Code saved on this device.");});
+   wrap.querySelector("#nexoraCodeClear").addEventListener("click",()=>{editor.value="";frame.srcdoc="";});
+   run();
+ }
+ function openMemoryManager(){
+   const wrap=document.createElement("div");
+   const render=()=>{
+     wrap.replaceChildren();
+     const intro=document.createElement("p");intro.className="nexora-panel-note";intro.textContent="Saved memories are stored in this browser and may be included in relevant AI chats. Review them and remove anything you no longer want saved.";wrap.appendChild(intro);
+     const field=document.createElement("textarea");field.rows=2;field.placeholder="Add a useful preference or fact…";field.setAttribute("aria-label","New saved memory");
+     const add=document.createElement("button");add.className="nexora-tool-primary";add.textContent="Save memory";add.addEventListener("click",()=>{const text=field.value.trim();if(!text)return;savedMemories.push({id:"mem_"+Date.now(),text});try{localStorage.setItem(MEMORY_STORAGE_KEY,JSON.stringify(savedMemories));}catch(_){}notify("Memory saved","A memory was added on this device.");render();});wrap.append(field,add);
+     if(!savedMemories.length){const empty=document.createElement("p");empty.textContent="No saved memories yet.";wrap.appendChild(empty);}
+     savedMemories.forEach((m,index)=>{const row=document.createElement("div");row.className="nexora-memory-row";const text=document.createElement("span");text.textContent=m.text;const del=document.createElement("button");del.textContent="Delete";del.addEventListener("click",()=>{savedMemories.splice(index,1);try{localStorage.setItem(MEMORY_STORAGE_KEY,JSON.stringify(savedMemories));}catch(_){}render();});row.append(text,del);wrap.appendChild(row);});
+   };render();openPanel("Smart Memory","Review information saved for your chats",wrap);
+ }
+ function openNotifications(){
+   const wrap=document.createElement("div");
+   const items=Array.isArray(upgradeData.notifications)?upgradeData.notifications:[];
+   if(!items.length)wrap.innerHTML='<p class="nexora-panel-note">No activity notifications yet. NEXORA will list local tool activity here.</p>';
+   else items.forEach(item=>{const row=document.createElement("article");row.className="nexora-notification";const title=document.createElement("strong");title.textContent=item.title;const detail=document.createElement("p");detail.textContent=item.detail||"";const time=document.createElement("small");time.textContent=new Date(item.at).toLocaleString();row.append(title,detail,time);wrap.appendChild(row);});
+   const clear=document.createElement("button");clear.textContent="Clear notifications";clear.addEventListener("click",()=>{upgradeData.notifications=[];writeStore(upgradeData);openNotifications();});wrap.appendChild(clear);
+   openPanel("Notification Centre","Private activity log stored on this device",wrap);
+ }
+ function applyCustomization(){
+   const prefs=upgradeData.appearance||{};
+   const accent=prefs.accent||"#8b5cf6",size=prefs.size||"15",wall=prefs.wall||"plain";
+   document.body.style.setProperty("--nexora-accent",accent);
+   document.body.style.setProperty("--nexora-chat-size",size+"px");
+   document.body.dataset.chatWall=wall;
+ }
+ function openCustomization(){
+   const prefs=upgradeData.appearance||{};
+   const wrap=document.createElement("div");
+   wrap.innerHTML='<label class="nexora-tool-label" for="nexoraAccent">Accent color</label><input id="nexoraAccent" type="color" value="'+(prefs.accent||"#8b5cf6")+'"><label class="nexora-tool-label" for="nexoraFontSize">Chat text size</label><select id="nexoraFontSize"><option value="14">Small</option><option value="15">Default</option><option value="17">Large</option><option value="19">Extra large</option></select><label class="nexora-tool-label" for="nexoraChatWall">Chat background</label><select id="nexoraChatWall"><option value="plain">Default</option><option value="soft">Soft glow</option><option value="midnight">Midnight</option></select><button class="nexora-tool-primary" id="nexoraAppearanceSave">Save appearance</button>';
+   openPanel("Customize appearance","Personalize the chat experience",wrap);
+   wrap.querySelector("#nexoraFontSize").value=prefs.size||"15";wrap.querySelector("#nexoraChatWall").value=prefs.wall||"plain";
+   wrap.querySelector("#nexoraAppearanceSave").addEventListener("click",()=>{upgradeData.appearance={accent:wrap.querySelector("#nexoraAccent").value,size:wrap.querySelector("#nexoraFontSize").value,wall:wrap.querySelector("#nexoraChatWall").value};writeStore(upgradeData);applyCustomization();notify("Appearance updated","Your chat appearance preferences were saved.");if(typeof showToast==="function")showToast("Appearance saved.");});
+ }
+ applyCustomization();
+ // Smart welcome: add more useful entry points without changing the existing chat flow.
+ const suggestions=document.querySelector(".welcome .suggestions");
+ if(suggestions){
+   [["Plan my study session","Study"],["Review a document","Files"],["Build a simple website","Code"]].forEach(([label])=>{const b=document.createElement("button");b.type="button";b.className="suggestion";b.dataset.welcomeSuggestion="";b.textContent=label;suggestions.appendChild(b);b.addEventListener("click",()=>{input.value=label==="Review a document"?"I want to review a document.":label==="Build a simple website"?"Help me build a simple website.":"Help me plan a study session.";input.dispatchEvent(new Event("input",{bubbles:true}));input.focus();});});
+ }
+ // One compact launcher keeps the composer tidy while making the new tools easy to find.
+ const menu=document.getElementById("composerMenu");
+ if(menu&&!document.getElementById("nexoraToolsMenuBtn")){
+   const b=document.createElement("button");b.type="button";b.className="composer-menu-item";b.id="nexoraToolsMenuBtn";b.innerHTML='<span aria-hidden="true">✦</span><span><strong>NEXORA Tools</strong><small>Compare, code, memory and customization</small></span>';b.addEventListener("click",()=>{menu.hidden=true;openToolHub();});menu.appendChild(b);
+ }
+ // Voice conversation uses the browser's existing speech recognition and speech synthesis.
+ const voiceStart=document.createElement("button");
+ voiceStart.type="button";voiceStart.id="nexoraVoiceStart";voiceStart.className="voice-wip-return";voiceStart.textContent="Start voice conversation";
+ document.querySelector(".voice-wip-content")?.insertBefore(voiceStart,document.getElementById("voiceWipReturn"));
+ const voiceDescription=document.querySelector(".voice-wip-description");
+ if(voiceDescription)voiceDescription.textContent="Use your device browser's microphone and speech support for hands-free conversation. Microphone access requires a supported browser and permission.";
+ const voiceHeading=document.getElementById("voiceWipTitle");if(voiceHeading)voiceHeading.textContent="Voice Conversation";
+ const voiceStatusNote=document.querySelector(".voice-wip-note");if(voiceStatusNote)voiceStatusNote.textContent="Voice availability depends on your browser, device permissions and secure connection (HTTPS).";
+ function stopVoiceConversation(){
+   voiceModeEnabled=false;voiceTurnInProgress=false;clearTimeout(voiceModeRestartTimer);
+   try{if(recognition&&isListening)recognition.stop();}catch(_){}
+   if("speechSynthesis" in window)window.speechSynthesis.cancel();
+   if(voiceStart)voiceStart.textContent="Start voice conversation";
+ }
+ function startVoiceModeListening(){
+   if(!SpeechRecognition||!recognition){if(voiceStatus)voiceStatus.textContent="Voice recognition is not supported in this browser. Try an up-to-date Chrome browser.";return;}
+   if(!window.isSecureContext){if(voiceStatus)voiceStatus.textContent="Microphone access requires HTTPS or localhost. Open the NEXORA website in Chrome.";return;}
+   if(isListening||!voiceModeEnabled)return;
+   try{recognition.lang=voiceLanguage?.value||"en-IN";recognition.start();if(voiceStatus)voiceStatus.textContent="Voice conversation is listening…";}
+   catch(_){if(voiceStatus)voiceStatus.textContent="Could not start the microphone. Check browser permissions and try again.";}
+ }
+ voiceStart.addEventListener("click",()=>{
+   if(voiceModeEnabled){stopVoiceConversation();voiceStart.textContent="Start voice conversation";if(voiceStatus)voiceStatus.textContent="Voice conversation stopped.";return;}
+   if(!SpeechRecognition||!recognition){if(voiceStatusNote)voiceStatusNote.textContent="Speech recognition is unavailable in this browser. Use the microphone button for voice input if supported.";return;}
+   voiceModeEnabled=true;voiceStart.textContent="Stop voice conversation";closeVoiceWipPage();startVoiceModeListening();
+ });
+ const originalCloseVoicePage=closeVoiceWipPage;
+ closeVoiceWipPage=function(){stopVoiceConversation();originalCloseVoicePage();};
+ // Record non-sensitive local activity only; never store message text or send analytics.
+ const priorSend=sendMessage;
+ sendMessage=function(text,options={}){const result=priorSend(text,options);if(String(text||"").trim())notify("Chat message sent","A conversation was updated.");return result;};
+ // Improve the existing dashboard with a useful local average and a privacy reminder.
+ const priorDashboard=openNexoraDashboard;
+ openNexoraDashboard=function(){priorDashboard();const total=sessions.reduce((n,s)=>n+(s.messages||[]).length,0);const avg=sessions.length?(total/sessions.length).toFixed(1):"0";const note=document.createElement("p");note.className="nexora-panel-note";note.textContent="Average messages per conversation: "+avg+". This dashboard reads only chats loaded in this browser; it does not report analytics externally.";panelBody.appendChild(note);};
+ // Gallery album filters: All, recent (last 7 days), and older saved images.
+ const priorGallery=renderMyImages;
+ renderMyImages=async function(){
+   await priorGallery();
+   const grid=document.getElementById("myImagesGrid");if(!grid)return;
+   let bar=document.getElementById("nexoraGalleryFilters");
+   if(!bar){bar=document.createElement("div");bar.id="nexoraGalleryFilters";bar.className="nexora-gallery-filters";bar.innerHTML='<button data-gallery-filter="all">All images</button><button data-gallery-filter="recent">Recent</button>';grid.parentNode.insertBefore(bar,grid);}
+   const cards=[...grid.querySelectorAll(".my-image-card")];
+   bar.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{const recent=btn.dataset.galleryFilter==="recent";cards.forEach(card=>{card.hidden=recent&&Number(card.dataset.created||0)<Date.now()-7*86400000;});});
+ };
+ notify("NEXORA upgrade suite ready","New tools are available from the + menu.");
+})();
+
 })();
 
 </script>
