@@ -2255,14 +2255,14 @@ function addMessage(role, text, options = {}) {
     actions.appendChild(regenerate);
     wrap.appendChild(actions);
   }
-  if (!options.typing) {
+  if (role === "bot" && !options.typing) {
     const webAction = document.createElement("div");
     webAction.className = "message-actions";
     const searchWeb = document.createElement("button");
     searchWeb.type = "button";
     searchWeb.className = "message-web-search";
     searchWeb.textContent = "🌐 Search web";
-    searchWeb.title = "Search the web about this message";
+    searchWeb.title = "Search the web about this AI answer";
     searchWeb.addEventListener("click", () => {
       if (busy) return;
       sendMessage(String(text), {webSearch:true});
