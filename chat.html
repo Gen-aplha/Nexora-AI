@@ -93,6 +93,7 @@ button{cursor:pointer}
 .composer-wrap{padding:12px clamp(12px,4vw,50px) 18px;background:linear-gradient(transparent,rgba(10,12,28,.88) 25%)}
 .composer{max-width:930px;margin:auto;display:flex;align-items:flex-end;gap:10px;padding:10px 11px 10px 18px;border:1px solid rgba(130,91,255,.45);border-radius:22px;background:rgba(25,28,54,.95);box-shadow:0 0 0 5px rgba(87,53,190,.08)}
 textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;border:0;outline:0;background:transparent;color:var(--text);line-height:1.5}textarea::placeholder{color:#8992cb}
+ .web-search-toggle{width:42px;height:42px;flex:0 0 42px;border:1px solid rgba(150,130,220,.35);border-radius:13px;background:rgba(255,255,255,.06);color:#aeb2d6;font-size:19px;cursor:pointer}.web-search-toggle.active{background:linear-gradient(135deg,#563cff,#963cff);border-color:#a98cff;color:#fff;box-shadow:0 0 0 3px rgba(120,80,255,.18)}
 .send{width:45px;height:45px;border:0;border-radius:15px;color:white;background:linear-gradient(135deg,#563cff,#a132ff);font-size:20px;box-shadow:0 4px 16px rgba(107,54,255,.3)}.send:disabled{opacity:.55}
 .footnote{text-align:center;color:#717aa9;font-size:11px;margin-top:9px}
 .typing{display:inline-flex;gap:5px;padding:6px 2px}.typing i{width:6px;height:6px;background:#a79aff;border-radius:50%;animation:pulse 1s infinite alternate}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}@keyframes pulse{to{opacity:.25;transform:translateY(-3px)}}
@@ -975,7 +976,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       <div class="plugins-categories" role="group" aria-label="Filter plugins"><button type="button" class="plugins-filter active" data-plugin-filter="All">All</button><button type="button" class="plugins-filter" data-plugin-filter="Productivity">Productivity</button><button type="button" class="plugins-filter" data-plugin-filter="Learning">Learning</button><button type="button" class="plugins-filter" data-plugin-filter="Creative">Creative</button></div>
       <div class="plugins-featured"><div class="plugins-featured-art">✦</div><div><span>COMING TO NEXORA</span><strong>Your AI, with more superpowers.</strong><p>Connect useful tools directly to your conversations.</p></div></div>
       <div class="plugins-grid" id="pluginsGrid">
-        <article class="plugin-card" data-category="Productivity" data-search="web search internet news websites"><div class="plugin-card-top"><span class="plugin-card-icon web">⌕</span><span class="plugin-status">Planned</span></div><h3>Web Search</h3><p>Find current information and useful websites from across the internet.</p><small>PRODUCTIVITY</small><button type="button" disabled>Coming soon</button></article>
+        <article class="plugin-card" data-category="Productivity" data-search="web search internet news websites"><div class="plugin-card-top"><span class="plugin-card-icon web">⌕</span><span class="plugin-status">Available</span></div><h3>Web Search</h3><p>Find current information, open webpages and get concise summaries with source links.</p><small>PRODUCTIVITY</small><button type="button" id="webSearchPluginLaunchBtn">Start web search</button></article>
         <article class="plugin-card" data-category="Productivity" data-search="pdf documents files summarize reader"><div class="plugin-card-top"><span class="plugin-card-icon docs">▤</span><span class="plugin-status">Available</span></div><h3>PDF Assistant</h3><p>Read documents, explain sections and create quick summaries.</p><small>PRODUCTIVITY</small><button type="button" id="pdfPluginLaunchBtn">Open assistant</button></article>
         <article class="plugin-card" data-category="Learning" data-search="calculator maths math equations"><div class="plugin-card-top"><span class="plugin-card-icon calc">＋</span><span class="plugin-status">Planned</span></div><h3>Smart Calculator</h3><p>Work through calculations and understand each step.</p><small>LEARNING</small><button type="button" disabled>Coming soon</button></article>
         <article class="plugin-card" data-category="Productivity" data-search="weather forecast temperature rain"><div class="plugin-card-top"><span class="plugin-card-icon weather">☼</span><span class="plugin-status">Planned</span></div><h3>Weather</h3><p>Check local conditions and upcoming forecasts.</p><small>PRODUCTIVITY</small><button type="button" disabled>Coming soon</button></article>
@@ -1132,6 +1133,7 @@ html,body{width:100%;height:100%;overflow:hidden!important;overscroll-behavior:n
       </div>
       <form class="composer" id="chatForm">
         <button class="plus-btn" id="composerPlus" type="button" aria-label="Add photos, files or create an image" aria-expanded="false">＋</button>
+        <button class="web-search-toggle" id="webSearchToggle" type="button" aria-label="Toggle live web search" aria-pressed="false" title="Turn on live web search">🌐</button>
         <textarea id="messageInput" rows="1" placeholder="Message NEXORA AI" aria-label="Your message"></textarea>
         <button class="voice-btn" id="voiceBtn" type="button" aria-label="Start voice input" title="Speak your message">🎙</button>
         <button class="send" id="sendBtn" type="submit" aria-label="Send message">↑</button>
@@ -1212,6 +1214,21 @@ const chat = document.getElementById("chat");
 const welcome = document.getElementById("welcome");
 const form = document.getElementById("chatForm");
 const input = document.getElementById("messageInput");
+const webSearchToggle = document.getElementById("webSearchToggle");
+let webSearchEnabled = false;
+webSearchToggle.addEventListener("click", () => {
+  webSearchEnabled = !webSearchEnabled;
+  webSearchToggle.classList.toggle("active", webSearchEnabled);
+  webSearchToggle.setAttribute("aria-pressed", String(webSearchEnabled));
+  webSearchToggle.title = webSearchEnabled ? "Live web search is on" : "Turn on live web search";
+  input.placeholder = webSearchEnabled ? "Search the web or paste a webpage link…" : "Message NEXORA AI";
+});
+const webSearchPluginLaunchBtn = document.getElementById("webSearchPluginLaunchBtn");
+webSearchPluginLaunchBtn?.addEventListener("click", () => {
+  if (!webSearchEnabled) webSearchToggle.click();
+  input.focus();
+  document.querySelector(".plugins-overlay.active")?.classList.remove("active");
+});
 const sendBtn = document.getElementById("sendBtn");
 const sidebar = document.getElementById("sidebar");
 const historyList = document.getElementById("historyList");
@@ -1815,6 +1832,7 @@ function inlineMarkdown(value) {
     code.push("<code>" + body + "</code>");
     return key;
   });
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
   s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   s = s.replace(/__(.+?)__/g, "<strong>$1</strong>");
   s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
@@ -2882,7 +2900,14 @@ async function sendMessage(text) {
   const typing = addMessage("bot", "", {typing:true});
   try {
     const pdfFiles = files.filter(item => item.kind === "text" && (/\.pdf$/i.test(item.name || "") || /^PDF CONTENT/i.test(item.text || "")));
-    if (pdfFiles.length) {
+    if (webSearchEnabled && !files.length) {
+      const urlMatch = message.match(/https?:\/\/[^\s<>"']+/i);
+      const pageUrl = urlMatch ? urlMatch[0].replace(/[),.!?]+$/, "") : "";
+      const result = pageUrl
+        ? await postBackend({action:"web_summarize",url:pageUrl,question:message.replace(pageUrl,"").trim() || "Summarize this webpage"})
+        : await postBackend({action:"web_search",query:message});
+      reply = result.reply || "The web service returned no summary.";
+    } else if (pdfFiles.length) {
       const pdfGuidance = "For help with PDF files, please use **PDF Assistant** instead of normal chat.\n\n**How to use it:**\n1. Tap the **＋** button beside the message box.\n2. Choose **PDF Assistant** and upload your PDF there.\n3. Select **Summarize PDF**, **Key points**, or **Explain simply**, or type your own question.\n\n**Tips for better results:**\n• Upload a text-based PDF where you can select and copy the words. Scanned/photo-only PDFs are not supported yet.\n• PDFs must be 12 MB or smaller.\n• PDF Assistant reads up to the first 40 pages, so split very long documents into smaller files.\n• Ask focused questions and mention a page number when you need details from a particular section.\n\nYour PDF was not sent to the normal chat AI.";
       typing.bubble.innerHTML = renderMarkdown(pdfGuidance);
       session.messages.push({role:"bot",text:pdfGuidance});
