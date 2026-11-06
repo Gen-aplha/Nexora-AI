@@ -1177,6 +1177,7 @@ body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35
             <button type="button" class="studio-tab active" data-studio-tab="create" aria-selected="true">Create</button>
             <button type="button" class="studio-tab" data-studio-tab="edit" aria-selected="false">Edit</button>
             <button type="button" class="studio-tab" data-studio-tab="gallery" aria-selected="false">My gallery</button>
+            <button type="button" class="studio-tab" data-studio-tab="prompts" aria-selected="false">Saved Prompts</button>
           </div>
           <section class="studio-section" id="imageStudioCreate">
           <label class="image-enhance-toggle"><input type="checkbox" id="imagePromptEnhance" checked> Improve prompt for richer results</label>
@@ -1243,6 +1244,11 @@ body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35
             <p class="studio-help">Your generated and edited images are saved on this device.</p>
             <div class="my-images-grid" id="myImagesGrid"><p class="my-images-empty">Your generated images will appear here.</p></div>
           </section>
+          <section class="studio-section" id="imageStudioPrompts" hidden>
+            <h2>Saved Prompts</h2>
+            <p class="studio-help">Save and reuse your favourite prompts.</p>
+            <button type="button" class="studio-primary-btn" id="openSavedPromptsBtn">✧ Open Saved Prompts</button>
+          </section>
         </div>
       </section>
       <div class="image-viewer" id="imageViewer" role="dialog" aria-modal="true" aria-label="Image preview">
@@ -1251,18 +1257,14 @@ body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35
       </div>
       
 <div class="nexora-upgrade-bar" aria-label="NEXORA AI tools">
-  <button type="button" class="nexora-search-launch" id="nexoraWebSearchBtn">🌐 Web search</button>
   <select id="nexoraPersonality" aria-label="AI personality">
     <option value="default">Personality: Default</option><option value="teacher">Teacher</option><option value="programmer">Programmer</option><option value="researcher">Researcher</option><option value="writer">Writer</option><option value="creative">Creative assistant</option>
   </select>
   <select id="nexoraModel" aria-label="AI model selector" title="Only the currently connected model is available">
     <option value="default">Model: NEXORA default</option>
   </select>
-  <button type="button" id="nexoraProjectsBtn">📁 Projects</button>
-  <button type="button" id="nexoraPromptsBtn">✧ Prompts</button>
   <button type="button" id="nexoraStudyBtn">🎓 Study mode</button>
   <button type="button" id="nexoraPresentationBtn">▤ Presentations</button>
-  <button type="button" id="nexoraDashboardBtn">▦ Dashboard</button>
 </div>
 <div class="nexora-panel-overlay" id="nexoraPanelOverlay" aria-hidden="true">
   <section class="nexora-panel" role="dialog" aria-modal="true" aria-labelledby="nexoraPanelTitle">
@@ -1560,7 +1562,7 @@ function moveStudioHistory(direction) {
 }
 function showImageStudioTab(tab) {
   document.body.classList.toggle("image-edit-tab-open",tab === "edit");
-  const sections = {create:document.getElementById("imageStudioCreate"),edit:document.getElementById("imageStudioEdit"),gallery:document.getElementById("imageStudioGallery")};
+  const sections = {create:document.getElementById("imageStudioCreate"),edit:document.getElementById("imageStudioEdit"),gallery:document.getElementById("imageStudioGallery"),prompts:document.getElementById("imageStudioPrompts")};
   Object.entries(sections).forEach(([name,section]) => { section.hidden = name !== tab; });
   document.querySelectorAll("[data-studio-tab]").forEach(button => {
     const active = button.dataset.studioTab === tab;
@@ -3264,8 +3266,9 @@ document.querySelectorAll("[data-account-action]").forEach(button=>button.addEve
  closeAccount();
  if(action==="personalization")openPersonalization();
  else if(action==="library")openLibrary();
- else if(action==="settings")openAccountInfo("Settings",'<p>Manage how NEXORA AI looks and find account, privacy and support options.</p><div class="account-info-actions"><button type="button" id="accountThemeToggle">Appearance · Switch light / dark theme</button><button type="button" id="accountVoicePrefs">Personalization · Response style and language</button><button type="button" id="accountManageProfile">Account · Manage your profile</button><a class="account-info-link" href="privacy.html">Privacy policy and data information</a><button type="button" id="accountHelp">Help · How to use NEXORA AI</button><button type="button" id="accountAbout">About · App information and version</button><a class="account-info-link" href="https://github.com/Gen-aplha/Nexora-AI/issues/new" target="_blank" rel="noopener noreferrer">Feedback · Report a problem or suggest an idea</a></div>');
- else if(action==="help")openAccountInfo("Help",'<p><strong>Start a chat:</strong> Type a message and tap Send.</p><p><strong>Create an image:</strong> Tap + beside the message box and choose Create an image.</p><p><strong>Find options:</strong> Open your profile menu and choose Settings.</p><p><strong>Account help:</strong> Use Account centre and check your email for verification messages.</p>');
+ else if(action==="settings")openAccountInfo("Settings",'<p>Manage how NEXORA AI looks and find account, privacy and support options.</p><div class="account-info-actions"><button type="button" id="accountThemeToggle">Appearance · Switch light / dark theme</button><button type="button" id="accountDashboardBtn">▦ Dashboard · Your NEXORA activity</button><button type="button" id="accountVoicePrefs">Personalization · Response style and language</button><button type="button" id="accountManageProfile">Account · Manage your profile</button><a class="account-info-link" href="privacy.html">Privacy policy and data information</a><button type="button" id="accountHelp">Help · How to use NEXORA AI</button><button type="button" id="accountAbout">About · App information and version</button><a class="account-info-link" href="https://github.com/Gen-aplha/Nexora-AI/issues/new" target="_blank" rel="noopener noreferrer">Feedback · Report a problem or suggest an idea</a></div>');
+
+ document.getElementById("accountDashboardBtn")?.addEventListener("click",openNexoraDashboard); else if(action==="help")openAccountInfo("Help",'<p><strong>Start a chat:</strong> Type a message and tap Send.</p><p><strong>Create an image:</strong> Tap + beside the message box and choose Create an image.</p><p><strong>Find options:</strong> Open your profile menu and choose Settings.</p><p><strong>Account help:</strong> Use Account centre and check your email for verification messages.</p>');
  else if(action==="about")openAccountInfo("About NEXORA AI",'<p>NEXORA AI is an independent AI assistant project.</p><p>Explore AI chat, Coding Assistant, PDF Assistant, Image Studio and personalization tools.</p><p><a href="https://gen-aplha.github.io/Nexora-AI/" target="_blank" rel="noopener noreferrer">Open the NEXORA AI website</a></p><p><a href="https://github.com/Gen-aplha/Nexora-AI/releases" target="_blank" rel="noopener noreferrer">View release versions</a></p><p><a href="plus.html">Explore NEXORA PLUS</a> · <a href="privacy.html">Privacy policy</a></p>');
 }));
 
@@ -3529,15 +3532,6 @@ document.body.dataset.theme = "light";
    }
    return originalSendMessage(text,options);
  };
- // Live search uses the existing Cloudflare web_search / web_summarize backend actions.
- document.getElementById("nexoraWebSearchBtn").addEventListener("click",()=>{
-   openPanel("Live web search","Search current web information through the connected NEXORA backend.",
-    '<label for="nexoraSearchQuery">What should NEXORA search for?</label><input id="nexoraSearchQuery" type="search" placeholder="Search the latest information..."><p class="nexora-panel-note">Search results depend on the web-search service configured in your NEXORA backend.</p><button class="primary" id="nexoraRunSearch">Search the web</button>');
-   const field=document.getElementById("nexoraSearchQuery");field.focus();
-   const run=()=>{const q=field.value.trim();if(!q)return;closePanel();sendMessage(q,{webSearch:true,displayText:"🌐 Search the web: "+q});};
-   document.getElementById("nexoraRunSearch").addEventListener("click",run);
-   field.addEventListener("keydown",e=>{if(e.key==="Enter")run();});
- });
  // Project folders are attached to chat-session records, so their labels travel with cloud-synced chats.
  function openProjects(){
    const current=currentSession();
@@ -3568,8 +3562,7 @@ document.body.dataset.theme = "light";
    assignBtn.addEventListener("click",()=>{let session=currentSession();if(!session)session=ensureSession("Project conversation");session.projectName=assign.value||"";session.updatedAt=Date.now();saveSessions();renderProjectList();if(typeof showToast==="function")showToast(session.projectName?"Conversation added to "+session.projectName:"Project folder removed.");});
    renderProjectList();openPanel("Projects & folders","Keep related chats organized.",wrap);
  }
- document.getElementById("nexoraProjectsBtn").addEventListener("click",openProjects);
- document.getElementById("projectsBtn")?.addEventListener("click",openProjects);
+ document.getElementById("projectsBtn")?.addEventListener("click",()=>{sidebar.classList.remove("open");openProjects();});
  // Prompt library: save, insert, and run reusable prompts.
  function openPrompts(){
    const wrap=document.createElement("div");
@@ -3584,7 +3577,6 @@ document.body.dataset.theme = "light";
    save.addEventListener("click",()=>{const value=field.value.trim();if(!value)return;prompts.unshift({title:value.split(/\s+/).slice(0,5).join(" ").slice(0,48),text:value});prompts=prompts.slice(0,100);storeList(PROMPTS_KEY,prompts);field.value="";render();});
    wrap.append(field,save,list);render();openPanel("Prompt library","Save and reuse your best prompts.",wrap);
  }
- document.getElementById("nexoraPromptsBtn").addEventListener("click",openPrompts);
  // Study mode uses the same connected AI, with a clear tutoring instruction.
  document.getElementById("nexoraStudyBtn").addEventListener("click",()=>{
    openPanel("Study mode","Turn a topic or homework question into a guided learning session.",
@@ -3597,6 +3589,7 @@ document.body.dataset.theme = "light";
  });
  // Export current chat in portable formats.
  // Presentation maker: generate slide content with AI, then export it as a self-contained HTML slide deck.
+ document.getElementById("openSavedPromptsBtn")?.addEventListener("click",openPrompts);
  document.getElementById("nexoraPresentationBtn").addEventListener("click",()=>{
    openPanel("AI presentation maker","Generate a slide-by-slide outline, then export it as a browser-based presentation.",
     '<label for="nexoraPresentationTopic">Presentation topic</label><input id="nexoraPresentationTopic" placeholder="e.g. Renewable energy"><label for="nexoraPresentationCount">Number of slides</label><select id="nexoraPresentationCount"><option>5</option><option selected>8</option><option>10</option><option>12</option></select><button class="primary" id="nexoraCreatePresentation">Generate presentation content</button><button id="nexoraDownloadPresentation">Download slides from latest AI answer</button><p class="nexora-panel-note">The download is a standalone HTML slideshow, not a PowerPoint file.</p>');
@@ -3611,14 +3604,14 @@ document.body.dataset.theme = "light";
    });
  });
  // Dashboard uses the user's own local chat data; it does not transmit analytics.
- document.getElementById("nexoraDashboardBtn").addEventListener("click",()=>{
+ function openNexoraDashboard(){
    const messageCount=sessions.reduce((sum,s)=>sum+(s.messages||[]).length,0);
    const userCount=sessions.reduce((sum,s)=>sum+(s.messages||[]).filter(m=>m.role==="user").length,0);
    const botCount=sessions.reduce((sum,s)=>sum+(s.messages||[]).filter(m=>m.role==="bot").length,0);
    const imageCount=sessions.reduce((sum,s)=>sum+(s.messages||[]).filter(m=>m.imageId).length,0);
    openPanel("Your NEXORA dashboard","A private overview calculated from chats currently loaded in this browser.",
     '<div class="nexora-stat-grid"><div class="nexora-stat"><strong>'+sessions.length+'</strong><span>Conversations</span></div><div class="nexora-stat"><strong>'+messageCount+'</strong><span>Total messages</span></div><div class="nexora-stat"><strong>'+userCount+'</strong><span>Your messages</span></div><div class="nexora-stat"><strong>'+botCount+'</strong><span>AI replies</span></div><div class="nexora-stat"><strong>'+imageCount+'</strong><span>Saved image messages</span></div><div class="nexora-stat"><strong>'+projects.length+'</strong><span>Project names on this device</span></div></div><p class="nexora-panel-note">Counts reflect conversations loaded in this session. No analytics are sent to a third party.</p>');
- });
+ }
  // Add Share to the existing message actions, retaining copy, read aloud, regenerate and edit.
  const originalAddMessage=addMessage;
  addMessage=function(role,text,options={}){
