@@ -1157,10 +1157,10 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
       <div class="voice-wip-content">
         <div class="voice-wip-orb" aria-hidden="true"><span>🎙</span></div>
         <p class="voice-wip-eyebrow">NEXORA AI · VOICE</p>
-        <h2 id="voiceWipTitle">Work in Progress</h2>
+        <h2 id="voiceWipTitle">Voice Conversation</h2>
         <p>Start a hands-free conversation with NEXORA AI.</p>
-        <p class="voice-wip-description">We're working on hands-free conversations so you can talk with NEXORA AI and hear replies naturally.</p>
-        <div class="voice-wip-note"><span aria-hidden="true">✦</span> This feature is being prepared for a future update.</div>
+        <p class="voice-wip-description">Start a hands-free conversation with NEXORA AI using your device microphone and speech support.</p>
+        <div class="voice-wip-note"><span aria-hidden="true">✦</span> Voice availability depends on your browser, device permissions and secure connection (HTTPS).</div>
         <button type="button" class="voice-wip-return" id="voiceWipReturn">Back to chat</button>
       </div>
     </section>
@@ -1855,7 +1855,27 @@ function closeVoiceWipPage() {
   document.body.classList.remove("voice-wip-open");
   voiceModeBtn.focus();
 }
-voiceModeBtn.addEventListener("click",openVoiceWipPage);
+voiceModeBtn.addEventListener("click",()=>{
+  if(voiceModeEnabled){
+    stopVoiceConversation();
+    voiceModeBtn.querySelector(".voice-mode-label").textContent="🎙 Voice mode";
+    voiceModeBtn.setAttribute("aria-label","Start voice conversation");
+    if(voiceStatus)voiceStatus.textContent="Voice conversation stopped.";
+    return;
+  }
+  if(!SpeechRecognition||!recognition){
+    if(voiceStatus)voiceStatus.textContent="Voice conversation is not supported in this browser. Try an up-to-date Chrome browser.";
+    return;
+  }
+  if(!window.isSecureContext){
+    if(voiceStatus)voiceStatus.textContent="Microphone access requires HTTPS or localhost. Open the NEXORA website in Chrome.";
+    return;
+  }
+  voiceModeEnabled=true;
+  voiceModeBtn.querySelector(".voice-mode-label").textContent="■ Stop voice mode";
+  voiceModeBtn.setAttribute("aria-label","Stop voice conversation");
+  startVoiceModeListening();
+});
 document.getElementById("voiceWipBack").addEventListener("click",closeVoiceWipPage);
 document.getElementById("voiceWipReturn").addEventListener("click",closeVoiceWipPage);
 if (!SpeechRecognition) {
