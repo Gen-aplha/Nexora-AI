@@ -3793,6 +3793,7 @@ document.body.dataset.theme = "light";
    try{if(recognition&&isListening)recognition.stop();}catch(_){}
    if("speechSynthesis" in window)window.speechSynthesis.cancel();
    if(voiceStart)voiceStart.textContent="Start voice conversation";
+   if(voiceModeBtn){const label=voiceModeBtn.querySelector(".voice-mode-label");if(label)label.textContent="🎙 Voice mode";voiceModeBtn.setAttribute("aria-label","Start voice conversation");}
  }
  function startVoiceModeListening(){
    if(!SpeechRecognition||!recognition){if(voiceStatus)voiceStatus.textContent="Voice recognition is not supported in this browser. Try an up-to-date Chrome browser.";return;}
