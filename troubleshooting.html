@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d1b">
+  <title>Fix an issue with NEXORA AI</title>
+  <meta name="description" content="Troubleshooting tips for NEXORA AI on Android. Learn how to force stop and reopen the app when it freezes or shows an error.">
+  <link rel="canonical" href="https://gen-aplha.github.io/Nexora-AI/troubleshooting.html">
+  <link rel="stylesheet" href="site.css">
+  <style>
+    .help-wrap{max-width:820px;margin:0 auto;padding:58px 0 76px}
+    .help-intro{text-align:center;margin-bottom:30px}
+    .help-intro p{color:var(--muted);font-size:17px}
+    .steps{display:grid;gap:14px;margin:28px 0}
+    .step{display:flex;gap:17px;align-items:flex-start;padding:21px;border:1px solid #292f52;border-radius:18px;background:linear-gradient(145deg,#151a31,#101326)}
+    .stepnum{flex:0 0 40px;height:40px;display:grid;place-items:center;border-radius:13px;background:#29214d;color:#d8ceff;font-weight:850;font-size:18px}
+    .step h2{font-size:19px;letter-spacing:0;margin:0 0 5px}
+    .step p{color:var(--muted);margin:0;font-size:14px;line-height:1.65}
+    .notice{margin:22px 0;padding:17px 19px;border:1px solid #51427b;border-radius:16px;background:#17152a;color:var(--muted);font-size:14px;line-height:1.65}
+    .help-actions{text-align:center;padding:25px;border:1px solid #292f52;border-radius:20px;background:linear-gradient(145deg,#151a31,#101326)}
+    .help-actions p{color:var(--muted);font-size:14px}
+    .backlink{display:inline-block;margin-top:20px;color:#c9c0ff}
+    @media(max-width:600px){.help-wrap{padding:42px 0 58px}.step{padding:17px}.stepnum{flex-basis:36px;height:36px}}
+  </style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap navin">
+    <a class="brand" href="index.html" aria-label="NEXORA AI home">
+      <img class="mark" src="nexora-logo.svg" alt="NEXORA AI logo" style="object-fit:cover;background:#030313;box-shadow:0 0 24px #2f7bff66"><span>NEXORA AI</span>
+    </a>
+    <a class="btn small" href="chat.html">Open AI Chat ↗</a>
+  </div>
+</header>
+<main class="wrap">
+  <div class="help-wrap">
+    <div class="help-intro">
+      <span class="eyebrow">Android troubleshooting guide</span>
+      <h1>Having trouble with <span class="gradient">NEXORA AI?</span></h1>
+      <p>If the app freezes, stops responding, or shows an unexpected error, try these steps first.</p>
+    </div>
+
+    <div class="steps">
+      <section class="step">
+        <div class="stepnum">1</div>
+        <div><h2>Open the app information screen</h2><p>Find the NEXORA AI icon on your Android home screen or app list. Touch and hold the icon, then tap <strong>App info</strong> (ⓘ). On some phones, you may need to tap the small information icon.</p></div>
+      </section>
+      <section class="step">
+        <div class="stepnum">2</div>
+        <div><h2>Force stop NEXORA AI</h2><p>On the App info screen, tap <strong>Force stop</strong>. If Android asks you to confirm, tap <strong>OK</strong> or <strong>Force stop</strong> again.</p></div>
+      </section>
+      <section class="step">
+        <div class="stepnum">3</div>
+        <div><h2>Open the app again</h2><p>Return to your home screen or app list and tap NEXORA AI to launch it again. Check whether the issue has disappeared.</p></div>
+      </section>
+      <section class="step">
+        <div class="stepnum">4</div>
+        <div><h2>If the problem continues</h2><p>Check your internet connection, then close and reopen NEXORA AI once more. If you use NEXORA AI in a browser, refresh the chat page or close and reopen the browser.</p></div>
+      </section>
+    </div>
+
+    <div class="notice"><strong>Important:</strong> Force stop only closes the app; it does not uninstall it. Do not tap <strong>Clear storage</strong>, <strong>Clear data</strong> or <strong>Uninstall</strong> as part of this troubleshooting step. If you have unsent text, copy it before closing the app.</div>
+
+    <section class="help-actions">
+      <h2>Still seeing the error?</h2>
+      <p>Report the issue to the NEXORA AI project. Include what you were doing and the exact error message, but do not include passwords or private account information.</p>
+      <a class="btn" href="https://github.com/Gen-aplha/Nexora-AI/issues/new" target="_blank" rel="noopener noreferrer">Report a problem ↗</a>
+    </section>
+    <div style="text-align:center"><a class="backlink" href="chat.html">← Back to NEXORA AI Chat</a></div>
+  </div>
+</main>
+<footer class="footer"><div class="wrap footin"><span>© <span id="year"></span> NEXORA AI</span><span><a href="privacy.html">Privacy Policy</a> · <a href="about.html">About</a></span><span>Created by Mayank Gupta.</span></div></footer>
+<script>document.getElementById("year").textContent=new Date().getFullYear();</script>
+</body>
+</html>
