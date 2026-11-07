@@ -1885,6 +1885,7 @@ if (!SpeechRecognition) {
   recognition.maxAlternatives = 1;
   recognition.onstart = () => {
     isListening = true;
+    if(typeof setVoicePageStatus==="function")setVoicePageStatus("Listening… speak when you are ready.");
     voiceBtn.classList.add("listening");
     voiceBtn.textContent = "⏹";
     voiceBtn.setAttribute("aria-label", "Stop voice input");
@@ -1911,7 +1912,9 @@ if (!SpeechRecognition) {
       "no-speech":"No speech was detected. Tap the microphone and try again.",
       "network":"Speech recognition needs a network connection in this browser."
     };
-    voiceStatus.textContent = messages[event.error] || ("Voice input error: " + event.error);
+    const message=messages[event.error] || ("Voice input error: " + event.error);
+    voiceStatus.textContent = message;
+    if(typeof setVoicePageStatus==="function")setVoicePageStatus(message);
   };
   recognition.onend = () => {
     isListening = false;
@@ -1924,9 +1927,11 @@ if (!SpeechRecognition) {
       if (spokenMessage) {
         voiceTurnInProgress = true;
         voiceStatus.textContent = "Sending your voice message…";
+        if(typeof setVoicePageStatus==="function")setVoicePageStatus("Sending your voice message…");
         sendMessage(spokenMessage);
       } else {
         voiceStatus.textContent = "Voice mode is on. Listening again…";
+        if(typeof setVoicePageStatus==="function")setVoicePageStatus("Listening again…");
         clearTimeout(voiceModeRestartTimer);
         voiceModeRestartTimer = setTimeout(startVoiceModeListening, 550);
       }
