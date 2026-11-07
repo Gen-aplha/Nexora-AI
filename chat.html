@@ -3562,6 +3562,12 @@ document.getElementById("accountForm").addEventListener("submit",async e=>{
      renderAccountButton();
      status.textContent="Signed in successfully. Backing up your saved chats and images…";
      closeAccount();closeFirstLaunch();
+     if(localStorage.getItem("nexora_new_account_onboarding_pending")==="yes"){
+       localStorage.removeItem("nexora_new_account_onboarding_pending");
+       localStorage.removeItem(SMART_ONBOARDING_KEY+"__completed");
+       localStorage.setItem("nexora_onboarding_redirect_after_continue","yes");
+       setTimeout(showSmartOnboarding,350);
+     }
      queueNexoraCloudSync(true);
      return;
    }
