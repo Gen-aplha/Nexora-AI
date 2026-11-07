@@ -1156,7 +1156,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
       <div class="status"><span class="dot"></span> Online</div>
     </header>
     <div class="voice-mode-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-haspopup="dialog" aria-controls="voiceWipPage"><span class="voice-mode-label">🎙 Voice mode</span></button></div>
-    <section class="voice-wip-page" id="voiceWipPage" role="dialog" aria-modal="true" aria-labelledby="voiceWipTitle" hidden>
+    <section class="voice-wip-page" id="voiceWipPage" role="dialog" aria-modal="true" aria-label="NEXORA AI voice mode" hidden>
       <header class="voice-wip-header"><button type="button" class="voice-wip-back" id="voiceWipBack" aria-label="Back to chat">‹</button><strong>NEXORA AI</strong></header>
       <div class="voice-wip-content">
         <div class="voice-wip-orb" aria-hidden="true"><span>🎙</span></div>
@@ -1866,7 +1866,6 @@ voiceModeBtn.addEventListener("click",()=>{
   if(status)status.textContent="Tap Start when you are ready to use your microphone.";
 });
 document.getElementById("voiceWipBack").addEventListener("click",closeVoiceWipPage);
-document.getElementById("voiceWipReturn").addEventListener("click",closeVoiceWipPage);
 if (!SpeechRecognition) {
   voiceBtn.title = "Voice input is not supported in this browser";
   voiceStatus.textContent = "Voice input is not supported here. Try Chrome on Android.";
