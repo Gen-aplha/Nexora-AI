@@ -1126,6 +1126,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <button class="account-centre-link" type="button" data-account-action="personalization"><span class="account-centre-icon">✧</span><span><strong>Personalization</strong><small>Response style, language and voice</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="library"><span class="account-centre-icon">▤</span><span><strong>Library</strong><small>Saved memories and notes</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="dashboard"><span class="account-centre-icon">▦</span><span><strong>Dashboard</strong><small>Your NEXORA activity</small></span><span class="account-centre-chevron">›</span></button>
+        <button class="account-centre-link" type="button" data-account-action="notifications"><span class="account-centre-icon">♧</span><span><strong>Notification Centre</strong><small>Recent activity and app alerts</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="settings"><span class="account-centre-icon">⚙</span><span><strong>Settings</strong><small>Appearance and app preferences</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="help"><span class="account-centre-icon">?</span><span><strong>Help</strong><small>Using NEXORA AI</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="about"><span class="account-centre-icon">ⓘ</span><span><strong>About NEXORA AI</strong><small>App information</small></span><span class="account-centre-chevron">›</span></button>
@@ -3311,6 +3312,7 @@ document.querySelectorAll("[data-account-action]").forEach(button=>button.addEve
  if(action==="personalization")openPersonalization();
  else if(action==="library")openLibrary();
  else if(action==="dashboard")openNexoraDashboard();
+ else if(action==="notifications")window.openNexoraNotifications?.();
  else if(action==="settings")openAccountInfo("Settings",'<p>Manage how NEXORA AI looks and find account, privacy and support options.</p><div class="account-info-actions"><button type="button" id="accountThemeToggle">Appearance · Switch light / dark theme</button><button type="button" id="accountVoicePrefs">Personalization · Response style and language</button><button type="button" id="accountManageProfile">Account · Manage your profile</button><a class="account-info-link" href="privacy.html">Privacy policy and data information</a><button type="button" id="accountHelp">Help · How to use NEXORA AI</button><button type="button" id="accountAbout">About · App information and version</button><a class="account-info-link" href="https://github.com/Gen-aplha/Nexora-AI/issues/new" target="_blank" rel="noopener noreferrer">Feedback · Report a problem or suggest an idea</a></div>');
  else if(action==="help")openAccountInfo("Help",'<p><strong>Start a chat:</strong> Type a message and tap Send.</p><p><strong>Create an image:</strong> Tap + beside the message box and choose Create an image.</p><p><strong>Find options:</strong> Open your profile menu and choose Settings.</p><p><strong>Account help:</strong> Use Account centre and check your email for verification messages.</p>');
  else if(action==="about")openAccountInfo("About NEXORA AI",'<p>NEXORA AI is an independent AI assistant project.</p><p>Explore AI chat, Coding Assistant, PDF Assistant, Image Studio and personalization tools.</p><p><a href="https://gen-aplha.github.io/Nexora-AI/" target="_blank" rel="noopener noreferrer">Open the NEXORA AI website</a></p><p><a href="https://github.com/Gen-aplha/Nexora-AI/releases" target="_blank" rel="noopener noreferrer">View release versions</a></p><p><a href="plus.html">Explore NEXORA PLUS</a> · <a href="privacy.html">Privacy policy</a></p>');
@@ -3690,13 +3692,12 @@ document.body.dataset.theme = "light";
  };
  const openToolHub=()=>{
    const wrap=document.createElement("div");
-   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="notifications">♧ <strong>Notification Centre</strong><small>Recent activity stored on this device</small></button><button data-tool="customize">◐ <strong>Customize appearance</strong><small>Accent color, text size and chat background</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
+   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="customize">◐ <strong>Customize appearance</strong><small>Accent color, text size and chat background</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
    openPanel("NEXORA Tools","Useful upgrades in one place",wrap);
    wrap.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>runTool(b.dataset.tool)));
  };
  function runTool(which){
    if(which==="compare")return openCompare();
-   if(which==="notifications")return openNotifications();
    if(which==="customize")return openCustomization();
    if(which==="files"){closePanel();document.getElementById("filesBtn")?.click();return;}
    if(which==="gallery"){closePanel();document.getElementById("sideImagesBtn")?.click();return;}
@@ -3745,6 +3746,8 @@ document.body.dataset.theme = "light";
    const clear=document.createElement("button");clear.textContent="Clear notifications";clear.addEventListener("click",()=>{upgradeData.notifications=[];writeStore(upgradeData);openNotifications();});wrap.appendChild(clear);
    openPanel("Notification Centre","Private activity log stored on this device",wrap);
  }
+ window.openNexoraNotifications=openNotifications;
+
  function applyCustomization(){
    const prefs=upgradeData.appearance||{};
    const accent=prefs.accent||"#8b5cf6",size=prefs.size||"15",wall=prefs.wall||"plain";
