@@ -2967,7 +2967,7 @@ async function signInWithGoogle(){
  const button=document.getElementById("firstLaunchGoogle")||document.getElementById("googleSignInBtn");
  if(!supabaseClient){status.textContent="The account service could not load. Refresh the page and try again.";return;}
  button.disabled=true;status.textContent="Redirecting to Google…";
- try{localStorage.setItem("nexora_google_auth_pending","1");localStorage.removeItem(ONBOARDING_STORAGE_KEY);const {error}=await supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:SUPABASE_REDIRECT_URL}});if(error)throw error;}
+ try{localStorage.setItem("nexora_google_auth_pending","1");localStorage.setItem("nexora_google_onboarding_check","yes");localStorage.removeItem(ONBOARDING_STORAGE_KEY);const {error}=await supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:SUPABASE_REDIRECT_URL}});if(error)throw error;}
  catch(error){status.textContent=error.message||"Google sign-in could not start. Check the provider setup and try again.";button.disabled=false;}
 }
 document.getElementById("googleSignInBtn").addEventListener("click",signInWithGoogle);
@@ -3409,11 +3409,13 @@ function saveSmartOnboarding(){
   const key="nexora_personalization_v1";let p={};try{p=JSON.parse(localStorage.getItem(key)||"{}")||{};}catch(_){}
   p.tone=tone;localStorage.setItem(key,JSON.stringify(p));
   localStorage.setItem(SMART_ONBOARDING_KEY+"__completed","yes");
-  closeSmartOnboarding();if(typeof showToast==="function")showToast("Your NEXORA AI preferences have been saved.");
+  closeSmartOnboarding();
+  if(localStorage.getItem("nexora_onboarding_redirect_after_continue")==="yes"){localStorage.removeItem("nexora_onboarding_redirect_after_continue");window.location.href=SUPABASE_REDIRECT_URL;return;}
+  if(typeof showToast==="function")showToast("Your NEXORA AI preferences have been saved.");
  }catch(error){console.warn("Could not save onboarding preferences:",error);if(typeof showToast==="function")showToast("Could not save preferences. Please try again.");}
 }
 document.getElementById("smartOnboardingSave").addEventListener("click",saveSmartOnboarding);
-document.getElementById("smartOnboardingSkip").addEventListener("click",()=>{localStorage.setItem(SMART_ONBOARDING_KEY+"__completed","yes");closeSmartOnboarding();});
+document.getElementById("smartOnboardingSkip").addEventListener("click",()=>{localStorage.setItem(SMART_ONBOARDING_KEY+"__completed","yes");closeSmartOnboarding();if(localStorage.getItem("nexora_onboarding_redirect_after_continue")==="yes"){localStorage.removeItem("nexora_onboarding_redirect_after_continue");window.location.href=SUPABASE_REDIRECT_URL;}});
 document.getElementById("editSmartOnboardingBtn").addEventListener("click",()=>{closePersonalization();localStorage.removeItem(SMART_ONBOARDING_KEY+"__completed");showSmartOnboarding();});
 document.getElementById("firstLaunchAccount").addEventListener("click",()=>openAuthPage("register"));
 document.getElementById("firstLaunchSignIn").addEventListener("click",()=>openAuthPage("login"));
@@ -3539,6 +3541,7 @@ document.getElementById("accountForm").addEventListener("submit",async e=>{
      });
      if(error)throw error;
      pendingVerificationEmail=email;
+     localStorage.setItem("nexora_new_account_onboarding_pending","yes");
      document.getElementById("accountResendVerification").hidden=false;
      status.textContent="Almost done! We sent a verification link to "+email+". Open that email and tap Confirm email, then return here and sign in. Check Spam/Junk if it isn't in your inbox.";
      document.getElementById("accountPassword").value="";
@@ -3632,8 +3635,16 @@ async function initializeNexoraAuth(){
        accountProfile={name:supabaseSession.user.user_metadata?.name||supabaseSession.user.email?.split("@")[0]||"NEXORA user",email:supabaseSession.user.email,picture:localStorage.getItem(PROFILE_PICTURE_KEY)||""};
        closeFirstLaunch();closeAccount();
        localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
+       const googleOnboardingCheck=localStorage.getItem("nexora_google_onboarding_check")==="yes";
+       const newAccountPending=localStorage.getItem("nexora_new_account_onboarding_pending")==="yes";
+       const createdAt=Date.parse(supabaseSession.user.created_at||"");
+       const lastSignInAt=Date.parse(supabaseSession.user.last_sign_in_at||"");
+       const isNewGoogleAccount=googleOnboardingCheck&&Number.isFinite(createdAt)&&Number.isFinite(lastSignInAt)&&Math.abs(lastSignInAt-createdAt)<300000;
+       if(newAccountPending||isNewGoogleAccount){localStorage.removeItem(SMART_ONBOARDING_KEY+"__completed");localStorage.setItem("nexora_onboarding_redirect_after_continue","yes");}
+       localStorage.removeItem("nexora_new_account_onboarding_pending");
+       localStorage.removeItem("nexora_google_onboarding_check");
        localStorage.removeItem("nexora_google_auth_pending");
-       setTimeout(showSmartOnboarding,350);
+       if(newAccountPending||isNewGoogleAccount)setTimeout(showSmartOnboarding,350);
        renderAccountButton();
      }
    }catch(error){console.warn("Could not restore NEXORA sign-in session:",error);}
@@ -3643,7 +3654,7 @@ async function initializeNexoraAuth(){
    document.getElementById("firstLaunchStatus").textContent="Google sign-in did not finish: "+authCallbackError+". Please check the provider setup.";
    return;
  }
- if(hasSupabaseSession){queueNexoraCloudSync(true);if(localStorage.getItem(SMART_ONBOARDING_KEY+"__completed")!=="yes")setTimeout(showSmartOnboarding,350);return;}
+ if(hasSupabaseSession){queueNexoraCloudSync(true);if(localStorage.getItem("nexora_onboarding_redirect_after_continue")==="yes")setTimeout(showSmartOnboarding,350);return;}
  if(googleAuthPending){
    showFirstLaunch();
    document.getElementById("firstLaunchStatus").textContent="Google sign-in was not completed. Please check the provider setup and try again.";
