@@ -6,7 +6,6 @@
     <filter id="softGlow" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="17" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="16" result="b"/><feOffset dy="12"/><feComponentTransfer><feFuncA type="linear" slope=".24"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
-  <circle cx="512" cy="512" r="420" stroke="url(#orbit)" stroke-opacity=".18" stroke-width="7"/>
   <path d="M260 755V278c0-42 51-62 80-30l430 485V250c0-40 32-72 72-72h20v568c0 43-51 63-80 31L372 294v461h-40c-40 0-72 0-72 0Z" fill="url(#n)" filter="url(#shadow)"/>
   <path d="M260 278c0-42 51-62 80-30l190 215-62 65-182-205c-17-19-26-31-26-45Z" fill="#fff" fill-opacity=".22"/>
   <path d="M112 665c135 135 450 124 680-40 48-34 79-71 94-106-95 78-247 139-405 155-152 16-286-5-369-57Z" stroke="url(#orbit)" stroke-width="40" stroke-linecap="round" filter="url(#softGlow)"/>
