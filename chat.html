@@ -4091,3 +4091,17 @@ renderHistory();
 
 </body>
 </html>
+
+
+/* Light-theme welcome logo: make the N mark larger and crisp on white. */
+.welcome>.logo-mark{
+  display:block!important;
+  width:112px!important;height:112px!important;
+  max-width:none!important;object-fit:contain!important;
+  opacity:1!important;mix-blend-mode:normal!important;
+  filter:drop-shadow(0 5px 13px rgba(105,48,210,.28))!important;
+  margin:0 auto 20px!important;
+}
+@media(min-width:700px){
+  .welcome>.logo-mark{width:124px!important;height:124px!important}
+}
