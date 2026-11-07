@@ -737,6 +737,7 @@ body.voice-wip-open{overflow:hidden}
 .voice-wip-note{margin:25px auto 22px;padding:13px 15px;border:1px solid rgba(139,111,255,.25);border-radius:13px;background:rgba(109,60,255,.07);color:var(--muted);font-size:12px;line-height:1.5}
 .voice-wip-note span{color:#9876ef;margin-right:6px}
 .voice-wip-return{width:100%;min-height:48px;border:0;border-radius:13px;background:linear-gradient(120deg,#6740df,#9b55e5);color:#fff;font-size:14px;font-weight:750;cursor:pointer}
+.voice-conversation-status{min-height:22px;margin:12px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
 
  
 /* NEXORA conversation refresh — ChatGPT-inspired, with NEXORA purple accents */
@@ -1159,6 +1160,8 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
       <header class="voice-wip-header"><button type="button" class="voice-wip-back" id="voiceWipBack" aria-label="Back to chat">‹</button><strong>NEXORA AI</strong></header>
       <div class="voice-wip-content">
         <div class="voice-wip-orb" aria-hidden="true"><span>🎙</span></div>
+        <button type="button" class="voice-wip-return" id="nexoraVoiceStart">Start</button>
+        <p id="voiceConversationStatus" class="voice-conversation-status" role="status" aria-live="polite">Tap Start when you are ready to use your microphone.</p>
         <p class="voice-wip-eyebrow">NEXORA AI · VOICE</p>
         <h2 id="voiceWipTitle">Voice Conversation</h2>
         <p>Start a hands-free conversation with NEXORA AI.</p>
@@ -1861,25 +1864,10 @@ function closeVoiceWipPage() {
   voiceModeBtn.focus();
 }
 voiceModeBtn.addEventListener("click",()=>{
-  if(voiceModeEnabled){
-    stopVoiceConversation();
-    voiceModeBtn.querySelector(".voice-mode-label").textContent="🎙 Voice mode";
-    voiceModeBtn.setAttribute("aria-label","Start voice conversation");
-    if(voiceStatus)voiceStatus.textContent="Voice conversation stopped.";
-    return;
-  }
-  if(!SpeechRecognition||!recognition){
-    if(voiceStatus)voiceStatus.textContent="Voice conversation is not supported in this browser. Try an up-to-date Chrome browser.";
-    return;
-  }
-  if(!window.isSecureContext){
-    if(voiceStatus)voiceStatus.textContent="Microphone access requires HTTPS or localhost. Open the NEXORA website in Chrome.";
-    return;
-  }
-  voiceModeEnabled=true;
-  voiceModeBtn.querySelector(".voice-mode-label").textContent="■ Stop voice mode";
-  voiceModeBtn.setAttribute("aria-label","Stop voice conversation");
-  startVoiceModeListening();
+  if(voiceModeEnabled){stopVoiceConversation();return;}
+  openVoiceWipPage();
+  const status=document.getElementById("voiceConversationStatus");
+  if(status)status.textContent="Tap Start when you are ready to use your microphone.";
 });
 document.getElementById("voiceWipBack").addEventListener("click",closeVoiceWipPage);
 document.getElementById("voiceWipReturn").addEventListener("click",closeVoiceWipPage);
@@ -3814,10 +3802,10 @@ renderHistory();
    [["Plan my study session","Study"],["Review a document","Files"],["Build a simple website","Code"]].forEach(([label])=>{const b=document.createElement("button");b.type="button";b.className="suggestion";b.dataset.welcomeSuggestion="";b.textContent=label;suggestions.appendChild(b);b.addEventListener("click",()=>{input.value=label==="Review a document"?"I want to review a document.":label==="Build a simple website"?"Help me build a simple website.":"Help me plan a study session.";input.dispatchEvent(new Event("input",{bubbles:true}));input.focus();});});
  }
  window.openNexoraTools=openToolHub;
- // Voice conversation uses the browser's existing speech recognition and speech synthesis.
- const voiceStart=document.createElement("button");
- voiceStart.type="button";voiceStart.id="nexoraVoiceStart";voiceStart.className="voice-wip-return";voiceStart.textContent="Start voice conversation";
- document.querySelector(".voice-wip-content")?.insertBefore(voiceStart,document.getElementById("voiceWipReturn"));
+ // Voice conversation controls sit directly below the microphone icon.
+ const voiceStart=document.getElementById("nexoraVoiceStart");
+ const voicePageStatus=document.getElementById("voiceConversationStatus");
+ const setVoicePageStatus=message=>{if(voicePageStatus)voicePageStatus.textContent=message||"";};
  const voiceDescription=document.querySelector(".voice-wip-description");
  if(voiceDescription)voiceDescription.textContent="Use your device browser's microphone and speech support for hands-free conversation. Microphone access requires a supported browser and permission.";
  const voiceHeading=document.getElementById("voiceWipTitle");if(voiceHeading)voiceHeading.textContent="Voice Conversation";
@@ -3826,21 +3814,23 @@ renderHistory();
    voiceModeEnabled=false;voiceTurnInProgress=false;clearTimeout(voiceModeRestartTimer);
    try{if(recognition&&isListening)recognition.stop();}catch(_){}
    if("speechSynthesis" in window)window.speechSynthesis.cancel();
-   if(voiceStart)voiceStart.textContent="Start voice conversation";
+   if(voiceStart){voiceStart.textContent="Start";voiceStart.setAttribute("aria-label","Start voice conversation");}
+   setVoicePageStatus("Voice conversation stopped.");
    if(voiceModeBtn){const label=voiceModeBtn.querySelector(".voice-mode-label");if(label)label.textContent="🎙 Voice mode";voiceModeBtn.setAttribute("aria-label","Start voice conversation");}
  }
  function startVoiceModeListening(){
-   if(!SpeechRecognition||!recognition){if(voiceStatus)voiceStatus.textContent="Voice recognition is not supported in this browser. Try an up-to-date Chrome browser.";return;}
-   if(!window.isSecureContext){if(voiceStatus)voiceStatus.textContent="Microphone access requires HTTPS or localhost. Open the NEXORA website in Chrome.";return;}
+   if(!SpeechRecognition||!recognition){const message="Voice recognition is not supported in this browser. Try an up-to-date Chrome browser.";if(voiceStatus)voiceStatus.textContent=message;setVoicePageStatus(message);voiceModeEnabled=false;if(voiceStart)voiceStart.textContent="Start";return;}
+   if(!window.isSecureContext){const message="Microphone access requires HTTPS or localhost. Open the NEXORA website in Chrome.";if(voiceStatus)voiceStatus.textContent=message;setVoicePageStatus(message);voiceModeEnabled=false;if(voiceStart)voiceStart.textContent="Start";return;}
    if(isListening||!voiceModeEnabled)return;
-   try{recognition.lang=voiceLanguage?.value||"en-IN";recognition.start();if(voiceStatus)voiceStatus.textContent="Voice conversation is listening…";}
-   catch(_){if(voiceStatus)voiceStatus.textContent="Could not start the microphone. Check browser permissions and try again.";}
+   try{recognition.lang=voiceLanguage?.value||"en-IN";recognition.start();if(voiceStatus)voiceStatus.textContent="Voice conversation is starting…";setVoicePageStatus("Connecting to your microphone…");}
+   catch(_){const message="Could not start the microphone. Check browser permissions and try again.";if(voiceStatus)voiceStatus.textContent=message;setVoicePageStatus(message);voiceModeEnabled=false;if(voiceStart)voiceStart.textContent="Start";}
  }
  document.getElementById("voiceWipBack")?.addEventListener("click",stopVoiceConversation);document.getElementById("voiceWipReturn")?.addEventListener("click",stopVoiceConversation);
  voiceStart.addEventListener("click",()=>{
-   if(voiceModeEnabled){stopVoiceConversation();voiceStart.textContent="Start voice conversation";if(voiceStatus)voiceStatus.textContent="Voice conversation stopped.";return;}
-   if(!SpeechRecognition||!recognition){if(voiceStatusNote)voiceStatusNote.textContent="Speech recognition is unavailable in this browser. Use the microphone button for voice input if supported.";return;}
-   voiceModeEnabled=true;voiceStart.textContent="Stop voice conversation";closeVoiceWipPage();startVoiceModeListening();
+   if(voiceModeEnabled){stopVoiceConversation();if(voiceStatus)voiceStatus.textContent="Voice conversation stopped.";return;}
+   voiceModeEnabled=true;voiceStart.textContent="Stop";voiceStart.setAttribute("aria-label","Stop voice conversation");
+   if(voiceModeBtn){const label=voiceModeBtn.querySelector(".voice-mode-label");if(label)label.textContent="🎙 Voice mode";}
+   startVoiceModeListening();
  });
  const originalCloseVoicePage=closeVoiceWipPage;
  closeVoiceWipPage=function(){stopVoiceConversation();originalCloseVoicePage();};
