@@ -1411,6 +1411,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
     <select id="personalizationLanguage" class="personalization-control"><option value="auto">Automatic / match my message</option><option value="English">English</option><option value="Hindi">Hindi</option><option value="Marathi">Marathi</option></select>
     <label class="personalization-label" for="personalizationInstructions">Custom instructions</label>
     <textarea id="personalizationInstructions" class="personalization-control personalization-textarea" rows="5" maxlength="1200" placeholder="Example: Explain difficult topics in simple words and use examples."></textarea>
+    <div class="personalization-actions"><button type="button" id="editSmartOnboardingBtn">Update interests and response style</button></div>
     <div class="personalization-section-title">Voice settings</div>
     <div class="voice-setting-field"><label for="voiceLanguage">Speech recognition language</label><select id="voiceLanguage" class="personalization-control" aria-label="Voice recognition language"><option value="en-IN">English (India)</option><option value="hi-IN">Hindi</option><option value="en-US">English (US)</option><option value="mr-IN">Marathi</option></select></div>
     <div class="voice-settings-actions"><button type="button" class="voice-settings-toggle" id="voiceSettingsToggle" aria-expanded="false">⚙ Speaking voice settings</button></div>
@@ -3413,6 +3414,7 @@ function saveSmartOnboarding(){
 }
 document.getElementById("smartOnboardingSave").addEventListener("click",saveSmartOnboarding);
 document.getElementById("smartOnboardingSkip").addEventListener("click",()=>{localStorage.setItem(SMART_ONBOARDING_KEY+"__completed","yes");closeSmartOnboarding();});
+document.getElementById("editSmartOnboardingBtn").addEventListener("click",()=>{closePersonalization();localStorage.removeItem(SMART_ONBOARDING_KEY+"__completed");showSmartOnboarding();});
 document.getElementById("firstLaunchAccount").addEventListener("click",()=>openAuthPage("register"));
 document.getElementById("firstLaunchSignIn").addEventListener("click",()=>openAuthPage("login"));
 document.getElementById("firstLaunchGoogle").addEventListener("click",()=>signInWithGoogle());
