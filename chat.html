@@ -662,6 +662,20 @@ body[data-theme="dark"] .composer{background:rgba(31,32,52,.96)}
 .composer textarea:focus{outline:none!important;box-shadow:none!important}
 body[data-theme="light"] .composer:focus-within{border-color:#d6d6df!important;box-shadow:none!important}
 
+/* Smart onboarding */
+.smart-onboarding-overlay{position:fixed;inset:0;z-index:4100;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.68);backdrop-filter:blur(7px)}
+.smart-onboarding-overlay.open{display:flex}
+.smart-onboarding-panel{width:min(100%,520px);max-height:min(90dvh,760px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:22px;background:var(--panel);color:var(--text);box-shadow:0 24px 90px #0008}
+.smart-onboarding-panel h2{margin:0 0 7px;font-size:24px}.smart-onboarding-panel>p{margin:0 0 20px;color:var(--muted);font-size:13px;line-height:1.55}
+.smart-onboarding-label{display:block;margin:18px 0 10px;font-size:14px;font-weight:750}
+.smart-interest-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.smart-interest-option{display:flex;align-items:center;gap:9px;min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);font-size:13px;cursor:pointer}
+.smart-interest-option input{width:17px;height:17px;accent-color:#8058e8}
+.smart-onboarding-select{width:100%;min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);font:inherit}
+.smart-onboarding-actions{display:flex;gap:10px;margin-top:22px}
+.smart-onboarding-actions button{flex:1;min-height:46px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);font-weight:700}
+.smart-onboarding-actions .smart-onboarding-save{background:#7055db;border-color:#7055db;color:#fff}
+@media(max-width:420px){.smart-onboarding-panel{padding:19px}.smart-interest-grid{grid-template-columns:1fr}}
 /* Personalization panel */
 .personalization-overlay{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.58);backdrop-filter:blur(5px)}
 .personalization-overlay.open{display:flex}
@@ -1046,6 +1060,33 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
       <button type="button" class="first-launch-google" id="firstLaunchGoogle"><svg class="google-g-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.8 6.1-15Z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4.1 2-6.9 2-5.3 0-9.8-3.6-11.4-8.4H5.8v5.3A20 20 0 0 0 24 44Z"/><path fill="#FBBC05" d="M12.6 27.6a12 12 0 0 1 0-7.2v-5.3H5.8a20 20 0 0 0 0 17.8l6.8-5.3Z"/><path fill="#EA4335" d="M24 12.0c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6 29.5 4 24 4A20 20 0 0 0 5.8 15.1l6.8 5.3C14.2 15.6 18.7 12 24 12Z"/></svg><span>Continue with Google</span></button>
       <button type="button" class="first-launch-guest" id="firstLaunchGuest">Continue as guest</button>
     <p id="firstLaunchStatus" role="status" aria-live="polite" style="min-height:16px;margin:8px 0 0;color:#b42336;font-size:12px"></p>
+    </div>
+  </section>
+</div>
+<div class="smart-onboarding-overlay" id="smartOnboardingOverlay" aria-hidden="true">
+  <section class="smart-onboarding-panel" role="dialog" aria-modal="true" aria-labelledby="smartOnboardingTitle">
+    <h2 id="smartOnboardingTitle">Make NEXORA AI yours</h2>
+    <p>Choose a few interests and how you like answers. You can change these preferences anytime.</p>
+    <span class="smart-onboarding-label">What are you interested in?</span>
+    <div class="smart-interest-grid">
+      <label class="smart-interest-option"><input type="checkbox" value="Study and learning"> 🎓 Study and learning</label>
+      <label class="smart-interest-option"><input type="checkbox" value="Coding and technology"> 💻 Coding and technology</label>
+      <label class="smart-interest-option"><input type="checkbox" value="Writing and communication"> ✍️ Writing and communication</label>
+      <label class="smart-interest-option"><input type="checkbox" value="Business and entrepreneurship"> 📈 Business and entrepreneurship</label>
+      <label class="smart-interest-option"><input type="checkbox" value="Creativity and design"> 🎨 Creativity and design</label>
+      <label class="smart-interest-option"><input type="checkbox" value="Science and research"> 🔬 Science and research</label>
+    </div>
+    <label class="smart-onboarding-label" for="smartOnboardingTone">How should NEXORA AI respond?</label>
+    <select class="smart-onboarding-select" id="smartOnboardingTone">
+      <option value="balanced">Balanced — clear and natural</option>
+      <option value="friendly">Friendly — warm and conversational</option>
+      <option value="professional">Professional — polished and structured</option>
+      <option value="concise">Short and concise — straight to the point</option>
+      <option value="detailed">Detailed — explain step by step</option>
+    </select>
+    <div class="smart-onboarding-actions">
+      <button type="button" id="smartOnboardingSkip">Not now</button>
+      <button type="button" class="smart-onboarding-save" id="smartOnboardingSave">Save preferences</button>
     </div>
   </section>
 </div>
@@ -3347,10 +3388,35 @@ const ONBOARDING_STORAGE_KEY="nexora_first_launch_choice_v2";
 const firstLaunchOverlay=document.getElementById("firstLaunchOverlay");
 function closeFirstLaunch(){firstLaunchOverlay.classList.remove("open");firstLaunchOverlay.setAttribute("aria-hidden","true");}
 function showFirstLaunch(){firstLaunchOverlay.classList.add("open");firstLaunchOverlay.setAttribute("aria-hidden","false");}
+const SMART_ONBOARDING_KEY="nexora_smart_onboarding_v1";
+const smartOnboardingOverlay=document.getElementById("smartOnboardingOverlay");
+function loadSmartOnboarding(){
+ let saved={};try{saved=JSON.parse(localStorage.getItem(SMART_ONBOARDING_KEY)||"{}")||{};}catch(_){}
+ smartOnboardingOverlay.querySelectorAll('input[type="checkbox"]').forEach(box=>{box.checked=Array.isArray(saved.interests)&&saved.interests.includes(box.value);});
+ document.getElementById("smartOnboardingTone").value=saved.tone||"balanced";
+}
+function showSmartOnboarding(){
+ if(localStorage.getItem(SMART_ONBOARDING_KEY+"__completed")==="yes")return;
+ loadSmartOnboarding();smartOnboardingOverlay.classList.add("open");smartOnboardingOverlay.setAttribute("aria-hidden","false");
+}
+function closeSmartOnboarding(){smartOnboardingOverlay.classList.remove("open");smartOnboardingOverlay.setAttribute("aria-hidden","true");}
+function saveSmartOnboarding(){
+ const interests=[...smartOnboardingOverlay.querySelectorAll('input[type="checkbox"]:checked')].map(box=>box.value);
+ const tone=document.getElementById("smartOnboardingTone").value;
+ try{
+  localStorage.setItem(SMART_ONBOARDING_KEY,JSON.stringify({interests,tone}));
+  const key="nexora_personalization_v1";let p={};try{p=JSON.parse(localStorage.getItem(key)||"{}")||{};}catch(_){}
+  p.tone=tone;localStorage.setItem(key,JSON.stringify(p));
+  localStorage.setItem(SMART_ONBOARDING_KEY+"__completed","yes");
+  closeSmartOnboarding();if(typeof showToast==="function")showToast("Your NEXORA AI preferences have been saved.");
+ }catch(error){console.warn("Could not save onboarding preferences:",error);if(typeof showToast==="function")showToast("Could not save preferences. Please try again.");}
+}
+document.getElementById("smartOnboardingSave").addEventListener("click",saveSmartOnboarding);
+document.getElementById("smartOnboardingSkip").addEventListener("click",()=>{localStorage.setItem(SMART_ONBOARDING_KEY+"__completed","yes");closeSmartOnboarding();});
 document.getElementById("firstLaunchAccount").addEventListener("click",()=>openAuthPage("register"));
 document.getElementById("firstLaunchSignIn").addEventListener("click",()=>openAuthPage("login"));
 document.getElementById("firstLaunchGoogle").addEventListener("click",()=>signInWithGoogle());
-document.getElementById("firstLaunchGuest").addEventListener("click",()=>{localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");closeFirstLaunch();});
+document.getElementById("firstLaunchGuest").addEventListener("click",()=>{localStorage.setItem(ONBOARDING_STORAGE_KEY,"guest");closeFirstLaunch();setTimeout(showSmartOnboarding,250);});
 
 let accountProfile=loadAccountProfile(),pendingAccountPicture="";
 function loadAccountProfile(){try{const p=JSON.parse(localStorage.getItem(ACCOUNT_STORAGE_KEY)||"null");return p&&typeof p.name==="string"?p:null;}catch(e){return null;}}
@@ -3565,6 +3631,7 @@ async function initializeNexoraAuth(){
        closeFirstLaunch();closeAccount();
        localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
        localStorage.removeItem("nexora_google_auth_pending");
+       setTimeout(showSmartOnboarding,350);
        renderAccountButton();
      }
    }catch(error){console.warn("Could not restore NEXORA sign-in session:",error);}
@@ -3574,7 +3641,7 @@ async function initializeNexoraAuth(){
    document.getElementById("firstLaunchStatus").textContent="Google sign-in did not finish: "+authCallbackError+". Please check the provider setup.";
    return;
  }
- if(hasSupabaseSession){queueNexoraCloudSync(true);return;}
+ if(hasSupabaseSession){queueNexoraCloudSync(true);if(localStorage.getItem(SMART_ONBOARDING_KEY+"__completed")!=="yes")setTimeout(showSmartOnboarding,350);return;}
  if(googleAuthPending){
    showFirstLaunch();
    document.getElementById("firstLaunchStatus").textContent="Google sign-in was not completed. Please check the provider setup and try again.";
@@ -3596,7 +3663,7 @@ async function initializeNexoraAuth(){
    }
    return;
  }
- if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="guest")return;
+ if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="guest"){if(localStorage.getItem(SMART_ONBOARDING_KEY+"__completed")!=="yes")setTimeout(showSmartOnboarding,350);return;}
  if(localStorage.getItem(ONBOARDING_STORAGE_KEY)==="account"||accountProfile){showFirstLaunch();return;}
  if(!localStorage.getItem(ONBOARDING_STORAGE_KEY)){
    showFirstLaunch();
@@ -3679,9 +3746,18 @@ renderHistory();
  const originalSendMessage=sendMessage;
  sendMessage=function(text,options={}){
    const preset=personalities[personality.value]||personalities.default;
-   if(!options.webSearch&&personality.value!=="default"){
+   let onboarding={};try{onboarding=JSON.parse(localStorage.getItem("nexora_smart_onboarding_v1")||"{}")||{};}catch(_){}
+   let personal={};try{personal=JSON.parse(localStorage.getItem("nexora_personalization_v1")||"{}")||{};}catch(_){}
+   const toneInstructions={friendly:"Use a friendly, conversational tone.",professional:"Use a professional, polished tone.",concise:"Keep the answer short and direct unless more detail is requested.",detailed:"Explain thoroughly in clear steps and include useful examples.",balanced:"Use a balanced mix of clarity and useful detail."};
+   const instructions=[];
+   if(personality.value!=="default")instructions.push(preset);
+   if(toneInstructions[personal.tone||onboarding.tone])instructions.push(toneInstructions[personal.tone||onboarding.tone]);
+   if(personal.language&&personal.language!=="auto")instructions.push("Respond in "+personal.language+" unless the user asks for another language.");
+   if(typeof personal.instructions==="string"&&personal.instructions.trim())instructions.push("Follow these user preferences: "+personal.instructions.trim());
+   if(Array.isArray(onboarding.interests)&&onboarding.interests.length)instructions.push("The user's selected interests are: "+onboarding.interests.join(", ")+". Use these interests to make examples and suggestions relevant when appropriate, but do not force them into unrelated answers.");
+   if(!options.webSearch&&instructions.length){
      const visible=options.displayText||text;
-     return originalSendMessage("ASSISTANT STYLE INSTRUCTIONS: "+preset+"\n\nUSER REQUEST:\n"+text,{...options,displayText:visible});
+     return originalSendMessage("PERSONAL RESPONSE PREFERENCES:\n"+instructions.join("\n")+"\n\nUSER REQUEST:\n"+text,{...options,displayText:visible});
    }
    return originalSendMessage(text,options);
  };
