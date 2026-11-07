@@ -1412,7 +1412,10 @@ webSearchPluginLaunchBtn?.addEventListener("click", () => {
 });
 const sendBtn = document.getElementById("sendBtn");
 const sidebar = document.getElementById("sidebar");
-let busy=false, sessions=[], activeSessionId=null;
+const LOCAL_CHAT_STORAGE_KEY="nexora_chat_sessions_local_v1";
+function loadLocalChatSessions(){try{const value=JSON.parse(localStorage.getItem(LOCAL_CHAT_STORAGE_KEY)||"[]");return Array.isArray(value)?value.filter(item=>item&&typeof item.id==="string"&&Array.isArray(item.messages)):[];}catch(_){return [];}}
+function persistLocalChatSessions(){try{localStorage.setItem(LOCAL_CHAT_STORAGE_KEY,JSON.stringify(sessions));}catch(error){console.warn("NEXORA could not save local chat history:",error);}}
+let busy=false, sessions=loadLocalChatSessions(), activeSessionId=sessions[0]?.id||null;
 const historySearch=document.getElementById("historySearch");
 const historyList=document.getElementById("historyList");
 const chatSyncStatus=document.getElementById("chatSyncStatus");
@@ -1430,6 +1433,7 @@ function updateChatSyncStatus(message){
 function saveSessions(){
  const session=currentSession();
  if(session)session.updatedAt=Date.now();
+ persistLocalChatSessions();
  renderHistory();
  if(!cloudSyncApplying)queueNexoraCloudSync();
  return true;
@@ -1479,6 +1483,7 @@ function renderHistory(){
 async function deleteChatSession(id){
  const user=supabaseSession?.user;
  sessions=sessions.filter(session=>session.id!==id);
+ persistLocalChatSessions();
  if(activeSessionId===id){activeSessionId=null;showWelcome();}
  renderHistory();
  if(user){
@@ -1493,7 +1498,7 @@ async function deleteChatSession(id){
 async function clearChatHistory(){
  if(!sessions.length)return;
  if(!window.confirm("Delete all your chat history from this account and its synced devices?"))return;
- sessions=[];activeSessionId=null;showWelcome();renderHistory();
+ sessions=[];activeSessionId=null;persistLocalChatSessions();showWelcome();renderHistory();
  const user=supabaseSession?.user;
  if(user){
    try{
@@ -2173,7 +2178,9 @@ async function syncNexoraCloudData(forcePull=false) {
       }
       if(activeSessionId)await renderSession(currentSession());
       else showWelcome();
+      persistLocalChatSessions();
       renderHistory();
+      if(document.getElementById("libraryOverlay")?.classList.contains("open"))renderLibraryContents();
       cloudSyncApplying=false;
     }
     const imageIds=imageIdsInSessions(sessions);
@@ -3574,8 +3581,9 @@ document.getElementById("themeBtn").addEventListener("click", () => {
 setTheme("light");
 document.body.dataset.theme = "light";
 
-// Always show the welcome screen on a fresh page load.
- activeSessionId=null; sessions=[]; showWelcome();
+// Restore the latest locally saved conversation on page reload.
+if(activeSessionId){renderSession(currentSession());}else{showWelcome();}
+renderHistory();
 
 /* NEXORA AI workspace upgrade: web search, projects, personalities, prompts,
    message sharing, exports, study tools, slide-deck export and dashboard. */
