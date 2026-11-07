@@ -1,15 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
   <defs>
-    <linearGradient id="n" x1="250" y1="230" x2="770" y2="790" gradientUnits="userSpaceOnUse"><stop stop-color="#F3A7FF"/><stop offset=".28" stop-color="#A52CFF"/><stop offset=".62" stop-color="#435BFF"/><stop offset="1" stop-color="#00DDF2"/></linearGradient>
-    <linearGradient id="orbit" x1="110" y1="670" x2="920" y2="370" gradientUnits="userSpaceOnUse"><stop stop-color="#D02AFF"/><stop offset=".48" stop-color="#7545FF"/><stop offset="1" stop-color="#12D9FF"/></linearGradient>
-    <linearGradient id="star" x1="700" y1="130" x2="830" y2="260" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF"/><stop offset=".55" stop-color="#C8A9FF"/><stop offset="1" stop-color="#39D9FF"/></linearGradient>
-    <filter id="softGlow" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="17" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="16" result="b"/><feOffset dy="12"/><feComponentTransfer><feFuncA type="linear" slope=".24"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="nGrad" x1="105" y1="105" x2="400" y2="405" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5A4FF"/><stop offset=".32" stop-color="#922BFF"/><stop offset=".67" stop-color="#315BFF"/><stop offset="1" stop-color="#00D7F5"/>
+    </linearGradient>
+    <linearGradient id="orbitGrad" x1="54" y1="318" x2="456" y2="205" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C22CFF"/><stop offset=".48" stop-color="#633BFF"/><stop offset="1" stop-color="#00D9FF"/>
+    </linearGradient>
+    <linearGradient id="starGrad" x1="342" y1="55" x2="419" y2="132" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/><stop offset=".48" stop-color="#BFA2FF"/><stop offset="1" stop-color="#35CFFF"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <path d="M260 755V278c0-42 51-62 80-30l430 485V250c0-40 32-72 72-72h20v568c0 43-51 63-80 31L372 294v461h-40c-40 0-72 0-72 0Z" fill="url(#n)" filter="url(#shadow)"/>
-  <path d="M260 278c0-42 51-62 80-30l190 215-62 65-182-205c-17-19-26-31-26-45Z" fill="#fff" fill-opacity=".22"/>
-  <path d="M112 665c135 135 450 124 680-40 48-34 79-71 94-106-95 78-247 139-405 155-152 16-286-5-369-57Z" stroke="url(#orbit)" stroke-width="40" stroke-linecap="round" filter="url(#softGlow)"/>
-  <path d="M112 665c135 135 450 124 680-40 48-34 79-71 94-106" stroke="#fff" stroke-opacity=".62" stroke-width="7" stroke-linecap="round"/>
-  <path d="M766 104c14 74 35 95 109 109-74 14-95 35-109 109-14-74-35-95-109-109 74-14 95-35 109-109Z" fill="url(#star)" filter="url(#softGlow)"/>
-  <circle cx="178" cy="340" r="8" fill="#D6A5FF"/><circle cx="835" cy="780" r="7" fill="#44D8FF"/><circle cx="340" cy="145" r="5" fill="#C98DFF"/>
+  <path d="M112 369V151c0-23 28-34 44-16l198 221V143c0-22 18-40 40-40h8v258c0 23-28 34-44 16L160 156v213h-8c-22 0-40 0-40 0Z" fill="url(#nGrad)"/>
+  <path d="M112 151c0-23 28-34 44-16l93 104-36 39-89-100c-7-8-12-17-12-27Z" fill="#FFFFFF" fill-opacity=".16"/>
+  <path d="M59 326c76 76 245 70 370-22 26-19 43-39 51-58-52 43-135 76-221 85-83 9-156-3-200-31Z" stroke="url(#orbitGrad)" stroke-width="25" stroke-linecap="round" filter="url(#glow)"/>
+  <path d="M59 326c76 76 245 70 370-22 26-19 43-39 51-58" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M380 34c8 42 20 54 62 62-42 8-54 20-62 62-8-42-20-54-62-62 42-8 54-20 62-62Z" fill="url(#starGrad)" filter="url(#glow)"/>
 </svg>
