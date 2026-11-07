@@ -1026,6 +1026,19 @@ body[data-theme="dark"] .history-search{border-color:#37364a;background:#1a1a2b;
 @media(max-width:680px){.nexora-upgrade-bar{margin-left:2px;margin-right:2px}.nexora-panel{padding:14px;border-radius:16px}.nexora-panel-overlay{padding:8px}.nexora-stat-grid{grid-template-columns:1fr 1fr}}
 body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35245b}
 
+/* Light-theme welcome logo: make the N mark larger and crisp on white. */
+.welcome>.logo-mark{
+  display:block!important;
+  width:112px!important;height:112px!important;
+  max-width:none!important;object-fit:contain!important;
+  opacity:1!important;mix-blend-mode:normal!important;
+  filter:drop-shadow(0 5px 13px rgba(105,48,210,.28))!important;
+  margin:0 auto 20px!important;
+}
+@media(min-width:700px){
+  .welcome>.logo-mark{width:124px!important;height:124px!important}
+}
+
 </style>
 
 <style id="nexora-upgrade-styles">
@@ -3991,19 +4004,7 @@ renderHistory();
    wrap.innerHTML='<p class="nexora-panel-note">Runs in a sandboxed preview inside this page. Do not paste secrets or passwords into code.</p><label class="nexora-tool-label" for="nexoraCodeInput">HTML, CSS and JavaScript</label><textarea id="nexoraCodeInput" rows="12" spellcheck="false" placeholder="<!doctype html>\n<html>\n<body>\n<h1>Hello NEXORA!</h1>\n</body>\n</html>"></textarea><div class="nexora-tool-actions"><button class="nexora-tool-primary" id="nexoraCodeRun">Run preview</button><button id="nexoraCodeSave">Save on this device</button><button id="nexoraCodeClear">Clear</button></div><iframe id="nexoraCodePreview" title="Code preview" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>';
    openPanel("Code Playground","Build and preview small web projects",wrap);
    const editor=wrap.querySelector("#nexoraCodeInput"),frame=wrap.querySelector("#nexoraCodePreview");
-   editor.value=localStorage.getItem("nexora_playground_code_v1")||'<!doctype html>\n<html><head><style>body{font-family:system-ui;padding:24px;background:#111;color:white}h1{color:#a78bfa}/* Light-theme welcome logo: make the N mark larger and crisp on white. */
-.welcome>.logo-mark{
-  display:block!important;
-  width:112px!important;height:112px!important;
-  max-width:none!important;object-fit:contain!important;
-  opacity:1!important;mix-blend-mode:normal!important;
-  filter:drop-shadow(0 5px 13px rgba(105,48,210,.28))!important;
-  margin:0 auto 20px!important;
-}
-@media(min-width:700px){
-  .welcome>.logo-mark{width:124px!important;height:124px!important}
-}
-
+   editor.value=localStorage.getItem("nexora_playground_code_v1")||'<!doctype html>\n<html><head><style>body{font-family:system-ui;padding:24px;background:#111;color:white}h1{color:#a78bfa}
 </style></head><body><h1>Hello NEXORA AI!</h1><p>Your preview is ready.</p></body></html>';
    const run=()=>{frame.srcdoc=editor.value;notify("Code preview opened","The playground preview was run locally.");};
    wrap.querySelector("#nexoraCodeRun").addEventListener("click",run);
