@@ -1379,6 +1379,14 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
       <div class="voice-settings-actions"><button type="button" id="voicePreviewBtn">▶ Preview voice</button><button type="button" id="voiceResetBtn">Reset</button></div>
       <p class="voice-settings-note" id="voiceSettingsNote">Available voices depend on your Android device and browser.</p>
     </section>
+    <div class="personalization-section-title">Custom appearance</div>
+    <label class="personalization-label" for="personalizationAccent">Accent color</label>
+    <input id="personalizationAccent" class="personalization-control" type="color" value="#8b5cf6">
+    <label class="personalization-label" for="personalizationFontSize">Chat text size</label>
+    <select id="personalizationFontSize" class="personalization-control"><option value="14">Small</option><option value="15">Default</option><option value="17">Large</option><option value="19">Extra large</option></select>
+    <label class="personalization-label" for="personalizationChatWall">Chat background</label>
+    <select id="personalizationChatWall" class="personalization-control"><option value="plain">Default</option><option value="soft">Soft glow</option><option value="midnight">Midnight</option></select>
+    <div class="personalization-actions"><button type="button" id="saveAppearanceBtn">Save appearance</button></div>
     <div class="personalization-actions"><button type="button" id="resetPersonalizationBtn">Reset</button><button type="button" id="savePersonalizationBtn">Save preferences</button></div>
   </section>
 </div>
@@ -3280,11 +3288,12 @@ const personalizationTone=document.getElementById("personalizationTone");
 const personalizationLanguage=document.getElementById("personalizationLanguage");
 const personalizationInstructions=document.getElementById("personalizationInstructions");
 function readPersonalization(){try{const value=JSON.parse(localStorage.getItem(PERSONALIZATION_KEY)||"{}");return value&&typeof value==="object"?value:{};}catch(_){return {};}}
-function loadPersonalizationForm(){const p=readPersonalization();personalizationTone.value=p.tone||"balanced";personalizationLanguage.value=p.language||"auto";personalizationInstructions.value=typeof p.instructions==="string"?p.instructions:"";}
+function loadPersonalizationForm(){const p=readPersonalization();personalizationTone.value=p.tone||"balanced";personalizationLanguage.value=p.language||"auto";personalizationInstructions.value=typeof p.instructions==="string"?p.instructions:"";const appearance=(()=>{try{return JSON.parse(localStorage.getItem("nexora_upgrade_data_v1")||"{}").appearance||{};}catch(_){return {};}})();document.getElementById("personalizationAccent").value=appearance.accent||"#8b5cf6";document.getElementById("personalizationFontSize").value=appearance.size||"15";document.getElementById("personalizationChatWall").value=appearance.wall||"plain";}
 function openPersonalization(){loadPersonalizationForm();renderMemories();personalizationOverlay.classList.add("open");personalizationOverlay.setAttribute("aria-hidden","false");sidebar.classList.remove("open");}
 function closePersonalization(){personalizationOverlay.classList.remove("open");personalizationOverlay.setAttribute("aria-hidden","true");}
 document.getElementById("personalizationBtn").addEventListener("click",openPersonalization);
 document.getElementById("closePersonalizationBtn").addEventListener("click",closePersonalization);
+document.getElementById("saveAppearanceBtn").addEventListener("click",()=>{const appearance={accent:document.getElementById("personalizationAccent").value,size:document.getElementById("personalizationFontSize").value,wall:document.getElementById("personalizationChatWall").value};try{const key="nexora_upgrade_data_v1";const data=JSON.parse(localStorage.getItem(key)||"{}");data.appearance=appearance;localStorage.setItem(key,JSON.stringify(data));if(typeof applyCustomization==="function")applyCustomization();if(typeof showToast==="function")showToast("Appearance saved.");}catch(error){console.error("Could not save appearance:",error);if(typeof showToast==="function")showToast("Could not save appearance.");}});
 personalizationOverlay.addEventListener("click",event=>{if(event.target===personalizationOverlay)closePersonalization();});
 document.getElementById("savePersonalizationBtn").addEventListener("click",()=>{const p={tone:personalizationTone.value,language:personalizationLanguage.value,instructions:personalizationInstructions.value.trim()};localStorage.setItem(PERSONALIZATION_KEY,JSON.stringify(p));closePersonalization();const note="Your personalization preferences have been saved on this device.";if(typeof showToast==="function")showToast(note);});
 document.getElementById("resetPersonalizationBtn").addEventListener("click",()=>{localStorage.removeItem(PERSONALIZATION_KEY);loadPersonalizationForm();});
@@ -3718,7 +3727,7 @@ renderHistory();
  };
  const openToolHub=()=>{
    const wrap=document.createElement("div");
-   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="customize">◐ <strong>Customize appearance</strong><small>Accent color, text size and chat background</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
+   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
    openPanel("NEXORA Tools","Useful upgrades in one place",wrap);
    wrap.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>runTool(b.dataset.tool)));
  };
