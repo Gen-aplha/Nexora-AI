@@ -3260,13 +3260,7 @@ document.getElementById("pluginsSearch").addEventListener("input",filterPluginCa
 document.getElementById("libraryBtn").addEventListener("click",openLibrary);
 document.getElementById("closeLibraryBtn").addEventListener("click",closeLibrary);
 document.getElementById("libraryOverlay").addEventListener("click",e=>{if(e.target.id==="libraryOverlay")closeLibrary();});
-document.getElementById("addMemoryBtn").addEventListener("click",()=>{
- const text=prompt("What should NEXORA remember? Example: I prefer short, step-by-step explanations.");
- if(!text||!text.trim())return;
- const title=prompt("Give this memory a short title (optional):","Saved memory");
- savedMemories.unshift({id:makeId(),title:(title||"Saved memory").trim(),text:text.trim(),createdAt:Date.now()});
- persistMemories();renderMemories();
-});
+// Smart Memory UI was removed from Library; keep its storage helpers without binding a missing button.
 document.getElementById("sideSearchBtn").addEventListener("click",()=>{sidebar.classList.remove("open");historySearch.focus();historySearch.scrollIntoView({block:"nearest"});});
 document.getElementById("sideImagesBtn").addEventListener("click",()=>{sidebar.classList.remove("open");const imageButton=document.getElementById("generateImageBtn");if(imageButton)imageButton.click();else alert("Open the Images tool from the chat composer.");});
 document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("click",()=>{
