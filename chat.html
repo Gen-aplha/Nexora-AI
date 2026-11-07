@@ -3727,7 +3727,7 @@ renderHistory();
  };
  const openToolHub=()=>{
    const wrap=document.createElement("div");
-   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
+   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button></div>';
    openPanel("NEXORA Tools","Useful upgrades in one place",wrap);
    wrap.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>runTool(b.dataset.tool)));
  };
@@ -3735,7 +3735,6 @@ renderHistory();
    if(which==="compare")return openCompare();
    if(which==="customize")return openCustomization();
    if(which==="files"){closePanel();document.getElementById("filesBtn")?.click();return;}
-   if(which==="dashboard"){closePanel();openNexoraDashboard();return;}
  }
  function openCompare(){
    const wrap=document.createElement("div");
