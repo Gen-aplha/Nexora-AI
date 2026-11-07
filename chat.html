@@ -1102,7 +1102,9 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
       <div class="library-head"><div><h2 id="libraryTitle">Library</h2><p>Your uploaded files and images</p></div><button id="closeLibraryBtn" class="library-close" aria-label="Close library">×</button></div>
       <div id="libraryGuestView" class="library-guest-view" hidden><p>Sign in to see your data</p><button type="button" id="librarySignInBtn" class="add-memory-btn">Sign in</button></div>
       <div id="librarySignedView" class="library-signed-view" hidden>
-        <p>Your generated images are available in your NEXORA gallery on this device.</p>
+        <p>Chats, uploads and generated images are saved automatically in this browser's Library. Sign in to sync supported chat history across devices. Uploaded files remain on this device.</p>
+        <h3 style="margin:18px 0 8px">Chat conversations</h3><div id="libraryChatList"></div>
+        <h3 style="margin:18px 0 8px">Uploaded files</h3><div id="libraryFileList"></div>
         <h3 style="margin:18px 0 8px">Generated images</h3><div id="libraryImageList" style="display:flex;flex-wrap:wrap;gap:6px"></div>
       </div>
       <section class="library-memory-section" aria-labelledby="libraryMemoryTitle">
@@ -2051,12 +2053,27 @@ function renderMarkdown(raw) {
 const IMAGE_DB_NAME = "nexora_ai_images_v1";
 function openImageDB() {
   return new Promise((resolve, reject) => {
-    if (!("indexedDB" in window)) return reject(new Error("Image storage is unavailable."));
-    const request = indexedDB.open(IMAGE_DB_NAME, 1);
-    request.onupgradeneeded = () => request.result.createObjectStore("images");
+    if (!("indexedDB" in window)) return reject(new Error("Library storage is unavailable."));
+    const request = indexedDB.open(IMAGE_DB_NAME, 2);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains("images")) db.createObjectStore("images");
+      if (!db.objectStoreNames.contains("libraryItems")) db.createObjectStore("libraryItems", {keyPath:"id"});
+    };
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error || new Error("Could not open image storage."));
+    request.onerror = () => reject(request.error || new Error("Could not open Library storage."));
   });
+}
+async function saveLibraryFile(file, kind, extractedText="") {
+  const db=await openImageDB();
+  const item={id:"file_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8),name:file.name||"Uploaded file",kind:kind||"file",type:file.type||"application/octet-stream",size:file.size||0,createdAt:Date.now(),blob:file,extractedText:String(extractedText||"").slice(0,MAX_TEXT_CHARS)};
+  await new Promise((resolve,reject)=>{const tx=db.transaction("libraryItems","readwrite");tx.objectStore("libraryItems").put(item);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error("Could not save this file to Library."));});
+  db.close();return item.id;
+}
+async function getLibraryFiles() {
+  const db=await openImageDB();
+  const items=await new Promise((resolve,reject)=>{const req=db.transaction("libraryItems","readonly").objectStore("libraryItems").getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});
+  db.close();return items.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
 }
 async function saveGeneratedImage(dataURL) {
   const db = await openImageDB();
@@ -2192,13 +2209,29 @@ async function syncNexoraCloudData(forcePull=false) {
 
 async function renderLibraryContents() {
  const imageList=document.getElementById("libraryImageList");if(!imageList)return;
- imageList.replaceChildren();const ids=imageIdsInSessions(sessions);
- if(!ids.length){imageList.textContent="No generated images in this current chat.";return;}
- for(const id of ids.slice(0,30)){try{const src=await getGeneratedImage(id);if(!src)continue;
+ imageList.replaceChildren();
+ const ids=[...new Set(sessions.flatMap(session=>imageIdsInSessions([session])))];
+ if(!ids.length)imageList.textContent="No generated images saved yet.";
+ for(const id of ids.slice(0,100)){try{const src=await getGeneratedImage(id);if(!src)continue;
  const img=document.createElement("img");img.src=src;img.alt="Generated image";img.loading="lazy";
- img.style.cssText="width:100%;max-width:110px;aspect-ratio:1;object-fit:cover;border-radius:12px;margin:5px";
+ img.style.cssText="width:100%;max-width:110px;aspect-ratio:1;object-fit:cover;border-radius:12px;margin:5px;cursor:pointer";
  img.addEventListener("click",()=>downloadImage(src,"nexora-ai-image.jpg"));imageList.appendChild(img);
  }catch(_){}}
+ const chatList=document.getElementById("libraryChatList");
+ if(chatList){chatList.replaceChildren();const ordered=[...sessions].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+ if(!ordered.length)chatList.textContent="No conversations saved yet.";
+ for(const session of ordered){const btn=document.createElement("button");btn.type="button";btn.className="account-secondary";btn.style.cssText="display:block;width:100%;text-align:left;margin:6px 0";
+ btn.textContent=(session.title||"New chat")+" · "+(session.messages?.length||0)+" messages";
+ btn.addEventListener("click",async()=>{activeSessionId=session.id;await renderSession(session);renderHistory();closeLibrary();});chatList.appendChild(btn);}}
+ const fileList=document.getElementById("libraryFileList");
+ if(fileList){fileList.replaceChildren();try{const files=await getLibraryFiles();
+ if(!files.length)fileList.textContent="Files you upload to NEXORA AI will appear here automatically.";
+ for(const item of files){const row=document.createElement("div");row.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--border,#ddd)";
+ const info=document.createElement("div");info.style.minWidth="0";const name=document.createElement("strong");name.textContent=item.name;name.style.cssText="display:block;overflow-wrap:anywhere;font-size:13px";
+ const meta=document.createElement("small");meta.textContent=(item.kind||"File").toUpperCase()+" · "+new Date(item.createdAt).toLocaleDateString()+" · "+(Math.max(1,Math.round((item.size||0)/1024)))+" KB";info.append(name,meta);
+ const download=document.createElement("button");download.type="button";download.className="account-secondary";download.textContent="Download";download.addEventListener("click",()=>{const url=URL.createObjectURL(item.blob);const a=document.createElement("a");a.href=url;a.download=item.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);});
+ row.append(info,download);fileList.appendChild(row);}}
+ catch(error){fileList.textContent="Could not load saved files on this device.";}}
 }
 
 function downloadImage(dataURL, filename) {
@@ -2697,6 +2730,8 @@ pdfAssistantFileInput.addEventListener("change",async()=>{
     pdfAssistantName=file.name;
     document.getElementById("pdfAssistantFileName").textContent=file.name;
     document.getElementById("pdfAssistantFileInfo").textContent="Text extracted successfully · "+Math.min(40, (text.match(/\[Page /g)||[]).length)+" pages read";
+    await saveLibraryFile(file,"pdf",text);
+    pdfAssistantStatus.textContent="PDF saved automatically to your Library. Ready to ask questions.";
     document.getElementById("pdfAssistantActions").hidden=false;
     pdfAssistantQuestion.disabled=false;
     pdfAssistantAskBtn.disabled=false;
@@ -2784,25 +2819,31 @@ attachmentInput.addEventListener("change", async () => {
       if (IMAGE_TYPES.includes(file.type) || (file.type.startsWith("image/") && ["jpg","jpeg","png","webp"].includes(ext))) {
         if (file.size > 15 * 1024 * 1024) throw new Error(file.name + " is too large. Choose an image under 15 MB.");
         const data = await prepareImageForVision(file);
+        await saveLibraryFile(file,"image");
         pendingAttachments.push({kind:"image",name:file.name,data});
       } else if (file.type.startsWith("video/")) {
         if (file.size > 50 * 1024 * 1024) throw new Error(file.name + " is too large. Video previews are limited to 50 MB.");
+        await saveLibraryFile(file,"video");
         pendingAttachments.push({kind:"video",name:file.name,file,url:URL.createObjectURL(file)});
       } else if (file.type === "application/pdf" || ext === "pdf") {
         if (file.size > 12 * 1024 * 1024) throw new Error(file.name + " is too large. PDFs must be 12 MB or smaller.");
         const text = await extractPdfText(file);
         if (!text.trim()) throw new Error(file.name + " has no selectable text. Scanned PDFs are not supported yet.");
+        await saveLibraryFile(file,"pdf",text);
         pendingAttachments.push({kind:"text",name:file.name,text:"PDF CONTENT (page-labelled; first 40 pages maximum):\n"+text});
       } else if (ext === "docx") {
         const text = await extractDocxText(file);
+        await saveLibraryFile(file,"document",text);
         pendingAttachments.push({kind:"text",name:file.name,text:"WORD DOCUMENT CONTENT:\n"+text});
       } else if (ext === "xlsx" || ext === "xls") {
         const text = await extractSpreadsheetText(file);
+        await saveLibraryFile(file,"spreadsheet",text);
         pendingAttachments.push({kind:"text",name:file.name,text:text});
       } else if (ALLOWED_TEXT_EXTENSIONS.includes(ext)) {
         if (file.size > 200000) throw new Error(file.name + " is too large. Text files must be 200 KB or smaller.");
         const text = await file.text();
         if (!text.trim()) throw new Error(file.name + " is empty.");
+        await saveLibraryFile(file,"text",text);
         pendingAttachments.push({kind:"text",name:file.name,text:text.slice(0,MAX_TEXT_CHARS)});
       } else {
         throw new Error(file.name + " is not supported. Choose a photo, video, PDF, DOCX, XLSX, XLS, TXT, MD, CSV or JSON file.");
@@ -3510,7 +3551,7 @@ function renderMemories(){
  if(!savedMemories.length){const empty=document.createElement("div");empty.className="memory-empty";empty.textContent="No saved memories yet. Save a preference or detail you want NEXORA to remember.";list.appendChild(empty);return;}
  savedMemories.forEach((item,index)=>{const card=document.createElement("article");card.className="memory-card";const title=document.createElement("strong");title.textContent=item.title||"Saved memory";const body=document.createElement("p");body.textContent=item.text;const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>{const next=prompt("Edit this memory",item.text);if(next&&next.trim()){item.text=next.trim();persistMemories();renderMemories();}};const remove=document.createElement("button");remove.textContent="Delete";remove.onclick=()=>{if(confirm("Delete this saved memory?")){savedMemories.splice(index,1);persistMemories();renderMemories();}};card.append(title,body,edit,remove);list.appendChild(card);});
 }
-function openLibrary(){const signedIn=!!((supabaseSession||authToken)&&accountProfile);document.getElementById("libraryGuestView").hidden=signedIn;document.getElementById("librarySignedView").hidden=!signedIn;renderMemories();document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");if(supabaseSession?.user?.id){renderLibraryContents();queueNexoraCloudSync(true);}else{setLibraryStatus("This account uses the older sign-in service. Sign in with your Supabase email or Google account to enable cloud backup.",true);renderLibraryContents();}}
+function openLibrary(){document.getElementById("libraryGuestView").hidden=true;document.getElementById("librarySignedView").hidden=false;renderMemories();document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");renderLibraryContents();if(supabaseSession?.user?.id)queueNexoraCloudSync(true);else setLibraryStatus("Local Library is active. Sign in to sync supported chat history across devices.");}
 function closeLibrary(){document.getElementById("libraryOverlay").classList.remove("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","true");}
 document.getElementById("librarySignInBtn").addEventListener("click",()=>{closeLibrary();openAccount();accountMode="login";setAccountMode("login");document.getElementById("accountStatus").textContent="Sign in to access your personal library.";});
 
