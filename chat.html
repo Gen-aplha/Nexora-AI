@@ -1190,6 +1190,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <button class="composer-menu-item" type="button" id="codingAssistantMenuBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg></span><span><strong>Coding Assistant</strong><small>Generate, explain and debug code</small></span></button>
         <button class="composer-menu-item" type="button" id="generateImageBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.5 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-3L12 2.5Z"/><path d="m19 2 .8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2Z"/></svg></span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
         <button class="composer-menu-item" type="button" id="nexoraPresentationBtn" aria-label="Open Presentation Maker"><span aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 9h4M7 12h2M14 9h3M14 12h3"/></svg></span><span><strong>Presentation Maker</strong><small>Create and download AI presentations</small></span></button>
+        <button class="composer-menu-item" type="button" id="nexoraToolsMenuBtn" onclick="document.getElementById(&quot;composerMenu&quot;).hidden=true;window.openNexoraTools?.()"><span aria-hidden="true">✦</span><span><strong>NEXORA Tools</strong><small>Compare responses, files, gallery and customization</small></span></button>
       </div>
       <section class="image-mode-panel" id="imageModePanel" hidden aria-label="Image creation">
         <header class="images-page-header">
@@ -3382,7 +3383,7 @@ document.getElementById("accountQuickPicture").addEventListener("change",async e
  finally{button.disabled=false;e.target.value="";}
 });
 
-document.getElementById("sideProfileBtn")?.addEventListener("click",event=>{event.preventDefault();openAccount();});
+document.addEventListener("click",event=>{const profileButton=event.target.closest?.("#sideProfileBtn");if(!profileButton)return;event.preventDefault();event.stopImmediatePropagation();try{openAccount();}catch(error){console.error("NEXORA account panel error:",error);const overlay=document.getElementById("accountOverlay");if(overlay){overlay.classList.remove("auth-only");overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");}}},true);
 document.getElementById("closeAccountBtn").addEventListener("click",closeAccount);
 document.getElementById("accountOverlay").addEventListener("click",e=>{if(e.target.id==="accountOverlay")closeAccount();});
 document.getElementById("accountPicture").addEventListener("change",async e=>{const file=e.target.files?.[0];if(!file)return;if(!file.type.startsWith("image/")){alert("Please choose an image file.");e.target.value="";return;}try{const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});const image=new Image();image.src=data;await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;});const scale=Math.min(1,512/Math.max(image.naturalWidth,image.naturalHeight));const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);pendingAccountPicture=canvas.toDataURL("image/jpeg",.78);renderAccountPreview();}catch(err){alert("That picture could not be opened. Please try another image.");}});
@@ -3812,11 +3813,7 @@ renderHistory();
  if(suggestions){
    [["Plan my study session","Study"],["Review a document","Files"],["Build a simple website","Code"]].forEach(([label])=>{const b=document.createElement("button");b.type="button";b.className="suggestion";b.dataset.welcomeSuggestion="";b.textContent=label;suggestions.appendChild(b);b.addEventListener("click",()=>{input.value=label==="Review a document"?"I want to review a document.":label==="Build a simple website"?"Help me build a simple website.":"Help me plan a study session.";input.dispatchEvent(new Event("input",{bubbles:true}));input.focus();});});
  }
- // One compact launcher keeps the composer tidy while making the new tools easy to find.
- const menu=document.getElementById("composerMenu");
- if(menu&&!document.getElementById("nexoraToolsMenuBtn")){
-   const b=document.createElement("button");b.type="button";b.className="composer-menu-item";b.id="nexoraToolsMenuBtn";b.innerHTML='<span aria-hidden="true">✦</span><span><strong>NEXORA Tools</strong><small>Compare, code, memory and customization</small></span>';b.addEventListener("click",()=>{menu.hidden=true;openToolHub();});menu.appendChild(b);
- }
+ window.openNexoraTools=openToolHub;
  // Voice conversation uses the browser's existing speech recognition and speech synthesis.
  const voiceStart=document.createElement("button");
  voiceStart.type="button";voiceStart.id="nexoraVoiceStart";voiceStart.className="voice-wip-return";voiceStart.textContent="Start voice conversation";
