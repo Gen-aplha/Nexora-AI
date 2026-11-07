@@ -3343,17 +3343,19 @@ async function loadNexoraPublicFeedbackDashboard(){
  status.textContent="Loading community feedback…";stats.replaceChildren();breakdown.replaceChildren();reviews.replaceChildren();
  try{
   if(!supabaseClient)throw new Error("The feedback service could not load. Please refresh the page.");
-  const [summaryResult,reviewsResult]=await Promise.all([
+  const [summaryResult,reviewsResult,reviewCountResult]=await Promise.all([
    supabaseClient.from("nexora_public_rating_summary").select("rating,rating_count"),
-   supabaseClient.from("nexora_public_feedback").select("rating,review,created_at").not("review","is",null).order("created_at",{ascending:false}).limit(20)
+   supabaseClient.from("nexora_public_feedback").select("rating,review,created_at").not("review","is",null).order("created_at",{ascending:false}).limit(20),
+   supabaseClient.from("nexora_public_feedback").select("review",{count:"exact",head:true}).not("review","is",null)
   ]);
   if(summaryResult.error)throw summaryResult.error;
   if(reviewsResult.error)throw reviewsResult.error;
+  if(reviewCountResult.error)throw reviewCountResult.error;
   const summary=summaryResult.data||[],reviewRows=reviewsResult.data||[];
   const counts=[1,2,3,4,5].map(star=>Number(summary.find(row=>Number(row.rating)===star)?.rating_count||0));
   const total=counts.reduce((sum,count)=>sum+count,0);
   const average=total?counts.reduce((sum,count,index)=>sum+count*(index+1),0)/total:0;
-  const reviewCount=reviewRows.length;
+  const reviewCount=Number(reviewCountResult.count||0);
   const addStat=(label,value)=>{const card=document.createElement("div");card.style.cssText="padding:12px;border:1px solid var(--border,#ddd);border-radius:11px;background:var(--surface,#fff);min-width:0";const name=document.createElement("div");name.textContent=label;name.style.cssText="font-size:12px;color:var(--muted,#777);margin-bottom:5px";const number=document.createElement("strong");number.textContent=value;number.style.cssText="font-size:22px;display:block";card.append(name,number);stats.appendChild(card);};
   addStat("Total ratings",String(total));addStat("Average rating",total?average.toFixed(1)+" / 5":"—");addStat("Written reviews",String(reviewCount));addStat("5-star ratings",String(counts[4]));
   const heading=document.createElement("div");heading.textContent="Rating breakdown";heading.style.cssText="font-weight:650;margin:14px 0 9px";breakdown.appendChild(heading);
