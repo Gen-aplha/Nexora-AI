@@ -1189,6 +1189,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <button class="composer-menu-item" type="button" id="pdfAssistantMenuBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2.75h8l4 4V21H6a2 2 0 0 1-2-2V4.75a2 2 0 0 1 2-2Z"/><path d="M14 2.75v4h4M8 12h8M8 15.5h6M8 18.5h5"/></svg></span><span><strong>PDF Assistant</strong><small>Summarize and ask questions about PDFs</small></span></button>
         <button class="composer-menu-item" type="button" id="codingAssistantMenuBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg></span><span><strong>Coding Assistant</strong><small>Generate, explain and debug code</small></span></button>
         <button class="composer-menu-item" type="button" id="generateImageBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.5 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-3L12 2.5Z"/><path d="m19 2 .8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2Z"/></svg></span><span><strong>Create an image</strong><small>Generate an image with AI</small></span></button>
+        <button class="composer-menu-item" type="button" id="nexoraPromptLibraryBtn"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H20v17H7.5A2.5 2.5 0 0 0 5 21.5z"/><path d="M5 4.5v17M9 6h7M9 10h7M9 14h5"/></svg></span><span><strong>Prompt Library</strong><small>Ready-made prompts for every task</small></span></button>
         <button class="composer-menu-item" type="button" id="nexoraPresentationBtn" aria-label="Open Presentation Maker"><span aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 9h4M7 12h2M14 9h3M14 12h3"/></svg></span><span><strong>Presentation Maker</strong><small>Create and download AI presentations</small></span></button>
       </div>
       <section class="image-mode-panel" id="imageModePanel" hidden aria-label="Image creation">
@@ -3677,19 +3678,80 @@ renderHistory();
    renderProjectList();openPanel("Projects & folders","Keep related chats organized.",wrap);
  }
  document.getElementById("projectsBtn")?.addEventListener("click",()=>{sidebar.classList.remove("open");openProjects();});
- // Prompt library: save, insert, and run reusable prompts.
+ // Prompt Library: searchable ready-made prompts plus the user's own saved prompts.
  function openPrompts(){
+   const library=[
+     {category:"Studying",items:[
+       ["Explain a topic simply","Teach me [topic] at a [grade/level] level. Start with a simple explanation, define key terms, give one everyday example, then check my understanding with three questions."],
+       ["Study plan","Create a realistic study plan for [subject/topic] over [number of days]. Break it into short sessions, include active-recall practice and revision, and leave room for breaks."],
+       ["Practice quiz","Create a [difficulty] practice quiz on [topic] with [number] questions. Put the answer key and brief explanations after all questions so I can try first."]
+     ]},
+     {category:"Coding",items:[
+       ["Debug my code","Act as a patient programming mentor. Help me debug this [language] code. Explain the likely cause, show the corrected code, and describe why the fix works. Code: [paste code]"],
+       ["Build a project","Help me build a [project/app] using [language or framework]. First outline the simplest working version, then provide complete beginner-friendly steps and explain where each file belongs."],
+       ["Understand code","Explain this [language] code line by line in beginner-friendly language. Define unfamiliar terms, point out potential errors, and suggest one small improvement: [paste code]"]
+     ]},
+     {category:"Writing",items:[
+       ["Improve my writing","Edit the text below for clarity, grammar, flow and structure while preserving my meaning and voice. Briefly list the most important changes. Text: [paste text]"],
+       ["Essay outline","Create a clear essay outline about [topic] for [audience/grade]. Include a thesis, introduction points, 3 main arguments, supporting evidence to look for, and a conclusion."],
+       ["Creative story starter","Help me develop an original story about [idea]. Suggest a compelling opening, main character, goal, obstacle and a few possible plot twists. Keep the tone [tone]."]
+     ]},
+     {category:"Business",items:[
+       ["Business idea planner","Help me evaluate a small business idea: [idea]. Identify the target audience, problem solved, simple value proposition, likely costs to investigate, risks and a low-cost way to test demand."],
+       ["Marketing plan","Create a practical marketing plan for [product/service] aimed at [audience]. Include positioning, key messages, suitable channels, a 2-week content outline and ways to measure results."],
+       ["Customer feedback analysis","Organize these customer comments into themes. Separate praise, complaints and feature requests, identify repeated patterns, and suggest priorities without inventing statistics: [paste feedback]"]
+     ]},
+     {category:"Creativity",items:[
+       ["Brainstorm fresh ideas","Generate 15 original ideas for [goal/topic]. Group them by approach, keep them practical, and highlight the 3 most distinctive ideas with a short reason."],
+       ["Design concept","Develop a visual concept for [project]. Describe the style, mood, composition, color direction, typography and key details. Include 3 distinct creative directions."],
+       ["Plan a video","Create a [duration]-second video concept about [topic] for [platform]. Break it into scenes with visuals, on-screen text, transitions and a concise voiceover idea."]
+     ]}
+   ];
    const wrap=document.createElement("div");
-   const field=document.createElement("textarea");field.placeholder="Write a prompt to save...";field.setAttribute("aria-label","Prompt text");
-   const save=document.createElement("button");save.className="primary";save.textContent="Save prompt";
-   const list=document.createElement("div");list.className="nexora-panel-list";
-   function render(){
-     list.replaceChildren();
-     if(!prompts.length){const empty=document.createElement("p");empty.className="nexora-empty";empty.textContent="Your saved prompts will appear here.";list.appendChild(empty);return;}
-     prompts.forEach((item,index)=>{const row=document.createElement("div");row.className="nexora-panel-row";const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=item.title||"Saved prompt";const small=document.createElement("small");small.textContent=item.text.slice(0,100);info.append(strong,small);const actions=document.createElement("div");actions.className="nexora-inline-actions";const use=document.createElement("button");use.textContent="Use";use.addEventListener("click",()=>{input.value=item.text;input.dispatchEvent(new Event("input"));closePanel();input.focus();});const run=document.createElement("button");run.textContent="Send";run.addEventListener("click",()=>{closePanel();sendMessage(item.text);});const del=document.createElement("button");del.textContent="Delete";del.addEventListener("click",()=>{prompts.splice(index,1);storeList(PROMPTS_KEY,prompts);render();});actions.append(use,run,del);row.append(info,actions);list.appendChild(row);});
+   const intro=document.createElement("p");intro.className="nexora-panel-note";intro.textContent="Choose a category, search the collection, then use a prompt in chat or send it directly. Replace the [bracketed] details with your own information.";
+   const search=document.createElement("input");search.type="search";search.placeholder="Search ready-made prompts…";search.setAttribute("aria-label","Search prompt library");search.style.cssText="width:100%;min-height:42px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font:inherit";
+   const categories=document.createElement("div");categories.className="nexora-inline-actions";
+   const results=document.createElement("div");results.className="nexora-panel-list";
+   const savedHeading=document.createElement("h3");savedHeading.textContent="My saved prompts";savedHeading.style.margin="18px 0 4px";
+   const field=document.createElement("textarea");field.placeholder="Write a prompt you want to save…";field.setAttribute("aria-label","Prompt text to save");
+   const save=document.createElement("button");save.className="primary";save.textContent="Save my prompt";
+   const savedList=document.createElement("div");savedList.className="nexora-panel-list";
+   let selected="All";
+   const allCategories=["All",...library.map(group=>group.category)];
+   function makeAction(label,handler,primary=false){const button=document.createElement("button");button.type="button";button.textContent=label;if(primary)button.className="primary";button.addEventListener("click",handler);return button;}
+   function renderLibrary(){
+     categories.replaceChildren();
+     allCategories.forEach(category=>{const button=makeAction(category,()=>{selected=category;renderLibrary();});button.setAttribute("aria-pressed",String(selected===category));if(selected===category)button.classList.add("primary");categories.appendChild(button);});
+     results.replaceChildren();
+     const query=search.value.trim().toLowerCase();
+     const matches=library.flatMap(group=>group.items.map(([title,text])=>({category:group.category,title,text}))).filter(item=>(selected==="All"||item.category===selected)&&(!query||(item.title+" "+item.text+" "+item.category).toLowerCase().includes(query)));
+     if(!matches.length){const empty=document.createElement("p");empty.className="nexora-empty";empty.textContent="No matching prompts. Try another search.";results.appendChild(empty);return;}
+     matches.forEach(item=>{
+       const row=document.createElement("article");row.className="nexora-panel-row";row.style.alignItems="flex-start";
+       const info=document.createElement("div");info.style.minWidth="0";const title=document.createElement("strong");title.textContent=item.title;
+       const category=document.createElement("small");category.textContent=item.category;
+       const description=document.createElement("p");description.textContent=item.text;description.style.cssText="font-size:11px;line-height:1.5;color:var(--muted);margin:7px 0 0;white-space:normal";
+       info.append(title,category,description);
+       const actions=document.createElement("div");actions.className="nexora-inline-actions";actions.style.flexShrink="0";
+       actions.append(makeAction("Use",()=>{input.value=item.text;input.dispatchEvent(new Event("input",{bubbles:true}));closePanel();input.focus();},true),makeAction("Send",()=>{closePanel();sendMessage(item.text,{displayText:"Prompt Library: "+item.title});}));
+       row.append(info,actions);results.appendChild(row);
+     });
    }
-   save.addEventListener("click",()=>{const value=field.value.trim();if(!value)return;prompts.unshift({title:value.split(/\s+/).slice(0,5).join(" ").slice(0,48),text:value});prompts=prompts.slice(0,100);storeList(PROMPTS_KEY,prompts);field.value="";render();});
-   wrap.append(field,save,list);render();openPanel("Prompt library","Save and reuse your best prompts.",wrap);
+   function renderSaved(){
+     savedList.replaceChildren();
+     if(!prompts.length){const empty=document.createElement("p");empty.className="nexora-empty";empty.textContent="Your saved prompts will appear here.";savedList.appendChild(empty);return;}
+     prompts.forEach((item,index)=>{
+       const row=document.createElement("div");row.className="nexora-panel-row";const info=document.createElement("div");info.style.minWidth="0";
+       const title=document.createElement("strong");title.textContent=item.title||"Saved prompt";const detail=document.createElement("small");detail.textContent=String(item.text||"").slice(0,120);info.append(title,detail);
+       const actions=document.createElement("div");actions.className="nexora-inline-actions";
+       actions.append(makeAction("Use",()=>{input.value=item.text;input.dispatchEvent(new Event("input",{bubbles:true}));closePanel();input.focus();}),makeAction("Send",()=>{closePanel();sendMessage(item.text);}),makeAction("Delete",()=>{prompts.splice(index,1);storeList(PROMPTS_KEY,prompts);renderSaved();}));
+       row.append(info,actions);savedList.appendChild(row);
+     });
+   }
+   search.addEventListener("input",renderLibrary);
+   save.addEventListener("click",()=>{const value=field.value.trim();if(!value)return;prompts.unshift({title:value.split(/\s+/).slice(0,5).join(" ").slice(0,48),text:value});prompts=prompts.slice(0,100);storeList(PROMPTS_KEY,prompts);field.value="";renderSaved();});
+   wrap.append(intro,search,categories,results,savedHeading,field,save,savedList);renderLibrary();renderSaved();
+   openPanel("Prompt Library","Ready-made prompts for studying, coding, writing, business and creativity.",wrap);
  }
  // Study mode uses the same connected AI, with a clear tutoring instruction.
  document.getElementById("nexoraStudyBtn").addEventListener("click",()=>{
@@ -3704,6 +3766,7 @@ renderHistory();
  // Export current chat in portable formats.
  // Presentation maker: generate slide content with AI, then export it as a self-contained HTML slide deck.
  document.getElementById("openSavedPromptsBtn")?.addEventListener("click",openPrompts);
+ document.getElementById("nexoraPromptLibraryBtn")?.addEventListener("click",()=>{composerMenu.hidden=true;composerPlus.setAttribute("aria-expanded","false");openPrompts();});
  document.getElementById("nexoraPresentationBtn").addEventListener("click",()=>{
    openPanel("AI presentation maker","Generate a slide-by-slide outline, then export it as a browser-based presentation.",
     '<label for="nexoraPresentationTopic">Presentation topic</label><input id="nexoraPresentationTopic" placeholder="e.g. Renewable energy"><label for="nexoraPresentationCount">Number of slides</label><select id="nexoraPresentationCount"><option>5</option><option selected>8</option><option>10</option><option>12</option></select><button class="primary" id="nexoraCreatePresentation">Generate presentation content</button><button id="nexoraDownloadPresentation">Download slides from latest AI answer</button><p class="nexora-panel-note">The download is a standalone HTML slideshow, not a PowerPoint file.</p>');
