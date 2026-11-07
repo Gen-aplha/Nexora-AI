@@ -1856,6 +1856,8 @@ let voiceModeEnabled = false;
 let voiceTurnInProgress = false;
 let voiceCapturedText = false;
 let voiceModeRestartTimer = null;
+let voiceModeRetryCount = 0;
+let voiceRecognitionError = null;
 const voiceModeBtn = document.getElementById("voiceModeBtn");
 const voiceWipPage = document.getElementById("voiceWipPage");
 function openVoiceWipPage() {
@@ -1889,6 +1891,7 @@ if (!SpeechRecognition) {
   recognition.maxAlternatives = 1;
   recognition.onstart = () => {
     isListening = true;
+    voiceRecognitionError = null;
     if(typeof setVoicePageStatus==="function")setVoicePageStatus("Listening… speak when you are ready.");
     voiceBtn.classList.add("listening");
     voiceBtn.textContent = "⏹";
@@ -1911,10 +1914,14 @@ if (!SpeechRecognition) {
     }
   };
   recognition.onerror = event => {
+    voiceRecognitionError = event.error || "unknown";
     const messages = {
       "not-allowed":"Microphone permission was blocked. Allow it in your browser settings.",
-      "no-speech":"No speech was detected. Tap the microphone and try again.",
-      "network":"Speech recognition needs a network connection in this browser."
+      "service-not-allowed":"This browser or site is not allowed to use speech recognition.",
+      "audio-capture":"No microphone was found. Check that a microphone is connected and available.",
+      "no-speech":"No speech was detected. Try speaking a little closer to the microphone.",
+      "network":"Speech recognition lost its network connection. Check your connection and try again.",
+      "aborted":"Voice recognition was interrupted."
     };
     const message=messages[event.error] || ("Voice input error: " + event.error);
     voiceStatus.textContent = message;
@@ -1929,15 +1936,36 @@ if (!SpeechRecognition) {
       const spokenMessage = voiceCapturedText ? input.value.trim() : "";
       voiceCapturedText = false;
       if (spokenMessage) {
+        voiceModeRetryCount = 0;
         voiceTurnInProgress = true;
         voiceStatus.textContent = "Sending your voice message…";
         if(typeof setVoicePageStatus==="function")setVoicePageStatus("Sending your voice message…");
         sendMessage(spokenMessage);
-      } else {
-        voiceStatus.textContent = "Voice mode is on. Listening again…";
-        if(typeof setVoicePageStatus==="function")setVoicePageStatus("Listening again…");
+      } else if (["not-allowed","service-not-allowed","audio-capture","language-not-supported"].includes(voiceRecognitionError)) {
+        const message = voiceStatus.textContent || "Voice recognition cannot continue. Check microphone and browser permissions.";
+        voiceModeEnabled = false;
+        voiceTurnInProgress = false;
+        if(voiceStart){voiceStart.textContent="Start";voiceStart.setAttribute("aria-label","Start voice conversation");}
+        if(voiceModeBtn){const label=voiceModeBtn.querySelector(".voice-mode-label");if(label)label.textContent="🎙 Voice mode";}
+        if(typeof setVoicePageStatus==="function")setVoicePageStatus(message);
+      } else if (voiceModeRetryCount < 3) {
+        voiceModeRetryCount++;
+        const delay = Math.min(700 * Math.pow(2, voiceModeRetryCount - 1), 2800);
+        const message = voiceRecognitionError === "network"
+          ? "Connection interrupted. Reconnecting to voice…"
+          : "Voice mode is on. Listening again…";
+        voiceStatus.textContent = message;
+        if(typeof setVoicePageStatus==="function")setVoicePageStatus(message);
         clearTimeout(voiceModeRestartTimer);
-        voiceModeRestartTimer = setTimeout(startVoiceModeListening, 550);
+        voiceModeRestartTimer = setTimeout(startVoiceModeListening, delay);
+      } else {
+        voiceModeEnabled = false;
+        voiceModeRetryCount = 0;
+        const message = "Voice mode paused after repeated interruptions. Tap Start to try again.";
+        voiceStatus.textContent = message;
+        if(voiceStart){voiceStart.textContent="Start";voiceStart.setAttribute("aria-label","Start voice conversation");}
+        if(voiceModeBtn){const label=voiceModeBtn.querySelector(".voice-mode-label");if(label)label.textContent="🎙 Voice mode";}
+        if(typeof setVoicePageStatus==="function")setVoicePageStatus(message);
       }
     } else if (!voiceModeEnabled && voiceStatus.textContent === "Listening… speak now") {
       voiceStatus.textContent = "Voice input stopped.";
@@ -2258,14 +2286,24 @@ function speakText(text, button, resumeVoiceMode = false) {
   if (chosenVoice) utterance.voice = chosenVoice;
   utterance.rate = Number(voiceRate.value) || 1;
   utterance.pitch = Number(voicePitch.value) || 1;
-  utterance.onend = utterance.onerror = () => {
+  utterance.onstart = () => {
+    if (resumeVoiceMode && voiceModeEnabled) {
+      voiceStatus.textContent = "NEXORA AI is speaking…";
+      if(typeof setVoicePageStatus==="function")setVoicePageStatus("NEXORA AI is speaking…");
+    }
+  };
+  const finishSpokenReply = () => {
     if (activeSpeechButton === button) stopSpeaking();
     if (resumeVoiceMode && voiceModeEnabled) {
       voiceTurnInProgress = false;
       voiceStatus.textContent = "Voice mode is on. Listening for your next question…";
-      voiceModeRestartTimer = setTimeout(startVoiceModeListening, 650);
+      if(typeof setVoicePageStatus==="function")setVoicePageStatus("Listening for your next question…");
+      clearTimeout(voiceModeRestartTimer);
+      voiceModeRestartTimer = setTimeout(startVoiceModeListening, 700);
     }
   };
+  utterance.onend = finishSpokenReply;
+  utterance.onerror = finishSpokenReply;
   activeSpeechButton = button;
   if (button) { button.textContent = "⏹ Stop speaking"; button.classList.add("voice-speaking"); }
   window.speechSynthesis.speak(utterance);
