@@ -1105,6 +1105,12 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <p>Your generated images are available in your NEXORA gallery on this device.</p>
         <h3 style="margin:18px 0 8px">Generated images</h3><div id="libraryImageList" style="display:flex;flex-wrap:wrap;gap:6px"></div>
       </div>
+      <section class="library-memory-section" aria-labelledby="libraryMemoryTitle">
+        <h3 id="libraryMemoryTitle" style="margin:22px 0 6px">✦ Smart Memory</h3>
+        <p class="library-note">Save and manage the preferences or details NEXORA AI can use in relevant chats. Memories stay on this device.</p>
+        <div class="library-actions"><button type="button" id="addMemoryBtn" class="add-memory-btn">＋ Save a memory</button></div>
+        <div id="memoryList" class="memory-list"></div>
+      </section>
     </section>
   </div>
 <div class="account-info-overlay" id="accountInfoOverlay" aria-hidden="true"><section class="account-info-panel" role="dialog" aria-modal="true" aria-labelledby="accountInfoTitle"><div class="account-head"><div><h2 id="accountInfoTitle">Settings</h2><p>NEXORA AI account centre</p></div><button type="button" id="closeAccountInfo" class="library-close" aria-label="Close">×</button></div><div id="accountInfoContent"></div></section></div>
@@ -1376,11 +1382,6 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
       <div class="voice-settings-actions"><button type="button" id="voicePreviewBtn">▶ Preview voice</button><button type="button" id="voiceResetBtn">Reset</button></div>
       <p class="voice-settings-note" id="voiceSettingsNote">Available voices depend on your Android device and browser.</p>
     </section>
-    <div class="personalization-section-title">Saved memories</div>
-    <p class="personalization-hint">Add notes and preferences you want NEXORA AI to remember.</p>
-    <div class="library-actions"><button type="button" id="addMemoryBtn" class="add-memory-btn">＋ Save a memory</button></div>
-    <div id="memoryList" class="memory-list"></div>
-    <p class="personalization-hint">Saved memories are stored in this browser on this device.</p>
     <div class="personalization-actions"><button type="button" id="resetPersonalizationBtn">Reset</button><button type="button" id="savePersonalizationBtn">Save preferences</button></div>
   </section>
 </div>
@@ -3507,7 +3508,7 @@ function renderMemories(){
  if(!savedMemories.length){const empty=document.createElement("div");empty.className="memory-empty";empty.textContent="No saved memories yet. Save a preference or detail you want NEXORA to remember.";list.appendChild(empty);return;}
  savedMemories.forEach((item,index)=>{const card=document.createElement("article");card.className="memory-card";const title=document.createElement("strong");title.textContent=item.title||"Saved memory";const body=document.createElement("p");body.textContent=item.text;const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>{const next=prompt("Edit this memory",item.text);if(next&&next.trim()){item.text=next.trim();persistMemories();renderMemories();}};const remove=document.createElement("button");remove.textContent="Delete";remove.onclick=()=>{if(confirm("Delete this saved memory?")){savedMemories.splice(index,1);persistMemories();renderMemories();}};card.append(title,body,edit,remove);list.appendChild(card);});
 }
-function openLibrary(){const signedIn=!!((supabaseSession||authToken)&&accountProfile);document.getElementById("libraryGuestView").hidden=signedIn;document.getElementById("librarySignedView").hidden=!signedIn;document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");if(supabaseSession?.user?.id){renderLibraryContents();queueNexoraCloudSync(true);}else{setLibraryStatus("This account uses the older sign-in service. Sign in with your Supabase email or Google account to enable cloud backup.",true);renderLibraryContents();}}
+function openLibrary(){const signedIn=!!((supabaseSession||authToken)&&accountProfile);document.getElementById("libraryGuestView").hidden=signedIn;document.getElementById("librarySignedView").hidden=!signedIn;renderMemories();document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");if(supabaseSession?.user?.id){renderLibraryContents();queueNexoraCloudSync(true);}else{setLibraryStatus("This account uses the older sign-in service. Sign in with your Supabase email or Google account to enable cloud backup.",true);renderLibraryContents();}}
 function closeLibrary(){document.getElementById("libraryOverlay").classList.remove("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","true");}
 document.getElementById("librarySignInBtn").addEventListener("click",()=>{closeLibrary();openAccount();accountMode="login";setAccountMode("login");document.getElementById("accountStatus").textContent="Sign in to access your personal library.";});
 
@@ -3689,13 +3690,12 @@ document.body.dataset.theme = "light";
  };
  const openToolHub=()=>{
    const wrap=document.createElement("div");
-   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="memory">✦ <strong>Smart Memory</strong><small>Review and manage saved memories</small></button><button data-tool="notifications">♧ <strong>Notification Centre</strong><small>Recent activity stored on this device</small></button><button data-tool="customize">◐ <strong>Customize appearance</strong><small>Accent color, text size and chat background</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
+   wrap.innerHTML='<p class="nexora-panel-note">A set of practical tools built into NEXORA AI. Some features use your existing connected AI service; saved settings stay on this device.</p><div class="nexora-upgrade-grid"><button data-tool="compare">⚖️ <strong>Compare responses</strong><small>Two approaches from the connected AI</small></button><button data-tool="notifications">♧ <strong>Notification Centre</strong><small>Recent activity stored on this device</small></button><button data-tool="customize">◐ <strong>Customize appearance</strong><small>Accent color, text size and chat background</small></button><button data-tool="files">▤ <strong>Advanced File Assistant</strong><small>Open the existing document attachment flow</small></button><button data-tool="gallery">▧ <strong>Image Albums</strong><small>Browse and filter your saved images</small></button><button data-tool="dashboard">▦ <strong>Usage Dashboard</strong><small>See your local activity insights</small></button></div>';
    openPanel("NEXORA Tools","Useful upgrades in one place",wrap);
    wrap.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>runTool(b.dataset.tool)));
  };
  function runTool(which){
    if(which==="compare")return openCompare();
-   if(which==="memory")return openMemoryManager();
    if(which==="notifications")return openNotifications();
    if(which==="customize")return openCustomization();
    if(which==="files"){closePanel();document.getElementById("filesBtn")?.click();return;}
@@ -3736,17 +3736,7 @@ document.body.dataset.theme = "light";
    run();
  }
  document.getElementById("codingAssistantPlaygroundBtn")?.addEventListener("click",()=>{closeCodingAssistant();openCodePlayground();});
- function openMemoryManager(){
-   const wrap=document.createElement("div");
-   const render=()=>{
-     wrap.replaceChildren();
-     const intro=document.createElement("p");intro.className="nexora-panel-note";intro.textContent="Saved memories are stored in this browser and may be included in relevant AI chats. Review them and remove anything you no longer want saved.";wrap.appendChild(intro);
-     const field=document.createElement("textarea");field.rows=2;field.placeholder="Add a useful preference or fact…";field.setAttribute("aria-label","New saved memory");
-     const add=document.createElement("button");add.className="nexora-tool-primary";add.textContent="Save memory";add.addEventListener("click",()=>{const text=field.value.trim();if(!text)return;savedMemories.push({id:"mem_"+Date.now(),text});try{localStorage.setItem(MEMORY_STORAGE_KEY,JSON.stringify(savedMemories));}catch(_){}notify("Memory saved","A memory was added on this device.");render();});wrap.append(field,add);
-     if(!savedMemories.length){const empty=document.createElement("p");empty.textContent="No saved memories yet.";wrap.appendChild(empty);}
-     savedMemories.forEach((m,index)=>{const row=document.createElement("div");row.className="nexora-memory-row";const text=document.createElement("span");text.textContent=m.text;const del=document.createElement("button");del.textContent="Delete";del.addEventListener("click",()=>{savedMemories.splice(index,1);try{localStorage.setItem(MEMORY_STORAGE_KEY,JSON.stringify(savedMemories));}catch(_){}render();});row.append(text,del);wrap.appendChild(row);});
-   };render();openPanel("Smart Memory","Review information saved for your chats",wrap);
- }
+
  function openNotifications(){
    const wrap=document.createElement("div");
    const items=Array.isArray(upgradeData.notifications)?upgradeData.notifications:[];
