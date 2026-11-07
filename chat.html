@@ -1107,12 +1107,6 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <h3 style="margin:18px 0 8px">Uploaded files</h3><div id="libraryFileList"></div>
         <h3 style="margin:18px 0 8px">Generated images</h3><div id="libraryImageList" style="display:flex;flex-wrap:wrap;gap:6px"></div>
       </div>
-      <section class="library-memory-section" aria-labelledby="libraryMemoryTitle">
-        <h3 id="libraryMemoryTitle" style="margin:22px 0 6px">✦ Smart Memory</h3>
-        <p class="library-note">Save and manage the preferences or details NEXORA AI can use in relevant chats. Memories stay on this device.</p>
-        <div class="library-actions"><button type="button" id="addMemoryBtn" class="add-memory-btn">＋ Save a memory</button></div>
-        <div id="memoryList" class="memory-list"></div>
-      </section>
     </section>
   </div>
 <div class="account-info-overlay" id="accountInfoOverlay" aria-hidden="true"><section class="account-info-panel" role="dialog" aria-modal="true" aria-labelledby="accountInfoTitle"><div class="account-head"><div><h2 id="accountInfoTitle">Settings</h2><p>NEXORA AI account centre</p></div><button type="button" id="closeAccountInfo" class="library-close" aria-label="Close">×</button></div><div id="accountInfoContent"></div></section></div>
@@ -3558,7 +3552,7 @@ function renderMemories(){
  if(!savedMemories.length){const empty=document.createElement("div");empty.className="memory-empty";empty.textContent="No saved memories yet. Save a preference or detail you want NEXORA to remember.";list.appendChild(empty);return;}
  savedMemories.forEach((item,index)=>{const card=document.createElement("article");card.className="memory-card";const title=document.createElement("strong");title.textContent=item.title||"Saved memory";const body=document.createElement("p");body.textContent=item.text;const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>{const next=prompt("Edit this memory",item.text);if(next&&next.trim()){item.text=next.trim();persistMemories();renderMemories();}};const remove=document.createElement("button");remove.textContent="Delete";remove.onclick=()=>{if(confirm("Delete this saved memory?")){savedMemories.splice(index,1);persistMemories();renderMemories();}};card.append(title,body,edit,remove);list.appendChild(card);});
 }
-function openLibrary(){document.getElementById("libraryGuestView").hidden=true;document.getElementById("librarySignedView").hidden=false;renderMemories();document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");renderLibraryContents();if(supabaseSession?.user?.id)queueNexoraCloudSync(true);else setLibraryStatus("Local Library is active. Sign in to sync supported chat history across devices.");}
+function openLibrary(){document.getElementById("libraryGuestView").hidden=true;document.getElementById("librarySignedView").hidden=false;document.getElementById("libraryOverlay").classList.add("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","false");sidebar.classList.remove("open");renderLibraryContents();if(supabaseSession?.user?.id)queueNexoraCloudSync(true);else setLibraryStatus("Local Library is active. Sign in to sync supported chat history across devices.");}
 function closeLibrary(){document.getElementById("libraryOverlay").classList.remove("open");document.getElementById("libraryOverlay").setAttribute("aria-hidden","true");}
 document.getElementById("librarySignInBtn").addEventListener("click",()=>{closeLibrary();openAccount();accountMode="login";setAccountMode("login");document.getElementById("accountStatus").textContent="Sign in to access your personal library.";});
 
