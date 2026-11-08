@@ -1030,6 +1030,14 @@ body[data-theme="dark"] .nexora-upgrade-bar .nexora-search-launch{background:#35
 
 }
 
+
+/* Keep mobile tool dialogs above the navigation drawer. */
+@media(max-width:680px){
+  .library-overlay.open,
+  .plugins-overlay.open,
+  .personalization-overlay.open,
+  .image-mode-panel:not([hidden]){z-index:10030!important}
+}
 </style>
 
 <style id="nexora-upgrade-styles">
