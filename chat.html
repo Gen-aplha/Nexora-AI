@@ -2971,9 +2971,11 @@ function setAccountMode(mode){
  document.getElementById("accountModeToggle").textContent=login?"New to NEXORA? Create an account":"Already have an account? Sign in";
 }
 async function signInWithGoogle(){
- const status=document.getElementById("firstLaunchStatus")||document.getElementById("accountStatus");
- const button=document.getElementById("firstLaunchGoogle")||document.getElementById("googleSignInBtn");
- if(!supabaseClient){status.textContent="The account service could not load. Refresh the page and try again.";return;}
+ const firstLaunchVisible=!!firstLaunchOverlay?.classList.contains("open");
+ const status=document.getElementById(firstLaunchVisible?"firstLaunchStatus":"accountStatus");
+ const button=document.getElementById(firstLaunchVisible?"firstLaunchGoogle":"googleSignInBtn");
+ if(!supabaseClient){if(status)status.textContent="The account service could not load. Refresh the page and try again.";return;}
+ if(!button||!status){console.error("NEXORA Google sign-in controls are unavailable.");return;}
  button.disabled=true;status.textContent="Redirecting to Google…";
  try{localStorage.setItem("nexora_google_auth_pending","1");localStorage.setItem("nexora_google_onboarding_check","yes");localStorage.removeItem(ONBOARDING_STORAGE_KEY);const {error}=await supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:SUPABASE_REDIRECT_URL}});if(error)throw error;}
  catch(error){status.textContent=error.message||"Google sign-in could not start. Check the provider setup and try again.";button.disabled=false;}
