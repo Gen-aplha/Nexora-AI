@@ -991,8 +991,6 @@ body[data-theme="dark"] .studio-style-select{background:#252536;border-color:#4b
 .history-clear-btn{border:0;background:transparent;color:var(--muted);font-size:11px;padding:7px 3px}
 .history-clear-btn:hover{color:#c43d58}
 .chat-sync-status{margin:0;padding:4px 2px;color:var(--muted);font-size:10px;line-height:1.4}
-.side-signin-btn{display:block;width:100%;margin:7px 0 3px;padding:10px 12px;border:1px solid #7656bf;border-radius:10px;background:linear-gradient(110deg,#38206f,#5b2c91);color:#fff;font-size:12px;font-weight:700;text-align:center}
-.side-signin-btn:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
 @media(max-width:680px){.nexora-upgrade-bar{width:100%;max-width:100%;padding:4px 8px 10px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}.nexora-upgrade-bar>*{scroll-snap-align:start}.nexora-upgrade-bar select{max-width:48vw}}
 body[data-theme="light"] .history-search{border:0;background:#f4f4f4;color:#222;padding:10px 12px}
 body[data-theme="light"] .history-entry:hover,body[data-theme="light"] .history-entry.active{background:#f1f1f1}
@@ -1119,7 +1117,6 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <button class="see-all-chats" id="seeAllChatsBtn" type="button">Show all chats</button>
         <button class="history-clear-btn" id="clearChatHistoryBtn" type="button">Clear all</button>
       </div>
-      <button type="button" class="side-signin-btn" id="sideSignInBtn">Sign in / Create account</button>
       <p class="chat-sync-status" id="chatSyncStatus" role="status">Sign in with Google to sync chats</p>
     </section>
     <div class="side-footer">
@@ -3526,7 +3523,6 @@ document.getElementById("accountQuickPicture").addEventListener("change",async e
  finally{button.disabled=false;e.target.value="";}
 });
 
-document.getElementById("sideSignInBtn")?.addEventListener("click",()=>{try{openAccount();}catch(error){console.error("NEXORA sign-in panel error:",error);const overlay=document.getElementById("accountOverlay");if(overlay){overlay.classList.remove("auth-only");overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");}}});
 document.addEventListener("click",event=>{const profileButton=event.target.closest?.("#sideProfileBtn");if(!profileButton)return;event.preventDefault();event.stopImmediatePropagation();try{openAccount();}catch(error){console.error("NEXORA account panel error:",error);const overlay=document.getElementById("accountOverlay");if(overlay){overlay.classList.remove("auth-only");overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");}}},true);
 document.getElementById("closeAccountBtn").addEventListener("click",closeAccount);
 document.getElementById("accountOverlay").addEventListener("click",e=>{if(e.target.id==="accountOverlay")closeAccount();});
