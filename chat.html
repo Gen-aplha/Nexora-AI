@@ -4041,11 +4041,6 @@ renderHistory();
    wrap.querySelector("#nexoraAppearanceSave").addEventListener("click",()=>{upgradeData.appearance={accent:wrap.querySelector("#nexoraAccent").value,size:wrap.querySelector("#nexoraFontSize").value,wall:wrap.querySelector("#nexoraChatWall").value};writeStore(upgradeData);applyCustomization();notify("Appearance updated","Your chat appearance preferences were saved.");if(typeof showToast==="function")showToast("Appearance saved.");});
  }
  applyCustomization();
- // Smart welcome: add more useful entry points without changing the existing chat flow.
- const suggestions=document.querySelector(".welcome .suggestions");
- if(suggestions){
-   [["Plan my study session","Study"],["Review a document","Files"],["Build a simple website","Code"]].forEach(([label])=>{const b=document.createElement("button");b.type="button";b.className="suggestion";b.dataset.welcomeSuggestion="";b.textContent=label;suggestions.appendChild(b);b.addEventListener("click",()=>{input.value=label==="Review a document"?"I want to review a document.":label==="Build a simple website"?"Help me build a simple website.":"Help me plan a study session.";input.dispatchEvent(new Event("input",{bubbles:true}));input.focus();});});
- }
  window.openNexoraTools=openToolHub;
  // Voice conversation controls sit directly below the microphone icon.
  const voiceStart=document.getElementById("nexoraVoiceStart");
