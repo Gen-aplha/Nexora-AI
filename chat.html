@@ -3660,7 +3660,7 @@ async function initializeNexoraAuth(){
        const newAccountPending=localStorage.getItem("nexora_new_account_onboarding_pending")==="yes";
        const createdAt=Date.parse(supabaseSession.user.created_at||"");
        const lastSignInAt=Date.parse(supabaseSession.user.last_sign_in_at||"");
-       const isNewGoogleAccount=googleOnboardingCheck&&Number.isFinite(createdAt)&&Number.isFinite(lastSignInAt)&&Math.abs(lastSignInAt-createdAt)<300000;
+       const isNewGoogleAccount=googleOnboardingCheck&&Number.isFinite(createdAt)&&Number.isFinite(lastSignInAt)&&lastSignInAt>=createdAt&&lastSignInAt-createdAt<86400000;
        if(newAccountPending||isNewGoogleAccount){localStorage.removeItem(SMART_ONBOARDING_KEY+"__completed");localStorage.setItem("nexora_onboarding_redirect_after_continue","yes");}
        localStorage.removeItem("nexora_new_account_onboarding_pending");
        localStorage.removeItem("nexora_google_onboarding_check");
