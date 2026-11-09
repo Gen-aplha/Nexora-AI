@@ -1049,6 +1049,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(max-width:680px){.sidebar{max-width:min(86vw,300px);padding:14px 10px}.topbar{min-width:0}.topbrand{flex:1;overflow:hidden}.topbrand>div{min-width:0}.topbrand p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chat{padding:18px 12px max(18px,env(safe-area-inset-bottom))}.welcome{width:100%;margin:5vh auto 0;padding:0 4px;transform:none}.welcome p{font-size:14px}.suggestions{gap:8px}.suggestion{max-width:100%;min-height:42px;padding:10px 12px}.composer-wrap{padding:8px 10px max(12px,env(safe-area-inset-bottom))}.composer{gap:6px;padding:7px 8px 7px 12px}.composer-tools{gap:6px}.tool-btn{min-height:40px}.message-row{gap:8px;margin-bottom:20px}.bubble-wrap{max-width:calc(100% - 40px)}.bubble{overflow-wrap:anywhere}.bubble pre{max-width:100%;white-space:pre;overscroll-behavior-x:contain}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
+.keyboard-open .footnote{display:none!important}
 </style>
 
 <style id="nexora-upgrade-styles">
@@ -1376,6 +1377,14 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
     </div>
   </main>
 </div>
+<script>
+(function(){
+ const input=document.getElementById("messageInput");
+ if(!input)return;
+ input.addEventListener("focus",()=>document.body.classList.add("keyboard-open"));
+ input.addEventListener("blur",()=>document.body.classList.remove("keyboard-open"));
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
