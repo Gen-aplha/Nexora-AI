@@ -21,7 +21,7 @@ for (const file of htmlFiles) {
     const pathname = decodeURIComponent(value.split("#")[0].split("?")[0]);
     if (!pathname) continue;
     const target = path.resolve(root, pathname.startsWith("/") ? "." + pathname : pathname);
-    if (!target.startsWith(root + path.sep) && target !== path.join(root, "index.html")) {
+    if (target !== root && !target.startsWith(root + path.sep)) {
       failures.push(file + ": link escapes repository root: " + value);
       continue;
     }
