@@ -1050,6 +1050,24 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
 .keyboard-open .footnote{display:none!important}
+
+/* NEXORA AI Avatar */
+.nexora-avatar-stage{display:grid;justify-items:center;gap:12px;padding:20px 12px 16px;border:1px solid var(--border,#ddd);border-radius:18px;background:radial-gradient(circle at 50% 35%,rgba(139,92,246,.18),transparent 65%),var(--panel,#fff)}
+.nexora-avatar-orb{width:116px;height:116px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#24104d,#6d3cff 65%,#c084fc);box-shadow:0 0 0 8px rgba(139,92,246,.10),0 0 35px rgba(139,92,246,.35);animation:nexoraAvatarFloat 3s ease-in-out infinite;position:relative}
+.nexora-avatar-face{font-size:58px;filter:drop-shadow(0 4px 8px #16072c)}
+.nexora-avatar-orb.speaking{animation:nexoraAvatarSpeak .42s ease-in-out infinite alternate}
+.nexora-avatar-orb.thinking{animation:nexoraAvatarThink 1s ease-in-out infinite}
+.nexora-avatar-caption{font-size:12px;color:var(--muted,#777);text-align:center}
+.nexora-avatar-controls{display:grid;gap:10px;margin-top:14px}
+.nexora-avatar-controls label{display:flex;align-items:center;gap:9px;font-size:13px}
+.nexora-avatar-controls input[type=checkbox]{width:18px;height:18px;accent-color:#8055e8}
+.nexora-avatar-controls select,.nexora-avatar-controls textarea{width:100%;padding:10px;border:1px solid var(--border,#ccc);border-radius:10px;background:var(--panel,#fff);color:inherit;font:inherit}
+.nexora-avatar-controls textarea{min-height:76px;resize:vertical}
+.nexora-avatar-controls button{min-height:44px;border:0;border-radius:11px;padding:10px 14px;background:linear-gradient(110deg,#6941dc,#a34be9);color:white;font-weight:650}
+@keyframes nexoraAvatarFloat{50%{transform:translateY(-6px)}}
+@keyframes nexoraAvatarSpeak{to{transform:scale(1.06) translateY(-2px);box-shadow:0 0 0 11px rgba(139,92,246,.13),0 0 45px rgba(139,92,246,.55)}}
+@keyframes nexoraAvatarThink{50%{filter:hue-rotate(25deg);transform:scale(.96)}}
+@media(prefers-reduced-motion:reduce){.nexora-avatar-orb{animation:none!important}}
 </style>
 
 <style id="nexora-upgrade-styles">
@@ -1187,6 +1205,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <a class="account-centre-link" href="plus.html"><span class="account-centre-icon">✦</span><span><strong>My plan</strong><small>Explore NEXORA PLUS</small></span><span class="account-centre-chevron">›</span></a>
         <button class="account-centre-link" type="button" data-account-action="personalization"><span class="account-centre-icon">✧</span><span><strong>Personalization</strong><small>Response style, language and voice</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="library"><span class="account-centre-icon">▤</span><span><strong>Library</strong><small>Saved memories and notes</small></span><span class="account-centre-chevron">›</span></button>
+        <button class="account-centre-link" type="button" data-account-action="avatar"><span class="account-centre-icon">🤖</span><span><strong>NEXORA AI Avatar</strong><small>Animated character and voice</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="dashboard"><span class="account-centre-icon">▦</span><span><strong>Dashboard</strong><small>Your NEXORA activity</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="notifications"><span class="account-centre-icon">♧</span><span><strong>Notification Centre</strong><small>Recent activity and app alerts</small></span><span class="account-centre-chevron">›</span></button>
         <button class="account-centre-link" type="button" data-account-action="settings"><span class="account-centre-icon">⚙</span><span><strong>Settings</strong><small>Appearance and app preferences</small></span><span class="account-centre-chevron">›</span></button>
@@ -1383,6 +1402,38 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
  if(!input)return;
  input.addEventListener("focus",()=>document.body.classList.add("keyboard-open"));
  input.addEventListener("blur",()=>document.body.classList.remove("keyboard-open"));
+})();
+
+/* NEXORA AI Avatar settings and optional spoken assistant replies */
+function openNexoraAvatarSettings(){
+ const key="nexora_avatar_preferences_v1";
+ let prefs={autoSpeak:false,voice:"",...(function(){try{return JSON.parse(localStorage.getItem(key)||"{}")}catch(_){return {}}})()};
+ const safeSave=()=>{try{localStorage.setItem(key,JSON.stringify(prefs))}catch(_){}};
+ const wrap=document.createElement("div");
+ wrap.innerHTML='<div class="nexora-avatar-stage"><div class="nexora-avatar-orb" id="nexoraAvatarOrb"><span class="nexora-avatar-face" aria-hidden="true">🤖</span></div><strong>NEXORA AI Avatar</strong><span class="nexora-avatar-caption" id="nexoraAvatarCaption" role="status" aria-live="polite">Your AI companion is ready.</span></div><div class="nexora-avatar-controls"><label><input type="checkbox" id="nexoraAvatarAutoSpeak"> Automatically speak NEXORA replies</label><label for="nexoraAvatarVoice">Voice</label><select id="nexoraAvatarVoice" aria-label="Avatar voice"><option value="">Device default voice</option></select><label for="nexoraAvatarTestText">Try a voice message</label><textarea id="nexoraAvatarTestText" maxlength="500" placeholder="Type something for your avatar to say…"></textarea><button type="button" id="nexoraAvatarSpeak">▶ Speak</button><button type="button" id="nexoraAvatarStop" style="background:transparent;color:inherit;border:1px solid var(--border,#ccc)">Stop voice</button><p class="nexora-panel-note">Voice uses speech available on this device/browser. Availability and voice choices may vary. Automatic speaking is off until you enable it.</p></div>';
+ openAccountInfo("NEXORA AI Avatar","Set up your animated assistant and voice.");
+ const content=document.getElementById("accountInfoContent");content.replaceChildren(wrap);
+ const auto=wrap.querySelector("#nexoraAvatarAutoSpeak"),voice=wrap.querySelector("#nexoraAvatarVoice"),orb=wrap.querySelector("#nexoraAvatarOrb"),caption=wrap.querySelector("#nexoraAvatarCaption");
+ auto.checked=!!prefs.autoSpeak;
+ const loadVoices=()=>{if(!("speechSynthesis" in window))return;const voices=window.speechSynthesis.getVoices();voice.replaceChildren(new Option("Device default voice",""));voices.forEach(v=>{const o=new Option(v.name+" ("+v.lang+")",v.voiceURI);voice.add(o);});voice.value=prefs.voice||"";};
+ loadVoices();if("speechSynthesis" in window)window.speechSynthesis.onvoiceschanged=loadVoices;
+ auto.addEventListener("change",()=>{prefs.autoSpeak=auto.checked;safeSave();});
+ voice.addEventListener("change",()=>{prefs.voice=voice.value;safeSave();});
+ const speak=text=>{if(!("speechSynthesis" in window)){caption.textContent="Speech is not supported in this browser.";return;}const clean=String(text||"").trim().slice(0,1200);if(!clean){caption.textContent="Enter a message first.";return;}window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(clean);const selected=window.speechSynthesis.getVoices().find(v=>v.voiceURI===prefs.voice);if(selected)utterance.voice=selected;utterance.onstart=()=>{orb.classList.add("speaking");orb.classList.remove("thinking");caption.textContent="Speaking…";};utterance.onend=()=>{orb.classList.remove("speaking");caption.textContent="I'm listening for your next task.";};utterance.onerror=()=>{orb.classList.remove("speaking");caption.textContent="Voice playback couldn't start on this device.";};window.speechSynthesis.speak(utterance);};
+ wrap.querySelector("#nexoraAvatarSpeak").addEventListener("click",()=>speak(wrap.querySelector("#nexoraAvatarTestText").value));
+ wrap.querySelector("#nexoraAvatarStop").addEventListener("click",()=>{if("speechSynthesis" in window)window.speechSynthesis.cancel();orb.classList.remove("speaking");caption.textContent="Voice stopped.";});
+}
+(function(){
+ const original=addMessage;
+ if(typeof original!=="function"||window.__nexoraAvatarReplyHook)return;
+ window.__nexoraAvatarReplyHook=true;
+ addMessage=function(role,text,options={}){
+   const result=original(role,text,options);
+   if(role==="bot"&&!options.typing){
+     try{const p=JSON.parse(localStorage.getItem("nexora_avatar_preferences_v1")||"{}");if(p.autoSpeak&&"speechSynthesis" in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text||"").replace(/<[^>]*>/g," ").slice(0,1200));const v=window.speechSynthesis.getVoices().find(x=>x.voiceURI===p.voice);if(v)u.voice=v;window.speechSynthesis.speak(u);}}catch(_){}
+   }
+   return result;
+ };
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -3523,6 +3574,7 @@ document.querySelectorAll("[data-account-action]").forEach(button=>button.addEve
  if(action==="personalization")openPersonalization();
  else if(action==="library")openLibrary();
  else if(action==="dashboard")window.openNexoraDashboard?.();
+ else if(action==="avatar")openNexoraAvatarSettings();
  else if(action==="notifications")window.openNexoraNotifications?.();
  else if(action==="security"){const signedIn=!!supabaseSession?.user;const userEmail=supabaseSession?.user?.email||accountProfile?.email||"Not signed in";openAccountInfo("Security & Privacy",'<p>Manage your NEXORA AI data and account security.</p><section style="padding:13px;border:1px solid var(--border,#ddd);border-radius:12px;margin:12px 0"><strong>Signed-in account</strong><p style="margin:6px 0 0;overflow-wrap:anywhere">'+String(userEmail).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))+'</p></section><h3>Session management</h3><p>Sign out of this device. Signing out other devices is not currently available here.</p><button type="button" id="nexoraSecuritySignOut" '+(signedIn?'':'disabled')+' style="width:100%;min-height:44px;border:1px solid var(--border,#ccc);border-radius:10px;background:transparent;color:inherit;font:inherit">Sign out of this device</button><h3>Permanent account deletion</h3><p>Account deletion must also remove associated cloud records and stored images. Request deletion from the NEXORA team while secure in-app deletion is being developed.</p><a class="account-info-link" href="mailto:nexora.ai.by.mrg@gmail.com?subject=NEXORA%20AI%20Account%20Deletion%20Request">Request account deletion</a><p><a class="account-info-link" href="privacy.html">Read the Privacy Policy</a></p>');document.getElementById("nexoraSecuritySignOut")?.addEventListener("click",()=>{closeAccountInfo();document.getElementById("accountSignOut")?.click();});}
  else if(action==="settings")openAccountInfo("Settings",'<p>Manage how NEXORA AI looks and find account, privacy and support options.</p><div class="account-info-actions"><button type="button" id="accountThemeToggle">Appearance · Switch light / dark theme</button><button type="button" id="accountVoicePrefs">Personalization · Response style and language</button><button type="button" id="accountManageProfile">Account · Manage your profile</button><a class="account-info-link" href="privacy.html">Privacy policy and data information</a><button type="button" id="accountHelp">Help · How to use NEXORA AI</button><button type="button" id="accountAbout">About · App information and version</button><a class="account-info-link" href="mailto:nexora.ai.by.mrg@gmail.com?subject=NEXORA%20AI%20Problem%20Report&body=Hello%20NEXORA%20AI%20Team%2C%0A%0AI%20am%20reporting%20a%20problem.%0A%0AWhat%20happened%3A%0A%0ASteps%20to%20reproduce%3A%0A%0ADevice%20and%20browser%2Fapp%3A%0A%0AError%20message%3A%0A">Feedback · Report a problem or suggest an idea</a></div>');
