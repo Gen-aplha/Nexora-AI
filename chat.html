@@ -2433,6 +2433,11 @@ function speakText(text, button, resumeVoiceMode = false) {
   activeSpeechButton = button;
   if (button) { button.textContent = "⏹ Stop speaking"; button.classList.add("voice-speaking"); }
   window.speechSynthesis.speak(utterance);
+  // Android Chrome can leave speech synthesis paused after recognition ends.
+  // Resume the queue after enqueueing the utterance to ensure voice replies play.
+  if (typeof window.speechSynthesis.resume === "function") {
+    window.speechSynthesis.resume();
+  }
 }
 async function copyCodeFromButton(button) {
   const code = button.closest(".code-block")?.querySelector("pre code")?.textContent || "";
@@ -3233,6 +3238,9 @@ let savedMemories=loadSavedMemories();
 
 async function sendMessage(text, options = {}) {
   const message = text.trim();
+  // Capture the voice-turn state at submission time so the reply is still
+  // spoken even if the voice screen changes while the network request runs.
+  const speakThisVoiceTurn = voiceModeEnabled && voiceTurnInProgress;
   let voiceReplyToSpeak = "";
   const files = pendingAttachments.slice();
   if ((!message && !files.length) || busy) return;
@@ -3248,6 +3256,10 @@ async function sendMessage(text, options = {}) {
   busy = true;
   sendBtn.disabled = true;
   generateImageBtn.disabled = true;
+  if (speakThisVoiceTurn) {
+    voiceStatus.textContent = "NEXORA AI is thinking…";
+    if (typeof setVoicePageStatus === "function") setVoicePageStatus("NEXORA AI is preparing your answer…");
+  }
   const shownText = options.displayText || message || "Please examine the attached file(s).";
   const names = attachmentSummary(files);
   const session = ensureSession(shownText);
@@ -3362,6 +3374,7 @@ async function sendMessage(text, options = {}) {
     const errorText = "I couldn't process your message. " + (error.message || "Please try again.");
     typing.bubble.innerHTML = renderMarkdown(errorText);
     session.messages.push({role:"bot",text:errorText});
+    voiceReplyToSpeak = errorText;
   } finally {
     session.updatedAt = Date.now();
     saveSessions();
@@ -3370,13 +3383,16 @@ async function sendMessage(text, options = {}) {
     sendBtn.disabled = false;
     generateImageBtn.disabled = false;
     chat.scrollTop = chat.scrollHeight;
-    if (voiceModeEnabled && voiceTurnInProgress) {
-      if (voiceReplyToSpeak) speakText(voiceReplyToSpeak, null, true);
-      else {
-        voiceTurnInProgress = false;
-        voiceStatus.textContent = "Voice mode is on. Listening for your next question…";
-        voiceModeRestartTimer = setTimeout(startVoiceModeListening, 650);
-      }
+    if (speakThisVoiceTurn && voiceReplyToSpeak) {
+      // Speak the completed answer while the voice conversation is still open.
+      // If the user has already left voice mode, speak this one reply without
+      // restarting microphone recognition.
+      speakText(voiceReplyToSpeak, null, voiceModeEnabled && voiceTurnInProgress);
+    } else if (voiceModeEnabled && voiceTurnInProgress) {
+      voiceTurnInProgress = false;
+      voiceStatus.textContent = "Voice mode is on. Listening for your next question…";
+      if (typeof setVoicePageStatus === "function") setVoicePageStatus("Listening for your next question…");
+      voiceModeRestartTimer = setTimeout(startVoiceModeListening, 650);
     }
     if (!voiceModeEnabled) input.focus();
   }
