@@ -8,6 +8,12 @@
   <meta name="description" content="Read the NEXORA AI Privacy Policy to understand how information is handled when using our website and AI assistant.">
   <title>Privacy Policy - NEXORA AI</title>
   <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NEXORA AI">
+  <meta property="og:url" content="https://gen-aplha.github.io/Nexora-AI/privacy.html">
+  <meta property="og:title" content="NEXORA AI Privacy Policy">
+  <meta property="og:description" content="Learn how NEXORA AI handles chat content, accounts, cloud sync, uploads and third-party services.">
+  <meta property="og:image" content="https://gen-aplha.github.io/Nexora-AI/social-preview.jpg">
   <link rel="canonical" href="https://gen-aplha.github.io/Nexora-AI/privacy.html">
   <!-- NEXORA AI Favicon and App Icons -->
   <link rel="icon" type="image/svg+xml" href="nexora-logo.svg?v=20261110">
@@ -55,109 +61,43 @@
 <body>
 <main>
   <h1>NEXORA AI Privacy Policy</h1>
-  <p class="updated">Last updated: November 1, 2026</p>
+  <p class="updated">Last updated: November 10, 2026</p>
+  <p>This policy explains how NEXORA AI handles information when you use its website, AI chat, account features and collaboration tools. NEXORA AI is an independent project. Do not submit passwords, payment details, government identifiers, private records or information about another person unless you have permission and it is necessary.</p>
 
-  <p>
-    Welcome to NEXORA AI. Your privacy matters to us.
-    This policy explains how information is handled when
-    you visit our website or use our AI assistant.
-  </p>
+  <h2>1. Information you provide</h2>
+  <p>Depending on the features you use, you may submit chat messages, prompts, uploaded images or documents, feedback, profile details, account email information, workspace messages, invitation details and files shared with a team. Please keep personal and sensitive information out of prompts and shared workspaces.</p>
 
-  <h2>1. Information You Provide</h2>
-  <p>
-    When using NEXORA AI, you may provide text messages,
-    questions, images, documents or other content.
-    Please avoid sharing passwords, financial details,
-    private documents or other sensitive information.
-  </p>
+  <h2>2. Local storage and browser data</h2>
+  <p>Some chat history, preferences, reminders and other app data may be stored in your browser or device using local storage or IndexedDB. This data can remain on that device until you clear it or use an in-app deletion feature. Browser or app removal may affect locally stored data.</p>
 
-  <h2>2. Chat History and Local Storage</h2>
-  <p>
-    NEXORA AI may save chat history and preferences
-    in your browser's local storage or IndexedDB.
-    This information is stored on your device and may
-    remain there until you delete it or clear your
-    browser data.
-  </p>
+  <h2>3. Accounts and cloud synchronisation</h2>
+  <p>Google sign-in and cloud chat synchronisation use Supabase Auth and Supabase database services. Account-related information and synced chat data may be stored in the NEXORA AI Supabase project. NEXORA Team Space uses Supabase to manage workspaces, memberships, invitations, conversations and shared messages. Team members who have access to a workspace may see its shared content.</p>
+  <p>NEXORA AI also has a separate email-and-password account backend using Cloudflare Workers and Cloudflare D1. Accounts in that system are distinct from Google/Supabase accounts unless the app explicitly provides a linking feature. Do not assume signing into one system signs you into the other.</p>
 
-  <h2>3. AI Processing</h2>
-  <p>
-    Messages and supported attachments are sent to
-    our AI backend hosted using Cloudflare Workers.
-    Cloudflare Workers AI processes requests to provide
-    chat responses, image analysis and image generation.
-  </p>
-  <p>
-    Your content is processed to provide the feature
-    you requested. Cloudflare's own privacy and data
-    handling practices may also apply.
-  </p>
+  <h2>4. AI processing and third-party providers</h2>
+  <p>When you send a prompt or request an AI feature, the relevant content is sent to NEXORA AI backend services hosted on Cloudflare Workers. AI requests are processed using Cloudflare Workers AI. Some search and web-summary functions may use an external search provider when configured. The relevant provider may process request content and technical data under its own terms and privacy policy.</p>
 
-  <h2>4. Uploaded Files and Images</h2>
-  <p>
-    When you upload a supported image or document,
-    its content may be sent to our backend for AI
-    processing. Only upload files you have permission
-    to share.
-  </p>
+  <h2>5. Uploaded images and documents</h2>
+  <p>Files may be processed by the AI backend or browser-based tools to provide the feature you selected. Team Space files are stored in a private Supabase Storage bucket and are intended to be accessible to authorised workspace members. Do not upload files you do not own or have permission to share.</p>
 
-  <h2>5. Voice Features</h2>
-  <p>
-    Voice input and spoken responses may use speech
-    recognition and speech synthesis features provided
-    by your browser or device. Their privacy practices
-    may apply separately.
-  </p>
+  <h2>6. Voice and translation features</h2>
+  <p>Voice input, live translation and spoken output may use speech recognition, text-to-speech or OCR libraries provided by your browser or loaded from third-party content delivery networks. Your device, browser and those providers may process audio, image or text data according to their own policies. Microphone access is controlled by your browser or device.</p>
 
-  <h2>6. Third-Party Services</h2>
-  <p>
-    NEXORA AI uses third-party services, including
-    GitHub Pages for website hosting and Cloudflare
-    Workers for backend and AI processing. These services
-    may process technical information according to
-    their own policies.
-  </p>
+  <h2>7. Notifications and reminders</h2>
+  <p>Smart Notifications reminders are currently stored locally on the device/browser. Browser notifications require permission. Timely alerts may not occur when the app or browser is fully closed; this feature is not a guaranteed background or emergency notification service.</p>
 
-  <h2>7. Data Security</h2>
-  <p>
-    We aim to use reasonable measures to protect
-    NEXORA AI. However, no website or internet
-    transmission can be guaranteed completely secure.
-    Please do not share confidential information.
-  </p>
+  <h2>8. Security, access and retention</h2>
+  <p>NEXORA AI uses access controls and service-provider security features, but no online service can guarantee absolute security. Data may remain in provider backups, operational logs or account records according to provider retention practices and project configuration. Do not treat NEXORA AI as a secure vault or submit confidential information.</p>
 
-  <h2>8. Children's Privacy</h2>
-  <p>
-    NEXORA AI is not intended to encourage children
-    to share personal or sensitive information.
-    Users should follow applicable age requirements
-    and seek a parent or guardian's guidance where
-    appropriate.
-  </p>
+  <h2>9. Your choices and deletion</h2>
+  <p>You can delete locally stored chats or reminders using the available app controls and clear browser storage from your device settings. Cloud-synced account data and Team Space content may require deletion through the relevant account or workspace controls. For a data-access or deletion request that cannot be completed in the app, contact the project through GitHub Issues. Do not include passwords or private account credentials in a request.</p>
 
-  <h2>9. Changes to This Policy</h2>
-  <p>
-    This Privacy Policy may be updated as NEXORA AI
-    gains new features or changes how it operates.
-    Updates will be published on this page.
-  </p>
+  <h2>10. Children's privacy</h2>
+  <p>NEXORA AI is not designed to encourage children to disclose personal information. Younger users should use the service with appropriate parent or guardian guidance and follow the applicable service-provider age requirements.</p>
 
-  <h2>10. Contact</h2>
-  <p>
-    For privacy questions or concerns, contact the
-    NEXORA AI project through its
-    <a href="https://github.com/gen-aplha/Nexora-AI/issues">
-      GitHub Issues page
-    </a>.
-  </p>
-
-  <footer>
-    © 2026 NEXORA AI. All rights reserved.
-    <br>
-    Created by Mayank Gupta.
-    <br>
-    <a href="index.html">Back to Home</a>
-  </footer>
+  <h2>11. Changes and contact</h2>
+  <p>This policy may change as features and providers change. Updates will be posted on this page. For questions or privacy requests, use the <a href="https://github.com/gen-aplha/Nexora-AI/issues">NEXORA AI GitHub Issues page</a>.</p>
+  <footer>© 2026 NEXORA AI. All rights reserved.<br><a href="index.html">Back to Home</a></footer>
 </main>
 </body>
     </html>
