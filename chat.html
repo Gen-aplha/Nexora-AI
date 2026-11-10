@@ -1072,6 +1072,8 @@ body[data-chat-wall="soft"] .chat{background:radial-gradient(ellipse at 50% 0%,r
 body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,20,40,.65),transparent 70%)}
 @media(max-width:600px){.nexora-upgrade-grid,.nexora-compare-results{grid-template-columns:1fr}.nexora-upgrade-grid button{min-height:70px}}
 </style>
+<script src="theme.js"></script>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body data-theme="light">
 <div class="first-launch-overlay" id="firstLaunchOverlay" aria-hidden="true">
@@ -3765,6 +3767,7 @@ document.getElementById("librarySignInBtn").addEventListener("click",()=>{closeL
 
 function setTheme(theme) {
   const light = theme === "light";
+  window.NEXORA_THEME?.set(light ? "light" : "dark");
   document.body.dataset.theme = light ? "light" : "dark";
   document.documentElement.style.colorScheme = light ? "light" : "dark";
   const themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -3779,8 +3782,7 @@ document.getElementById("themeBtn").addEventListener("click", () => {
   setTheme(document.body.dataset.theme === "light" ? "dark" : "light");
 });
 // Always start in the requested light theme.
-setTheme("light");
-document.body.dataset.theme = "light";
+setTheme(window.NEXORA_THEME?.get() || "light");
 
 // Restore the latest locally saved conversation on page reload.
 if(activeSessionId){renderSession(currentSession());}else{showWelcome();}
