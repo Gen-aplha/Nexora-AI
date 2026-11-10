@@ -34,3 +34,43 @@ html[data-theme="light"]{--bg:#f7f7fb;--panel:#fff;--panel2:#f0edf6;--line:#ded9
 html[data-theme="dark"]{--bg:#0b0914;--panel:#151124;--panel2:#1d1830;--line:#33294e;--text:#f5f1ff;--muted:#aaa0c3;--accent:#9a6bff}
 body[data-theme="light"]{background:#f7f7fb;color:#24212d}
 body[data-theme="dark"]{background:#0c0e1d;color:#f5f6ff}
+
+/* Dark-mode control fixes: override light-only controls on every page */
+body[data-theme="dark"] button,
+body[data-theme="dark"] .btn,
+body[data-theme="dark"] .secondary,
+body[data-theme="dark"] .action,
+body[data-theme="dark"] .tab:not(.active),
+body[data-theme="dark"] .tool-btn,
+body[data-theme="dark"] .suggestion,
+body[data-theme="dark"] .nav-btn,
+body[data-theme="dark"] .history-tools button,
+body[data-theme="dark"] .workspace-item,
+body[data-theme="dark"] .conversation-item{
+  background-color:#242130;color:#f5f2ff;border-color:#454052;
+}
+body[data-theme="dark"] .btn.primary,
+body[data-theme="dark"] .primary,
+body[data-theme="dark"] .tab.active,
+body[data-theme="dark"] #new-chat,
+body[data-theme="dark"] .new-chat{
+  background:linear-gradient(110deg,#7048c9,#9849ca);color:#fff;border-color:#8056ce;
+}
+body[data-theme="dark"] .field,
+body[data-theme="dark"] input,
+body[data-theme="dark"] textarea,
+body[data-theme="dark"] select,
+body[data-theme="dark"] .file,
+body[data-theme="dark"] .history-search{
+  background-color:#171521!important;color:#f5f2ff!important;border-color:#454052!important;
+}
+body[data-theme="dark"] input::placeholder,
+body[data-theme="dark"] textarea::placeholder{color:#aaa3b8}
+body[data-theme="dark"] .tag{background:#19382e;color:#9be5c4;border-color:#326b55}
+body[data-theme="dark"] .file-item{background:#201d2a;color:#f5f2ff;border-color:#383345}
+body[data-theme="dark"] .messages{background:#14121d;color:#f5f2ff}
+body[data-theme="dark"] .empty{color:#aaa3b8}
+body[data-theme="dark"] .back{background:#242130;color:#e4d7ff;border-color:#454052}
+body[data-theme="dark"] .download-panel,
+body[data-theme="dark"] .notice{background:#1b1924;color:#d5cede;border-color:#454052}
+body[data-theme="dark"] button:disabled{opacity:.55}
