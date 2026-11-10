@@ -28,6 +28,35 @@ svg{overflow:visible}.node rect{fill:#211a35;stroke:#7654a9;stroke-width:1.5}.no
 .legend{font-size:11px;color:var(--muted);padding:0 16px 14px}
 @media(max-width:600px){header{padding:0 12px;height:62px}main{padding:20px 12px 40px}.builder{padding:13px}.toolbar strong{width:100%}.map-scroll{padding:12px}}
 @media print{body{background:#fff;color:#111}header,.hero,.builder,.toolbar,.legend{display:none!important}main{padding:0;max-width:none}.workspace{display:block!important;border:0;background:#fff}.map-scroll{overflow:visible;padding:0}.map-stage{min-width:0}.node rect{fill:#fff;stroke:#6542a0}.node.root rect{fill:#eee5ff}.node text{fill:#181020}.node .hint{fill:#555}.edge{stroke:#7656a8}}
+
+/* NEXORA light theme */
+:root{color-scheme:light;--bg:#f5f3fa;--panel:#ffffff;--panel2:#f0ebf8;--line:#ded6eb;--text:#211a2d;--muted:#665d73;--accent:#7541c8;--accent2:#9b48ce}
+body{background:linear-gradient(180deg,#f4efff 0,#faf9fc 260px,var(--bg) 100%);color:var(--text)}
+header{background:#ffffffed;border-bottom-color:var(--line);box-shadow:0 2px 12px #35204a0d}
+.brand span,.eyebrow{color:#7541c8}
+.back{color:#56328e;background:#fff;border-color:var(--line)}
+.hero p,.legend,.status{color:var(--muted)}
+.builder{background:linear-gradient(145deg,#fff,#f7f3fc);border-color:var(--line);box-shadow:0 14px 40px #39265312}
+.tab,.secondary,.action{background:#f4effa;color:var(--text);border-color:var(--line)}
+.tab.active{background:#7541c8;color:#fff;border-color:#7541c8}
+textarea,select{background:#fff;color:var(--text);border-color:#d8cfe5}
+textarea::placeholder{color:#8a8196}
+.workspace{background:#fff;border-color:var(--line)}
+.toolbar{background:#f7f3fb;border-bottom-color:var(--line)}
+.action:hover,.secondary:hover,.tab:hover{border-color:#9265cf}
+.map-scroll{background:#fff}
+.node rect{fill:#f0e8fb;stroke:#9a79c4}
+.node.root rect{fill:#7541c8;stroke:#a887db}
+.node text{fill:#251b34}
+.node.root text{fill:#fff}
+.node .hint{fill:#6e6280}
+.node.root .hint{fill:#e9dcff}
+.edge{stroke:#a58ac7}
+.empty{color:var(--muted)}
+.empty .symbol{color:#7541c8}
+.empty strong{color:var(--text)}
+@media print{body{background:#fff;color:#111}header,.hero,.builder,.toolbar,.legend{display:none!important}.workspace{background:#fff}.node rect{fill:#fff;stroke:#6542a0}.node.root rect{fill:#eee5ff}.node text{fill:#181020}.node .hint{fill:#555}.edge{stroke:#7656a8}}
+
 </style>
 </head>
 <body>
