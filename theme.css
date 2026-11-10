@@ -101,3 +101,28 @@ body[data-theme="dark"] .composer textarea,
   box-shadow:none!important;
   outline:0!important;
 }
+
+
+/* Site-wide theme consistency overrides for public website pages */
+html,body{min-height:100%;background:var(--nx-bg)!important;color:var(--nx-text)!important}
+body[data-theme="light"]{--page-bg:#f7f7fb;--surface:#fff;--surface-soft:#f0edf6;--surface-text:#24212d;--surface-muted:#706b7b;--surface-border:#ded9e8}
+body[data-theme="dark"]{--page-bg:#0c0e1d;--surface:#171a2d;--surface-soft:#20233a;--surface-text:#f5f6ff;--surface-muted:#a7abc2;--surface-border:#343852}
+body[data-theme] :is(header,nav,footer,main,section,article,aside,.container,.wrap,.content,.hero,.hero-content,.section,.section-inner,.feature,.feature-card,.feature-item,.plan-card,.pricing-card,.faq-item,.step-card,.download-card,.download-panel,.notice,.panel,.card,.box,.modal,.modal-content,.dialog,.help-card,.troubleshooting-card,.footer,.topbar,.navbar){
+ color:var(--surface-text);
+ border-color:var(--surface-border);
+}
+body[data-theme="light"] :is(header,nav,footer,.hero,.section,.feature-card,.feature-item,.plan-card,.pricing-card,.faq-item,.step-card,.download-card,.panel,.card,.box,.modal-content,.dialog,.help-card,.troubleshooting-card){background-color:var(--surface)}
+body[data-theme="dark"] :is(header,nav,footer,.hero,.section,.feature-card,.feature-item,.plan-card,.pricing-card,.faq-item,.step-card,.download-card,.panel,.card,.box,.modal-content,.dialog,.help-card,.troubleshooting-card){background-color:var(--surface)!important;color:var(--surface-text)!important;border-color:var(--surface-border)!important}
+body[data-theme="dark"] :is(h1,h2,h3,h4,h5,h6,strong,label,legend){color:#f5f6ff}
+body[data-theme="light"] :is(h1,h2,h3,h4,h5,h6,strong,label,legend){color:#24212d}
+body[data-theme="dark"] :is(p,li,small,.muted,.subtitle,.description,.eyebrow,.footer-text){color:var(--surface-muted)}
+body[data-theme="light"] :is(p,li,small,.muted,.subtitle,.description,.eyebrow,.footer-text){color:var(--surface-muted)}
+body[data-theme="dark"] :is(input,textarea,select){background:var(--surface-soft)!important;color:var(--surface-text)!important;border-color:var(--surface-border)!important}
+body[data-theme="light"] :is(input,textarea,select){background:#fff!important;color:#24212d!important;border-color:#ded9e8!important}
+body[data-theme="dark"] :is(button,.btn,.button,.secondary,.tab,.action){background-color:#242130;color:#f5f2ff;border-color:#454052}
+body[data-theme="dark"] :is(.btn-primary,.primary,.button-primary,[type="submit"]){background:linear-gradient(110deg,#7048c9,#9849ca)!important;color:#fff!important;border-color:#8056ce!important}
+body[data-theme="light"] :is(.btn,.button,.secondary,.tab,.action){color:#24212d}
+body[data-theme="dark"] a{color:#c5b5fd}
+body[data-theme="light"] a{color:#6841b5}
+body[data-theme="dark"] .notice,body[data-theme="dark"] .callout{background:var(--surface-soft)!important;color:var(--surface-text)!important}
+body[data-theme="light"] .notice,body[data-theme="light"] .callout{background:var(--surface-soft)!important;color:var(--surface-text)!important}
