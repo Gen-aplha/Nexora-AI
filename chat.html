@@ -1257,7 +1257,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <p class="voice-wip-eyebrow">NEXORA AI · VOICE</p>
         <div class="voice-browser-help">
           <p>If you are not getting answers in voice conversation, tap the link below and open this link in Chrome browser to use this feature.</p>
-          <a href="https://gen-aplha.github.io/Nexora-AI/chat.html#voice-mode" data-voice-chrome-link target="_blank" rel="noopener noreferrer">Open NEXORA Voice Mode in Chrome</a>
+          <a href="https://gen-aplha.github.io/Nexora-AI/chat.html?openVoiceMode=1" data-voice-chrome-link target="_blank" rel="noopener noreferrer">Open NEXORA Voice Mode in Chrome</a>
         </div>
       </div>
     </section>
@@ -1982,8 +1982,8 @@ voiceModeBtn.addEventListener("click",()=>{
   if(status)status.textContent="Tap Start when you are ready to use your microphone.";
 });
 document.getElementById("voiceWipBack").addEventListener("click",closeVoiceWipPage);
-document.querySelectorAll("[data-voice-chrome-link]").forEach(link=>link.addEventListener("click",event=>{const ua=navigator.userAgent||"";if(/Android/i.test(ua)){event.preventDefault();const fallback="https://gen-aplha.github.io/Nexora-AI/chat.html%23voice-mode";const intent="intent://gen-aplha.github.io/Nexora-AI/chat.html%23voice-mode#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url="+encodeURIComponent("https://gen-aplha.github.io/Nexora-AI/chat.html#voice-mode")+";end";window.location.href=intent;}}));
-if(window.location.hash==="#voice-mode"){openVoiceWipPage();}
+document.querySelectorAll("[data-voice-chrome-link]").forEach(link=>link.addEventListener("click",event=>{const ua=navigator.userAgent||"";if(/Android/i.test(ua)){event.preventDefault();const target="https://gen-aplha.github.io/Nexora-AI/chat.html?openVoiceMode=1";const intent="intent://gen-aplha.github.io/Nexora-AI/chat.html?openVoiceMode=1#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url="+encodeURIComponent(target)+";end";window.location.href=intent;}}));
+if(window.location.hash==="#voice-mode"||new URLSearchParams(window.location.search).get("openVoiceMode")==="1"){openVoiceWipPage();}
 window.addEventListener("hashchange",()=>{if(window.location.hash==="#voice-mode")openVoiceWipPage();});
 if (!SpeechRecognition) {
   voiceBtn.title = "Voice input is not supported in this browser";
