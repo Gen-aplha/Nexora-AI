@@ -1074,6 +1074,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .nexora-compare-card h3{font-size:13px;margin:0 0 8px}.nexora-compare-body{font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
 .nexora-memory-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:8px}.nexora-memory-row span{overflow-wrap:anywhere;font-size:13px}
 .nexora-notification{margin:8px 0}.nexora-notification p{margin:5px 0;font-size:13px}.nexora-notification small{color:var(--muted)}
+.nexora-task-form{display:grid;gap:10px;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);margin:10px 0 16px}.nexora-task-form label{display:grid;gap:5px;font-size:12px;font-weight:650;color:var(--text)}.nexora-task-form input,.nexora-task-form select{width:100%;min-height:42px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);font:inherit}.nexora-task-primary,.nexora-task-secondary,.nexora-task-action{min-height:42px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);font-weight:650}.nexora-task-primary{background:linear-gradient(110deg,#7049d5,#a33de2);border:0;color:#fff}.nexora-task-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.nexora-task-card{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);margin:8px 0}.nexora-task-card.is-complete{opacity:.68}.nexora-task-card strong{overflow-wrap:anywhere}.nexora-task-meta{display:block;margin-top:5px;color:var(--muted);font-size:11px;line-height:1.5}.nexora-task-status{display:inline-block;margin-top:7px;padding:3px 7px;border-radius:20px;background:rgba(139,92,246,.14);font-size:10px}.nexora-task-permission{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px;border:1px solid var(--line);border-radius:12px;margin:10px 0;color:var(--muted);font-size:12px}
 #nexoraCodePreview{width:100%;height:260px;margin-top:12px;border:1px solid var(--line);border-radius:12px;background:white}
 .nexora-gallery-filters{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap}.nexora-gallery-filters button{padding:7px 12px;border:1px solid var(--line);border-radius:20px;background:var(--panel2);color:var(--text)}
 body{--nexora-chat-size:15px}.bubble{font-size:var(--nexora-chat-size)}
@@ -1148,7 +1149,7 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
       <button class="side-link" id="libraryBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h12a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2z"/><path d="M5 6.5a2 2 0 0 1 2-2h12M8 8h8M8 12h8M8 16h5"/></svg></span><span>Library</span></button>
       <button class="side-link" id="pluginsBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3"/><path d="M6 7h12v3a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6V7Z"/><path d="M12 16v2a4 4 0 0 1-4 4"/></svg></span><span>Plugins</span><span class="plugins-nav-count">7</span></button>
       <button class="side-link" id="projectsBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
-      <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Scheduled</span></button>
+      <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Smart Notifications</span></button>
       <button class="side-link" id="personalizationBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
       <a class="side-link" id="mindMapNavLink" href="mindmap.html" style="text-decoration:none"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M12 7.2v4.2M12 11.4 5 15.8M12 11.4l7 4.4"/></svg></span><span>Mind Map</span></a>
       <a class="side-link" id="teamSpaceNavLink" href="teamspace.html" style="text-decoration:none"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3.5 19c.4-3.1 2.3-4.8 5.5-4.8s5.1 1.7 5.5 4.8M14.5 14.8c3.5-.8 5.7.7 6 3.7"/></svg></span><span>Team Space</span></a>
@@ -3445,7 +3446,8 @@ document.querySelectorAll("[data-coming]").forEach(btn=>btn.addEventListener("cl
    const name=prompt("What project would you like to work on?");
    if(name&&name.trim())sendMessage("Help me create and manage this project: "+name.trim()+". Start with a clear plan and milestones.");
  }else if(feature==="Scheduled"){
-   sendMessage("Help me create a practical schedule or study timetable. Ask me for the task, date and time, then format a reminder plan I can save.");
+   if(typeof window.openNexoraSmartNotifications==="function")window.openNexoraSmartNotifications();
+   else if(typeof showToast==="function")showToast("Smart Notifications are loading. Please try again.");
  }
 }));
 
@@ -4097,6 +4099,84 @@ renderHistory();
    openPanel("Notification Centre","Private activity log stored on this device",wrap);
  }
  window.openNexoraNotifications=openNotifications;
+
+ // Smart Notifications: persistent local task reminders, with optional browser alerts.
+ const SMART_TASKS_KEY="nexora_smart_tasks_v1";
+ const readSmartTasks=()=>{try{const value=JSON.parse(localStorage.getItem(SMART_TASKS_KEY)||"[]");return Array.isArray(value)?value:[];}catch(_){return [];}};
+ let smartTasks=readSmartTasks(),smartReminderTimer=null;
+ const saveSmartTasks=()=>{try{localStorage.setItem(SMART_TASKS_KEY,JSON.stringify(smartTasks));}catch(_){if(typeof showToast==="function")showToast("Storage is full. Remove old reminders and try again.");}};
+ const formatSmartDate=value=>{const date=new Date(value);return Number.isNaN(date.getTime())?"Date not set":date.toLocaleString([], {dateStyle:"medium",timeStyle:"short"});};
+ const localDateTimeValue=date=>{const adjusted=new Date(date.getTime()-date.getTimezoneOffset()*60000);return adjusted.toISOString().slice(0,16);};
+ function deliverSmartReminders(){
+   const now=Date.now();let changed=false;
+   smartTasks.forEach(task=>{
+     if(!task.completed&&!task.notifiedAt&&Number(task.remindAt)<=now){
+       task.notifiedAt=now;changed=true;
+       const title="Reminder: "+task.title;
+       const body=(task.project?task.project+" · ":"")+"Due "+formatSmartDate(task.dueAt);
+       notify(title,body);
+       if("Notification"in window&&Notification.permission==="granted"){
+         try{const alert=new Notification(title,{body,tag:"nexora-task-"+task.id});alert.onclick=()=>{window.focus();alert.close();};}catch(_){}
+       }
+       if(typeof showToast==="function")showToast(title);
+     }
+   });
+   if(changed)saveSmartTasks();
+   scheduleSmartReminders();
+ }
+ function scheduleSmartReminders(){
+   if(smartReminderTimer)clearTimeout(smartReminderTimer);
+   const next=smartTasks.filter(task=>!task.completed&&!task.notifiedAt).reduce((earliest,task)=>Math.min(earliest,Number(task.remindAt)||Infinity),Infinity);
+   if(Number.isFinite(next)){const delay=Math.max(0,Math.min(next-Date.now(),2147480000));smartReminderTimer=setTimeout(deliverSmartReminders,delay);}
+ }
+ function openSmartNotifications(){
+   const wrap=document.createElement("div");
+   const intro=document.createElement("p");intro.className="nexora-panel-note";intro.textContent="Create reminders for tasks and projects. Your reminders are saved on this device.";wrap.appendChild(intro);
+   const permission=document.createElement("div");permission.className="nexora-task-permission";
+   const permissionText=document.createElement("span");
+   const permissionButton=document.createElement("button");permissionButton.type="button";permissionButton.className="nexora-task-secondary";
+   function updatePermission(){if(!("Notification"in window)){permissionText.textContent="Browser notifications are not supported here. In-app reminders still work while NEXORA is open.";permissionButton.hidden=true;}else if(Notification.permission==="granted"){permissionText.textContent="Browser notifications are enabled on this device.";permissionButton.hidden=true;}else if(Notification.permission==="denied"){permissionText.textContent="Browser notifications are blocked. You can still use in-app reminders.";permissionButton.hidden=true;}else{permissionText.textContent="Allow optional browser alerts when a reminder is due.";permissionButton.hidden=false;permissionButton.textContent="Enable notifications";}}
+   permissionButton.addEventListener("click",async()=>{if(!("Notification"in window))return;try{await Notification.requestPermission();updatePermission();}catch(_){permissionText.textContent="Could not request permission. Check browser site settings.";}});permission.append(permissionText,permissionButton);wrap.appendChild(permission);updatePermission();
+   const form=document.createElement("form");form.className="nexora-task-form";
+   form.innerHTML='<label for="nexoraTaskTitle">Task or reminder title<input id="nexoraTaskTitle" name="title" maxlength="100" required placeholder="e.g. Finish science project"></label><label for="nexoraTaskProject">Project (optional)<select id="nexoraTaskProject" name="project"><option value="">No project</option></select></label><label for="nexoraTaskDue">Due date and time<input id="nexoraTaskDue" name="due" type="datetime-local" required></label><label for="nexoraTaskLead">Remind me<select id="nexoraTaskLead" name="lead"><option value="0">At the due time</option><option value="5">5 minutes before</option><option value="15" selected>15 minutes before</option><option value="60">1 hour before</option><option value="1440">1 day before</option></select></label><button class="nexora-task-primary" type="submit">＋ Save reminder</button>';
+   const projectSelect=form.querySelector("#nexoraTaskProject");
+   let savedProjects=[];try{const value=JSON.parse(localStorage.getItem("nexora_projects_v1")||"[]");if(Array.isArray(value))savedProjects=value;}catch(_){}
+   savedProjects.forEach(project=>{const option=document.createElement("option");option.value=String(project);option.textContent=String(project);projectSelect.appendChild(option);});
+   form.querySelector("#nexoraTaskDue").min=localDateTimeValue(new Date());
+   const list=document.createElement("div");list.setAttribute("aria-live","polite");
+   const heading=document.createElement("h3");heading.textContent="Your reminders";heading.style.fontSize="15px";heading.style.margin="18px 0 8px";
+   function renderTasks(){
+     list.replaceChildren();
+     const ordered=[...smartTasks].sort((a,b)=>Number(a.dueAt)-Number(b.dueAt));
+     if(!ordered.length){const empty=document.createElement("p");empty.className="nexora-empty";empty.textContent="No reminders yet. Add your first task above.";list.appendChild(empty);return;}
+     ordered.forEach(task=>{
+       const card=document.createElement("article");card.className="nexora-task-card"+(task.completed?" is-complete":"");
+       const title=document.createElement("strong");title.textContent=task.title;
+       const meta=document.createElement("small");meta.className="nexora-task-meta";meta.textContent=(task.project?task.project+" · ":"")+"Due "+formatSmartDate(task.dueAt);
+       const status=document.createElement("span");status.className="nexora-task-status";status.textContent=task.completed?"Completed":task.notifiedAt?"Reminder sent":Number(task.dueAt)<Date.now()?"Overdue":"Upcoming";
+       const actions=document.createElement("div");actions.className="nexora-task-actions";
+       if(!task.completed){const complete=document.createElement("button");complete.type="button";complete.className="nexora-task-action";complete.textContent="Mark complete";complete.addEventListener("click",()=>{task.completed=true;saveSmartTasks();notify("Task completed",task.title);renderTasks();scheduleSmartReminders();});actions.appendChild(complete);}
+       const remove=document.createElement("button");remove.type="button";remove.className="nexora-task-action";remove.textContent="Delete";remove.addEventListener("click",()=>{smartTasks=smartTasks.filter(item=>item.id!==task.id);saveSmartTasks();renderTasks();scheduleSmartReminders();});actions.appendChild(remove);
+       card.append(title,meta,status,actions);list.appendChild(card);
+     });
+   }
+   form.addEventListener("submit",event=>{
+     event.preventDefault();const title=form.elements.title.value.trim();const due=new Date(form.elements.due.value).getTime();const lead=Number(form.elements.lead.value)||0;
+     if(!title||!Number.isFinite(due)){if(typeof showToast==="function")showToast("Enter a task title and valid due date.");return;}
+     if(due<=Date.now()){if(typeof showToast==="function")showToast("Choose a future due date and time.");return;}
+     const project=form.elements.project.value;
+     smartTasks.push({id:"task-"+Date.now()+"-"+Math.random().toString(36).slice(2,8),title,project,dueAt:due,remindAt:Math.max(Date.now(),due-lead*60000),completed:false,notifiedAt:null,createdAt:Date.now()});
+     saveSmartTasks();form.reset();form.querySelector("#nexoraTaskDue").min=localDateTimeValue(new Date());renderTasks();scheduleSmartReminders();
+     if(typeof showToast==="function")showToast("Reminder saved.");
+   });
+   wrap.append(form,heading,list);renderTasks();
+   openPanel("Smart Notifications","Task and project reminders",wrap);
+ }
+ window.openNexoraSmartNotifications=openSmartNotifications;
+ deliverSmartReminders();
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)deliverSmartReminders();});
+ window.addEventListener("focus",deliverSmartReminders);
+ window.addEventListener("pageshow",deliverSmartReminders);
 
  function applyCustomization(){
    const prefs=upgradeData.appearance||{};
