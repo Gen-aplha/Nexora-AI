@@ -1983,7 +1983,9 @@ voiceModeBtn.addEventListener("click",()=>{
 });
 document.getElementById("voiceWipBack").addEventListener("click",closeVoiceWipPage);
 document.querySelectorAll("[data-voice-chrome-link]").forEach(link=>link.addEventListener("click",event=>{const ua=navigator.userAgent||"";if(/Android/i.test(ua)){event.preventDefault();const target="https://gen-aplha.github.io/Nexora-AI/chat.html?openVoiceMode=1";const intent="intent://gen-aplha.github.io/Nexora-AI/chat.html?openVoiceMode=1#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url="+encodeURIComponent(target)+";end";window.location.href=intent;}}));
-if(window.location.hash==="#voice-mode"||new URLSearchParams(window.location.search).get("openVoiceMode")==="1"){openVoiceWipPage();}
+const voiceOpenedInChrome=new URLSearchParams(window.location.search).get("openVoiceMode")==="1";
+if(voiceOpenedInChrome){const browserHelp=document.querySelector(".voice-browser-help");if(browserHelp)browserHelp.hidden=true;}
+if(window.location.hash==="#voice-mode"||voiceOpenedInChrome){openVoiceWipPage();}
 window.addEventListener("hashchange",()=>{if(window.location.hash==="#voice-mode")openVoiceWipPage();});
 if (!SpeechRecognition) {
   voiceBtn.title = "Voice input is not supported in this browser";
