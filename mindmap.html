@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100b20">
+<title>NEXORA Mind Map</title>
+<meta name="description" content="Turn any topic or NEXORA AI conversation into an interactive mind map.">
+<link rel="icon" href="nexora-logo.svg">
+<style>
+:root{color-scheme:dark;--bg:#0b0914;--panel:#151124;--panel2:#1d1830;--line:#33294e;--text:#f5f1ff;--muted:#aaa0c3;--accent:#9a6bff;--accent2:#d45cff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#2b1851 0,transparent 45%),var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,sans-serif;min-height:100vh}
+button,textarea,select{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer}
+header{height:70px;display:flex;align-items:center;gap:14px;padding:0 22px;border-bottom:1px solid #ffffff14;background:#0b0914d9;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}
+.brand{font-weight:850;letter-spacing:1px;font-size:18px}.brand span{color:#bd80ff}.back{color:#d8c8ff;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px}
+main{max-width:1180px;margin:0 auto;padding:30px 20px 60px}.hero{text-align:center;margin:8px auto 25px}.eyebrow{color:#bd8cff;font-size:11px;letter-spacing:2px;font-weight:800}.hero h1{font-size:clamp(29px,5vw,43px);margin:5px 0 8px;letter-spacing:-1px}.hero p{color:var(--muted);margin:0}
+.builder{background:linear-gradient(145deg,#19132b,#110e1d);border:1px solid var(--line);border-radius:19px;padding:18px;box-shadow:0 18px 55px #0004}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.tab,.secondary,.action{min-height:44px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);padding:9px 13px}.tab.active{background:#6f45bd;border-color:#a985ff}
+textarea{width:100%;min-height:112px;resize:vertical;padding:13px;border:1px solid var(--line);border-radius:12px;background:#0d0a17;color:var(--text);outline:none}textarea:focus,select:focus{border-color:var(--accent)}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:11px}select{min-height:44px;flex:1;min-width:190px;padding:8px 11px;border:1px solid var(--line);border-radius:10px;background:#0d0a17;color:var(--text)}
+.primary{min-height:46px;border:0;border-radius:11px;padding:10px 19px;color:white;font-weight:750;background:linear-gradient(110deg,#6945d7,#a33de2);box-shadow:0 5px 20px #7d44dc44}.primary:disabled{opacity:.55;cursor:wait}
+.status{color:var(--muted);font-size:12px;min-height:20px;margin-top:9px}
+.workspace{margin-top:22px;background:#100d1c;border:1px solid var(--line);border-radius:18px;overflow:hidden;display:none}.workspace.visible{display:block}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line);background:#171226}.toolbar strong{margin-right:auto}.action{font-size:12px;min-height:38px;padding:7px 11px}.action:hover,.secondary:hover,.tab:hover{border-color:#a985ff}
+.map-scroll{overflow:auto;min-height:330px;padding:22px}.map-stage{min-width:680px;display:flex;justify-content:center;padding:15px 10px 30px}
+svg{overflow:visible}.node rect{fill:#211a35;stroke:#7654a9;stroke-width:1.5}.node.root rect{fill:#5633a0;stroke:#c6a5ff;stroke-width:2}.node text{fill:#f7f1ff;font-size:14px;font-weight:650}.node .hint{fill:#b9a8d6;font-size:10px;font-weight:400}.node{cursor:pointer}.node:focus{outline:none}.node:focus rect{stroke:#fff;stroke-width:3}.edge{fill:none;stroke:#7155a4;stroke-width:2.2;stroke-linecap:round}
+.empty{padding:65px 15px;text-align:center;color:var(--muted)}.empty .symbol{font-size:35px;color:#b18aff}.empty strong{display:block;color:var(--text);font-size:17px;margin:8px}
+.legend{font-size:11px;color:var(--muted);padding:0 16px 14px}
+@media(max-width:600px){header{padding:0 12px;height:62px}main{padding:20px 12px 40px}.builder{padding:13px}.toolbar strong{width:100%}.map-scroll{padding:12px}}
+@media print{body{background:#fff;color:#111}header,.hero,.builder,.toolbar,.legend{display:none!important}main{padding:0;max-width:none}.workspace{display:block!important;border:0;background:#fff}.map-scroll{overflow:visible;padding:0}.map-stage{min-width:0}.node rect{fill:#fff;stroke:#6542a0}.node.root rect{fill:#eee5ff}.node text{fill:#181020}.node .hint{fill:#555}.edge{stroke:#7656a8}}
+</style>
+</head>
+<body>
+<header><a class="back" href="chat.html">← Back to chat</a><div class="brand">NEXORA <span>MIND MAP</span></div></header>
+<main>
+<section class="hero"><div class="eyebrow">THINK · CONNECT · EXPLORE</div><h1>Turn ideas into a mind map</h1><p>Explore a topic or visually organize one of your NEXORA conversations.</p></section>
+<section class="builder">
+<div class="tabs" role="group" aria-label="Mind map source"><button class="tab active" id="topicTab" type="button">✨ Create from a topic</button><button class="tab" id="chatTab" type="button">💬 Use a conversation</button></div>
+<div id="topicSource"><label for="topicInput">What should the mind map explain?</label><textarea id="topicInput" placeholder="Example: The Solar System, causes of climate change, or how machine learning works"></textarea></div>
+<div id="chatSource" hidden><label for="chatSelect">Choose a saved conversation on this device</label><select id="chatSelect"><option value="">Loading conversations…</option></select><p style="color:var(--muted);font-size:12px;margin:7px 0 0">Only conversations saved in this browser are listed here.</p></div>
+<div class="row"><button class="primary" id="generateBtn" type="button">✦ Generate mind map</button><span style="color:var(--muted);font-size:12px">AI-powered · Editable · Expandable</span></div>
+<div class="status" id="status" role="status" aria-live="polite"></div>
+</section>
+<section class="workspace" id="workspace">
+<div class="toolbar"><strong id="mapTitle">Your mind map</strong><button class="action" id="expandBtn" type="button">Expand all</button><button class="action" id="collapseBtn" type="button">Collapse all</button><button class="action" id="saveBtn" type="button">Save</button><button class="action" id="pngBtn" type="button">Export PNG</button><button class="action" id="pdfBtn" type="button">Export PDF</button></div>
+<div class="map-scroll"><div class="map-stage" id="mapStage"></div></div>
+<div class="legend">Tap a node to expand or collapse it. Use Edit to rename a node and + to add a branch.</div>
+</section>
+</main>
+<script>
+const API_URL="https://nexora-ai-backend-v2.mayankhindubro.workers.dev";
+const CHAT_KEY="nexora_chat_sessions_local_v1";
+const MAP_KEY="nexora_mind_maps_v1";
+const $=id=>document.getElementById(id);
+let source="topic",tree=null;
+const topicTab=$("topicTab"),chatTab=$("chatTab"),topicSource=$("topicSource"),chatSource=$("chatSource");
+function setSource(next){source=next;topicTab.classList.toggle("active",next==="topic");chatTab.classList.toggle("active",next==="chat");topicSource.hidden=next!=="topic";chatSource.hidden=next!=="chat";$("status").textContent="";}
+topicTab.addEventListener("click",()=>setSource("topic"));chatTab.addEventListener("click",()=>setSource("chat"));
+function readChats(){try{const data=JSON.parse(localStorage.getItem(CHAT_KEY)||"[]");return Array.isArray(data)?data:[]}catch(_){return []}}
+function loadChatOptions(){const select=$("chatSelect"),chats=readChats();select.replaceChildren();if(!chats.length){select.add(new Option("No saved conversations found",""));return;}chats.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).forEach(c=>{const label=(c.title||"Untitled chat")+" · "+(c.messages||[]).length+" messages";select.add(new Option(label,c.id));});}
+loadChatOptions();
+function cleanTree(data,depth=0){if(depth>4||!data||typeof data!=="object")return null;const title=String(data.title||data.name||"Untitled").trim().slice(0,90);const children=Array.isArray(data.children)?data.children.slice(0,8).map(x=>cleanTree(x,depth+1)).filter(Boolean):[];return {title,children,collapsed:false};}
+function parseJSON(raw){let text=String(raw||"").trim().replace(/^\`\`\`(?:json)?/i,"").replace(/\`\`\`$/,"").trim();const start=text.indexOf("{"),end=text.lastIndexOf("}");if(start<0||end<start)throw new Error("The AI response wasn't valid mind map data. Please try again.");return JSON.parse(text.slice(start,end+1));}
+async function generate(){
+ let sourceText="";
+ if(source==="topic"){sourceText=$("topicInput").value.trim();if(!sourceText){$("topicInput").focus();$("status").textContent="Enter a topic first.";return;}}
+ else{const chosen=readChats().find(c=>c.id===$("chatSelect").value);if(!chosen){$("status").textContent="Choose a saved conversation first.";return;}sourceText=(chosen.messages||[]).map(m=>(m.role==="user"?"USER: ":"NEXORA AI: ")+String(m.text||"")).join("\n\n").slice(0,18000);if(!sourceText.trim()){ $("status").textContent="That conversation has no text messages.";return;}}
+ const btn=$("generateBtn");btn.disabled=true;btn.textContent="Building…";$("status").textContent="NEXORA AI is organizing the main ideas…";
+ const instruction='Create a clear hierarchical mind map from the supplied material. Return ONLY valid JSON, no markdown. Required schema: {"title":"short central topic","children":[{"title":"main branch","children":[{"title":"subtopic","children":[]}]}]}. Include 4 to 7 main branches when the material supports them, with 2 to 5 concise subtopics per branch. Preserve important facts and relationships; do not invent details. Keep every node title short (ideally under 8 words). For a conversation, summarize its actual key themes, decisions, questions and next steps.';
+ try{
+  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",message:instruction+"\n\nSOURCE MATERIAL:\n"+sourceText})});
+  const raw=await response.text();let payload={};try{payload=JSON.parse(raw)}catch(_){}
+  if(!response.ok||payload.error)throw new Error(payload.error||"AI request failed ("+response.status+").");
+  const answer=payload.reply||payload.response||payload.message||payload.text||raw;
+  tree=cleanTree(parseJSON(answer));if(!tree)throw new Error("No mind map structure was returned.");
+  $("mapTitle").textContent=tree.title;$("workspace").classList.add("visible");renderMap();$("status").textContent="Your mind map is ready. Tap any node to explore it.";
+ }catch(error){$("status").textContent=error.message||"Could not generate the mind map. Please try again."}
+ finally{btn.disabled=false;btn.textContent="✦ Generate mind map";}
+}
+$("generateBtn").addEventListener("click",generate);
+function visibleLayout(root){
+ const gap=42,nodeW=190,nodeH=58,levelGap=110,positions=[],edges=[];let cursor=0;
+ function measure(n){if(n.collapsed||!n.children.length)return nodeW;return Math.max(nodeW,n.children.reduce((sum,c)=>sum+measure(c)+gap, -gap));}
+ function place(n,x,y,parent){const width=measure(n),cx=x+width/2;positions.push({node:n,x:cx-nodeW/2,y,w:nodeW,h:nodeH});if(parent)edges.push({x1:parent.x,y1:parent.y+nodeH/2,x2:cx-nodeW/2,y2:y+nodeH/2});if(!n.collapsed&&n.children.length){let childX=x;for(const child of n.children){const cw=measure(child);place(child,childX,y+levelGap,{x:cx+nodeW/2,y:y+nodeH/2});childX+=cw+gap;}}}
+ const width=measure(root);place(root,0,20,null);const height=Math.max(250,...positions.map(p=>p.y+p.h+30));return {positions,edges,width,height,nodeW,nodeH};
+}
+function renderMap(){if(!tree)return;const l=visibleLayout(tree),svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 "+(l.width+20)+" "+l.height);svg.setAttribute("width",l.width+20);svg.setAttribute("height",l.height);
+ for(const e of l.edges){const path=document.createElementNS(svg.namespaceURI,"path");const mid=(e.x1+e.x2)/2;path.setAttribute("d","M "+e.x1+" "+e.y1+" C "+mid+" "+e.y1+", "+mid+" "+e.y2+", "+e.x2+" "+e.y2);path.setAttribute("class","edge");svg.append(path);}
+ for(const p of l.positions){const g=document.createElementNS(svg.namespaceURI,"g");g.setAttribute("class","node"+(p.node===tree?" root":""));g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label",p.node.title+(p.node.children.length?(p.node.collapsed?", collapsed":", expanded"):""));const rect=document.createElementNS(svg.namespaceURI,"rect");rect.setAttribute("x",p.x);rect.setAttribute("y",p.y);rect.setAttribute("width",p.w);rect.setAttribute("height",p.h);rect.setAttribute("rx","12");g.append(rect);const label=document.createElementNS(svg.namespaceURI,"text");label.setAttribute("x",p.x+p.w/2);label.setAttribute("y",p.y+25);label.setAttribute("text-anchor","middle");label.textContent=p.node.title.length>24?p.node.title.slice(0,22)+"…":p.node.title;g.append(label);const hint=document.createElementNS(svg.namespaceURI,"text");hint.setAttribute("x",p.x+p.w/2);hint.setAttribute("y",p.y+43);hint.setAttribute("text-anchor","middle");hint.setAttribute("class","hint");hint.textContent=p.node.children.length?(p.node.collapsed?"＋ "+p.node.children.length+" hidden":"− "+p.node.children.length+" branches"):"Tap Edit or + below";g.append(hint);const activate=()=>{if(p.node.children.length){p.node.collapsed=!p.node.collapsed;renderMap();}};g.addEventListener("click",activate);g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate();}});g.addEventListener("contextmenu",e=>{e.preventDefault();editNode(p.node);});svg.append(g);}
+ $("mapStage").replaceChildren(svg);
+ const tools=document.createElement("div");tools.style.cssText="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:15px";
+ const nodes=[];function walk(n){nodes.push(n);n.children.forEach(walk)}walk(tree);
+ nodes.forEach((n,i)=>{if(i===0)return;const wrap=document.createElement("span");wrap.style.display="none";tools.append(wrap);});
+ $("mapStage").append(tools);
+ // Select a node by tapping it, then use the editor controls.
+}
+let selectedNode=null;
+function findFirstLeaf(){return tree}
+function editNode(node){const value=prompt("Rename this mind map node:",node.title);if(value&&value.trim()){node.title=value.trim().slice(0,90);$("mapTitle").textContent=tree.title;renderMap();}}
+function collectNodes(n,out=[]){out.push(n);n.children.forEach(c=>collectNodes(c,out));return out;}
+function addBranch(){if(!tree)return;const nodes=collectNodes(tree);const labels=nodes.map((n,i)=>i+". "+n.title).join("\n");const index=Number(prompt("Add a child branch under which node? Enter its number:\n"+labels,"0"));if(!Number.isInteger(index)||index<0||index>=nodes.length)return;const title=prompt("New branch name:");if(title&&title.trim()){nodes[index].children.push({title:title.trim().slice(0,90),children:[],collapsed:false});nodes[index].collapsed=false;renderMap();}}
+$("mapStage").addEventListener("dblclick",e=>{const target=e.target.closest(".node");if(!target)return;});
+$("mapStage").addEventListener("click",e=>{const target=e.target.closest(".node");if(!target)return;const texts=target.querySelector("text");if(!texts)return;const title=texts.textContent;selectedNode=collectNodes(tree).find(n=>n.title===title||n.title.startsWith(title.replace("…","")));if(selectedNode){$("mapTitle").textContent=tree.title+" · "+selectedNode.title;}});
+function setCollapsed(n,value){n.collapsed=value;n.children.forEach(c=>setCollapsed(c,value));}
+$("expandBtn").addEventListener("click",()=>{if(tree){setCollapsed(tree,false);renderMap();}});
+$("collapseBtn").addEventListener("click",()=>{if(tree){tree.collapsed=false;tree.children.forEach(c=>setCollapsed(c,true));renderMap();}});
+$("saveBtn").addEventListener("click",()=>{if(!tree)return;try{const maps=JSON.parse(localStorage.getItem(MAP_KEY)||"[]");maps.unshift({title:tree.title,tree,updatedAt:Date.now()});localStorage.setItem(MAP_KEY,JSON.stringify(maps.slice(0,30)));$("status").textContent="Mind map saved on this device.";}catch(_){$("status").textContent="Could not save this map. Device storage may be full."}});
+function svgBlob(){const svg=$("mapStage").querySelector("svg");if(!svg)throw new Error("Generate a map first.");const copy=svg.cloneNode(true);copy.setAttribute("xmlns","http://www.w3.org/2000/svg");const style=document.createElementNS(copy.namespaceURI,"style");style.textContent=".node rect{fill:#211a35;stroke:#7654a9;stroke-width:1.5}.node.root rect{fill:#5633a0;stroke:#c6a5ff;stroke-width:2}.node text{fill:#f7f1ff;font:650 14px Arial}.node .hint{fill:#b9a8d6;font:11px Arial}.edge{fill:none;stroke:#9877cb;stroke-width:2.2}";copy.insertBefore(style,copy.firstChild);return new Blob([new XMLSerializer().serializeToString(copy)],{type:"image/svg+xml;charset=utf-8"});}
+$("pngBtn").addEventListener("click",()=>{try{const blob=svgBlob(),url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{const canvas=document.createElement("canvas");canvas.width=img.width*2;canvas.height=img.height*2;const ctx=canvas.getContext("2d");ctx.scale(2,2);ctx.fillStyle="#100d1c";ctx.fillRect(0,0,img.width,img.height);ctx.drawImage(img,0,0);URL.revokeObjectURL(url);canvas.toBlob(png=>{const a=document.createElement("a");a.href=URL.createObjectURL(png);a.download="nexora-mind-map.png";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);},"image/png");};img.onerror=()=>{URL.revokeObjectURL(url);$("status").textContent="Could not export this map as PNG."};img.src=url;}catch(e){$("status").textContent=e.message;}});
+$("pdfBtn").addEventListener("click",()=>{if(tree)window.print();});
+</script>
+</body>
+</html>
