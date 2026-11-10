@@ -74,3 +74,18 @@ body[data-theme="dark"] .back{background:#242130;color:#e4d7ff;border-color:#454
 body[data-theme="dark"] .download-panel,
 body[data-theme="dark"] .notice{background:#1b1924;color:#d5cede;border-color:#454052}
 body[data-theme="dark"] button:disabled{opacity:.55}
+
+/* Mind Map header: its page-level light palette needs an explicit dark override */
+body[data-theme="dark"] header{
+  background:#0c0e1d!important;
+  color:#f5f1ff;
+  border-bottom-color:#343852!important;
+  box-shadow:0 2px 14px #0005;
+}
+body[data-theme="dark"] header .brand{color:#f5f1ff}
+body[data-theme="dark"] header .brand span{color:#bd8cff}
+body[data-theme="dark"] header .back{
+  background:#242130!important;
+  color:#e4d7ff!important;
+  border-color:#454052!important;
+}
