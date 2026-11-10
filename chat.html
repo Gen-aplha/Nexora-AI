@@ -750,6 +750,9 @@ body.voice-wip-open{overflow:hidden}
 .voice-wip-content h2{margin:0 0 12px;font-size:clamp(27px,7vw,36px);font-weight:800;letter-spacing:-.7px}
 .voice-wip-content>p:not(.voice-wip-eyebrow){margin:0 0 9px;font-size:17px;font-weight:650}
 .voice-wip-content .voice-wip-description{max-width:360px;margin:0 auto;color:var(--muted);font-size:14px!important;font-weight:400!important;line-height:1.65}
+.voice-browser-help{margin:24px auto 0;padding:15px 16px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);color:var(--muted);font-size:13px;line-height:1.55}
+.voice-browser-help p{margin:0 0 10px}
+.voice-browser-help a{display:inline-block;color:#7950df;font-weight:750;text-decoration:underline;text-underline-offset:3px}
 .voice-wip-note{margin:25px auto 22px;padding:13px 15px;border:1px solid rgba(139,111,255,.25);border-radius:13px;background:rgba(109,60,255,.07);color:var(--muted);font-size:12px;line-height:1.5}
 .voice-wip-note span{color:#9876ef;margin-right:6px}
 .voice-wip-return{width:100%;min-height:48px;border:0;border-radius:13px;background:linear-gradient(120deg,#6740df,#9b55e5);color:#fff;font-size:14px;font-weight:750;cursor:pointer}
@@ -1252,7 +1255,10 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
         <button type="button" class="voice-wip-return" id="nexoraVoiceStart">Start</button>
         <p id="voiceConversationStatus" class="voice-conversation-status" role="status" aria-live="polite">Tap Start when you are ready to use your microphone.</p>
         <p class="voice-wip-eyebrow">NEXORA AI · VOICE</p>
-
+        <div class="voice-browser-help">
+          <p>If you are not getting answers in voice conversation, tap the link below and open it in Chrome to use this feature.</p>
+          <a href="https://gen-aplha.github.io/Nexora-AI/chat.html#voice-mode" target="_blank" rel="noopener noreferrer">Open NEXORA Voice Mode in Chrome</a>
+        </div>
       </div>
     </section>
     <section class="chat" id="chat" aria-live="polite">
@@ -1976,6 +1982,8 @@ voiceModeBtn.addEventListener("click",()=>{
   if(status)status.textContent="Tap Start when you are ready to use your microphone.";
 });
 document.getElementById("voiceWipBack").addEventListener("click",closeVoiceWipPage);
+if(window.location.hash==="#voice-mode"){openVoiceWipPage();}
+window.addEventListener("hashchange",()=>{if(window.location.hash==="#voice-mode")openVoiceWipPage();});
 if (!SpeechRecognition) {
   voiceBtn.title = "Voice input is not supported in this browser";
   voiceStatus.textContent = "Voice input is not supported here. Try Chrome on Android.";
