@@ -1052,6 +1052,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 .keyboard-open .footnote{display:none!important}
 
+/* NEXORA animated light-theme startup screen */
+.nexora-startup{position:fixed;inset:0;z-index:30000;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 42%,#fff 0%,#f5f1ff 54%,#ece8fa 100%);color:#242033;opacity:1;visibility:visible;transition:opacity .65s ease,visibility .65s ease}
+.nexora-startup.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
+.nexora-startup-core{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.nexora-startup-logo-wrap{position:relative;width:148px;height:148px;display:grid;place-items:center;animation:nexoraLogoArrive 2.5s cubic-bezier(.2,.8,.2,1) both}
+.nexora-startup-logo-wrap:before{content:"";position:absolute;inset:-18px;border-radius:50%;background:conic-gradient(from 0deg,transparent,#a78bfa,#7c3aed,transparent,#c4b5fd,transparent);filter:blur(15px);opacity:0;animation:nexoraEnergy 2.7s ease-out forwards}
+.nexora-startup-logo{position:relative;width:116px;height:116px;object-fit:contain;border-radius:27px;background:#fff;padding:7px;box-shadow:0 12px 38px #7552c52b,0 0 0 1px #ddd4fa;opacity:0;transform:scale(.45);animation:nexoraLogoForm 2.7s cubic-bezier(.16,1,.3,1) .25s forwards}
+.nexora-startup-particles{position:absolute;inset:-80px;pointer-events:none}
+.nexora-startup-particles i{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 12px #8b5cf6;opacity:0;animation:nexoraParticle 2.4s ease-out var(--delay,0s) forwards}
+.nexora-startup-particles i:nth-child(1){--x:-120px;--y:-90px;--delay:.05s}.nexora-startup-particles i:nth-child(2){--x:115px;--y:-105px;--delay:.2s}.nexora-startup-particles i:nth-child(3){--x:-145px;--y:28px;--delay:.32s}.nexora-startup-particles i:nth-child(4){--x:140px;--y:35px;--delay:.12s}.nexora-startup-particles i:nth-child(5){--x:-75px;--y:125px;--delay:.26s}.nexora-startup-particles i:nth-child(6){--x:85px;--y:118px;--delay:.4s}.nexora-startup-particles i:nth-child(7){--x:0px;--y:-150px;--delay:.18s}.nexora-startup-particles i:nth-child(8){--x:12px;--y:145px;--delay:.35s}
+.nexora-startup-name{margin:5px 0 0;font-size:25px;font-weight:850;letter-spacing:4px;color:#28213d;opacity:0;animation:nexoraTextIn .7s ease 2.1s forwards}
+.nexora-startup-tagline{margin:0;font-size:10px;font-weight:750;letter-spacing:3px;color:#786a9b;opacity:0;animation:nexoraTextIn .7s ease 2.35s forwards}
+.nexora-startup-glint{position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 35%,#fff9 50%,transparent 65%);transform:translateX(-120%);animation:nexoraGlint 1s ease 2.25s forwards}
+@keyframes nexoraLogoArrive{0%{transform:scale(.72) rotate(-9deg)}65%{transform:scale(1.06) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes nexoraEnergy{0%{opacity:0;transform:scale(.35) rotate(0)}45%{opacity:.9;transform:scale(1.1) rotate(180deg)}100%{opacity:.2;transform:scale(1.35) rotate(360deg)}}
+@keyframes nexoraLogoForm{0%{opacity:0;transform:scale(.35);filter:blur(8px)}65%{opacity:1;transform:scale(1.12);filter:blur(0)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+@keyframes nexoraParticle{0%{opacity:0;transform:translate(0,0) scale(.3)}30%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.3)}}
+@keyframes nexoraTextIn{to{opacity:1;transform:translateY(0)}from{opacity:0;transform:translateY(8px)}}
+@keyframes nexoraGlint{to{transform:translateX(120%)}}
+@media(prefers-reduced-motion:reduce){.nexora-startup *{animation-duration:.01ms!important;animation-delay:0ms!important}.nexora-startup{transition:none}}
 </style>
 
 <style id="nexora-upgrade-styles">
@@ -1077,6 +1097,26 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
 <link rel="stylesheet" href="theme.css">
 </head>
 <body data-theme="light">
+<div class="nexora-startup" id="nexoraStartup" aria-label="NEXORA AI starting" role="status">
+  <div class="nexora-startup-core">
+    <div class="nexora-startup-logo-wrap">
+      <div class="nexora-startup-particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <img class="nexora-startup-logo" src="nexora-logo.svg?v=20261110" alt="NEXORA N logo">
+      <span class="nexora-startup-glint" aria-hidden="true"></span>
+    </div>
+    <h1 class="nexora-startup-name">NEXORA AI</h1>
+    <p class="nexora-startup-tagline">CHAT • CREATE • EXPLORE</p>
+  </div>
+</div>
+<script>
+(function(){
+  const splash=document.getElementById("nexoraStartup");
+  if(!splash)return;
+  const finish=()=>{splash.classList.add("is-leaving");window.setTimeout(()=>splash.remove(),700);};
+  const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.setTimeout(finish,reduced?500:3600);
+})();
+</script>
 <div class="first-launch-overlay" id="firstLaunchOverlay" aria-hidden="true">
   <section class="first-launch-panel" role="dialog" aria-modal="true" aria-labelledby="firstLaunchTitle">
     <img class="first-launch-logo" src="nexora-logo.svg?v=20261110" alt="NEXORA logo">
