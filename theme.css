@@ -29,3 +29,8 @@ body[data-theme="dark"] .msg{background:#242130;color:#f5f2ff;border-color:#3833
 body[data-theme="dark"] .msg.mine{background:#34254d;border-color:#574078}
 body[data-theme="dark"] .file{background:#201d2a;border-color:#383345}
 body[data-theme="dark"] .auth{background:#1b1924}
+
+html[data-theme="light"]{--bg:#f7f7fb;--panel:#fff;--panel2:#f0edf6;--line:#ded9e8;--text:#24212d;--muted:#706b7b;--accent:#7541c8}
+html[data-theme="dark"]{--bg:#0b0914;--panel:#151124;--panel2:#1d1830;--line:#33294e;--text:#f5f1ff;--muted:#aaa0c3;--accent:#9a6bff}
+body[data-theme="light"]{background:#f7f7fb;color:#24212d}
+body[data-theme="dark"]{background:#0c0e1d;color:#f5f6ff}
