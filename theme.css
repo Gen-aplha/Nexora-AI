@@ -230,8 +230,7 @@ body[data-theme="dark"] :is(.tab,.secondary,.action){background:#24213a!importan
 body[data-theme="dark"] .tab.active{background:#7541c8!important;color:#fff!important}
 body[data-theme="dark"] :is(textarea,select){background:#111322!important;color:#f5f6ff!important;border-color:#454052!important}
 /* Team Space page */
-body[data-theme="light"] :is(.shell,.panel,.messages,.msg,.auth,.file,.workspace-item,.conversation-item,.field){background-color:#fff!important;color:#24212d!important;border-color:#ded9e8!important}
-body[data-theme="light"] body{background:#f7f7fb!important}
+body[data-theme="light"] :is(.panel,.messages,.msg,.auth,.file,.workspace-item,.conversation-item,.field){background-color:#fff!important;color:#24212d!important;border-color:#ded9e8!important}
 body[data-theme="light"] .msg.mine{background:#eee5fa!important}
 body[data-theme="light"] :is(.btn,.workspace-item,.conversation-item){color:#342b45!important}
 body[data-theme="light"] .btn.primary{background:linear-gradient(110deg,#7048c9,#9849ca)!important;color:#fff!important}
