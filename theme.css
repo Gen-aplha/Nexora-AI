@@ -126,3 +126,34 @@ body[data-theme="dark"] a{color:#c5b5fd}
 body[data-theme="light"] a{color:#6841b5}
 body[data-theme="dark"] .notice,body[data-theme="dark"] .callout{background:var(--surface-soft)!important;color:var(--surface-text)!important}
 body[data-theme="light"] .notice,body[data-theme="light"] .callout{background:var(--surface-soft)!important;color:var(--surface-text)!important}
+
+
+/* NEXORA theme consistency pass: include page-specific cards and dialogs. */
+body[data-theme="light"] :is(main,.container,.wrap,.content,.hero-content,.section-inner,.article,.plan,.feature,.dialog,.modal-content,.account-panel,.account-info-panel,.nexora-panel,.nexora-stat,.nexora-panel-row,.workspace,.builder,.toolbar,.messages,.msg,.auth){
+  background-color:var(--surface)!important;
+  color:var(--surface-text)!important;
+  border-color:var(--surface-border)!important;
+}
+body[data-theme="light"] :is(.plan,.feature,.dialog,.account-panel,.account-info-panel,.nexora-panel,.nexora-stat,.nexora-panel-row){
+  box-shadow:0 8px 28px rgba(35,25,65,.07);
+}
+body[data-theme="light"] :is(.plan p,.plan li,.feature p,.dialog p,.account-panel p,.account-info-panel p,.nexora-panel-note,.nexora-stat span){
+  color:var(--surface-muted)!important;
+}
+body[data-theme="light"] :is(.plan h1,.plan h2,.plan h3,.feature h1,.feature h2,.feature h3,.dialog h1,.dialog h2,.account-panel h1,.account-panel h2,.account-info-panel h1,.account-info-panel h2){
+  color:var(--surface-text)!important;
+}
+body[data-theme="light"] :is(.plan,.feature,.dialog,.account-panel,.account-info-panel,.nexora-panel,.nexora-stat,.nexora-panel-row){
+  background-image:none;
+}
+body[data-theme="light"] :is(.account-centre-link,.account-centre-link strong){color:var(--surface-text)}
+body[data-theme="light"] .account-centre-link:hover{background:var(--surface-soft)}
+body[data-theme="light"] .account-centre-icon{background:#f0edf8;color:#6546c8}
+body[data-theme="light"] .account-centre-divider{background:var(--surface-border)}
+body[data-theme="dark"] :is(.account-panel,.account-info-panel,.nexora-panel,.nexora-stat,.nexora-panel-row,.plan,.feature,.dialog){
+  background-color:var(--surface)!important;color:var(--surface-text)!important;border-color:var(--surface-border)!important;
+}
+body[data-theme="dark"] :is(.account-centre-link,.account-centre-link strong){color:var(--surface-text)}
+body[data-theme="dark"] .account-centre-link:hover{background:var(--surface-soft)}
+body[data-theme="dark"] .account-centre-icon{background:#29233b;color:#c5b5fd}
+body[data-theme="dark"] .account-centre-divider{background:var(--surface-border)}
