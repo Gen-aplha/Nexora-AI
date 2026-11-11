@@ -157,3 +157,8 @@ body[data-theme="dark"] :is(.account-centre-link,.account-centre-link strong){co
 body[data-theme="dark"] .account-centre-link:hover{background:var(--surface-soft)}
 body[data-theme="dark"] .account-centre-icon{background:#29233b;color:#c5b5fd}
 body[data-theme="dark"] .account-centre-divider{background:var(--surface-border)}
+
+body[data-theme="light"] .close{background:#f0edf6!important;color:#24212d!important;border-color:#ded9e8!important}
+body[data-theme="dark"] .close{background:#29233b!important;color:#f5f1ff!important;border-color:#454052!important}
+body[data-theme="light"] .plan .choose{background:#ece8f5;color:#24212d}
+body[data-theme="dark"] .plan .choose{background:#2a2440;color:#f5f1ff}
