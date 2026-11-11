@@ -1079,6 +1079,7 @@ html.nexora-splash-seen .nexora-startup{display:none!important}
   outline:2px solid rgba(118,85,232,.65)!important;
   outline-offset:2px;
 }
+.side-primary>.side-link[hidden]{display:none!important}
 </style>
 
 <style id="nexora-upgrade-styles">
@@ -1307,9 +1308,10 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
       <button class="side-link" id="pluginsBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3"/><path d="M6 7h12v3a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6V7Z"/><path d="M12 16v2a4 4 0 0 1-4 4"/></svg></span><span>Plugins</span><span class="plugins-nav-count">7</span></button>
       <button class="side-link" id="projectsBtn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5h6l2 2h9v9h-17z"/><path d="M3.5 7.5v-2h6l2 2"/></svg></span><span>Projects</span></button>
       <button class="side-link" data-coming="Scheduled"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></span><span>Smart Notifications</span></button>
-      <button class="side-link" id="personalizationBtn" type="button"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
-      <a class="side-link" id="mindMapNavLink" href="mindmap.html" style="text-decoration:none"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M12 7.2v4.2M12 11.4 5 15.8M12 11.4l7 4.4"/></svg></span><span>Mind Map</span></a>
-      <a class="side-link" id="teamSpaceNavLink" href="teamspace.html" style="text-decoration:none"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3.5 19c.4-3.1 2.3-4.8 5.5-4.8s5.1 1.7 5.5 4.8M14.5 14.8c3.5-.8 5.7.7 6 3.7"/></svg></span><span>Team Space</span></a>
+      <button class="side-link" id="exploreToggle" type="button" aria-expanded="false"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.8 8.2-2.4 5.2-5.2 2.4 2.4-5.2z"/></svg></span><span>Explore</span></button>
+      <button class="side-link" id="personalizationBtn" type="button" hidden><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.5 3.1-5.5 7-5.5s6.5 2 7 5.5M18.5 4.5l.8 1.7 1.7.8-1.7.8-.8-1.7-.8 1.7-1.7-.8 1.7-.8z"/></svg></span><span>Personalization</span></button>
+      <a class="side-link" id="mindMapNavLink" href="mindmap.html" style="text-decoration:none" hidden><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M12 7.2v4.2M12 11.4 5 15.8M12 11.4l7 4.4"/></svg></span><span>Mind Map</span></a>
+      <a class="side-link" id="teamSpaceNavLink" href="teamspace.html" style="text-decoration:none" hidden><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3.5 19c.4-3.1 2.3-4.8 5.5-4.8s5.1 1.7 5.5 4.8M14.5 14.8c3.5-.8 5.7.7 6 3.7"/></svg></span><span>Team Space</span></a>
     </div>
     <div class="side-divider"></div>
     <section class="chat-history-panel" aria-label="Chat history">
@@ -3590,6 +3592,11 @@ function filterPluginCards(){const q=document.getElementById("pluginsSearch").va
 document.querySelectorAll("[data-plugin-filter]").forEach(btn=>btn.addEventListener("click",()=>{activePluginFilter=btn.dataset.pluginFilter;document.querySelectorAll("[data-plugin-filter]").forEach(b=>b.classList.toggle("active",b===btn));filterPluginCards();}));
 document.getElementById("pluginsSearch").addEventListener("input",filterPluginCards);
 
+const exploreToggle=document.getElementById("exploreToggle");
+const exploreItems=["personalizationBtn","mindMapNavLink","teamSpaceNavLink"].map(id=>document.getElementById(id));
+function resetSidebarExplore(){exploreItems.forEach(item=>{if(item)item.hidden=true;});if(exploreToggle){exploreToggle.hidden=false;exploreToggle.setAttribute("aria-expanded","false");}}
+exploreToggle?.addEventListener("click",()=>{exploreItems.forEach(item=>{if(item)item.hidden=false;});exploreToggle.hidden=true;exploreToggle.setAttribute("aria-expanded","true");});
+document.getElementById("menuBtn")?.addEventListener("click",()=>{if(sidebar.classList.contains("open"))resetSidebarExplore();});
 document.getElementById("libraryBtn").addEventListener("click",openLibrary);
 document.getElementById("closeLibraryBtn").addEventListener("click",closeLibrary);
 document.getElementById("libraryOverlay").addEventListener("click",e=>{if(e.target.id==="libraryOverlay")closeLibrary();});
