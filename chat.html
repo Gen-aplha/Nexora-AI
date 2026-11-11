@@ -1085,6 +1085,104 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
 </style>
 <script src="theme.js?v=20261110-logo2"></script>
 <link rel="stylesheet" href="theme.css?v=20261111-themefix">
+<style id="nexora-image-library-theme-fix">
+/* Image Studio and Library follow the active app theme. */
+body[data-theme="light"] .image-mode-panel{background:#f7f7fb!important;color:#24212d!important}
+body[data-theme="light"] .images-page-header{background:#fff!important;color:#24212d!important;border-color:#e4e1eb!important}
+body[data-theme="light"] .images-page-header>strong,
+body[data-theme="light"] .images-page-scroll h2,
+body[data-theme="light"] .studio-section h2,
+body[data-theme="light"] .studio-field-label,
+body[data-theme="light"] .studio-compare-control{color:#24212d!important}
+body[data-theme="light"] .studio-help,
+body[data-theme="light"] .studio-status,
+body[data-theme="light"] .my-images-empty{color:#686477!important}
+body[data-theme="light"] .studio-tabs{background:#eeebf5!important;border-color:#ded9e8!important}
+body[data-theme="light"] .studio-tab{background:#eeebf5!important;color:#514b60!important;border-color:transparent!important}
+body[data-theme="light"] .studio-tab.active{background:#fff!important;color:#5132a5!important;border-color:#d9cafa!important;box-shadow:0 1px 5px #33205a14}
+body[data-theme="light"] .image-enhance-toggle{background:#fff!important;color:#383344!important;border-color:#e2deeb!important}
+body[data-theme="light"] .image-editor-section input:not([type="file"]):not([type="range"]),
+body[data-theme="light"] .image-editor-section textarea,
+body[data-theme="light"] .image-editor-section select,
+body[data-theme="light"] #studioEditPrompt,
+body[data-theme="light"] .studio-style-select{background:#fff!important;color:#24212d!important;border-color:#dcd7e6!important}
+body[data-theme="light"] .image-editor-section input::placeholder,
+body[data-theme="light"] .image-editor-section textarea::placeholder,
+body[data-theme="light"] #studioEditPrompt::placeholder{color:#817b8e!important;opacity:1}
+body[data-theme="light"] .studio-upload-btn,
+body[data-theme="light"] .studio-edit-actions button,
+body[data-theme="light"] .nexora-gallery-filters button{background:#fff!important;color:#393348!important;border:1px solid #ded9e8!important}
+body[data-theme="light"] .studio-primary-btn{background:linear-gradient(110deg,#7049d5,#a33de2)!important;color:#fff!important}
+body[data-theme="light"] .my-image-thumb{background:#eeeaf4!important;border:1px solid #e2deeb}
+body[data-theme="light"] .image-viewer{background:#f7f7fb!important}
+body[data-theme="light"] .image-viewer-close{background:#fff!important;color:#24212d!important;border-color:#ded9e8!important}
+body[data-theme="light"] body:has(.image-mode-panel:not([hidden])) .composer,
+body[data-theme="light"]:has(.image-mode-panel:not([hidden])) .composer{background:#fff!important;color:#24212d!important;border-color:#ded9e8!important}
+body[data-theme="light"]:has(.image-mode-panel:not([hidden])) .composer textarea{color:#24212d!important}
+body[data-theme="light"]:has(.image-mode-panel:not([hidden])) .plus-btn,
+body[data-theme="light"]:has(.image-mode-panel:not([hidden])) .voice-btn{color:#343044!important}
+
+body[data-theme="dark"] .image-mode-panel{background:#0c0e1d!important;color:#f5f1ff!important}
+body[data-theme="dark"] .images-page-header{background:#171a2d!important;color:#f5f1ff!important;border-color:#343852!important}
+body[data-theme="dark"] .images-page-header>strong,
+body[data-theme="dark"] .images-page-scroll h2,
+body[data-theme="dark"] .studio-section h2,
+body[data-theme="dark"] .studio-field-label,
+body[data-theme="dark"] .studio-compare-control{color:#f5f1ff!important}
+body[data-theme="dark"] .studio-help,
+body[data-theme="dark"] .studio-status,
+body[data-theme="dark"] .my-images-empty{color:#b7b4c9!important}
+body[data-theme="dark"] .studio-tabs{background:#171a2d!important;border-color:#343852!important}
+body[data-theme="dark"] .studio-tab{background:#20233a!important;color:#d5d1e5!important;border-color:#343852!important}
+body[data-theme="dark"] .studio-tab.active{background:#39265d!important;color:#fff!important;border-color:#7654a9!important}
+body[data-theme="dark"] .image-enhance-toggle{background:#171a2d!important;color:#eeeaf8!important;border-color:#343852!important}
+body[data-theme="dark"] .image-editor-section input:not([type="file"]):not([type="range"]),
+body[data-theme="dark"] .image-editor-section textarea,
+body[data-theme="dark"] .image-editor-section select,
+body[data-theme="dark"] #studioEditPrompt,
+body[data-theme="dark"] .studio-style-select{background:#171a2d!important;color:#f5f1ff!important;border-color:#3a3d55!important}
+body[data-theme="dark"] .image-editor-section input::placeholder,
+body[data-theme="dark"] .image-editor-section textarea::placeholder,
+body[data-theme="dark"] #studioEditPrompt::placeholder{color:#aaa6bd!important;opacity:1}
+body[data-theme="dark"] .studio-upload-btn,
+body[data-theme="dark"] .studio-edit-actions button,
+body[data-theme="dark"] .nexora-gallery-filters button{background:#20233a!important;color:#f5f1ff!important;border:1px solid #3a3d55!important}
+body[data-theme="dark"] .studio-primary-btn{background:linear-gradient(110deg,#7049d5,#a33de2)!important;color:#fff!important}
+body[data-theme="dark"] .my-image-thumb{background:#20233a!important;border:1px solid #343852}
+body[data-theme="dark"] .image-viewer{background:#080914!important}
+body[data-theme="dark"] .image-viewer-close{background:#20233a!important;color:#f5f1ff!important;border-color:#454052!important}
+body[data-theme="dark"]:has(.image-mode-panel:not([hidden])) .composer{background:#171a2d!important;color:#f5f1ff!important;border-color:#3a3d55!important}
+body[data-theme="dark"]:has(.image-mode-panel:not([hidden])) .composer textarea{color:#f5f1ff!important}
+body[data-theme="dark"]:has(.image-mode-panel:not([hidden])) .plus-btn,
+body[data-theme="dark"]:has(.image-mode-panel:not([hidden])) .voice-btn{color:#f5f1ff!important}
+body[data-theme="dark"]:has(.image-mode-panel:not([hidden])) .send{background:#7049d5!important;color:#fff!important}
+
+body[data-theme="light"] .library-panel{background:#fff!important;color:#24212d!important;border:1px solid #e2deeb!important}
+body[data-theme="light"] .library-head h2,
+body[data-theme="light"] .library-signed-view h3,
+body[data-theme="light"] .library-guest-view p{color:#24212d!important}
+body[data-theme="light"] .library-head p,
+body[data-theme="light"] .library-signed-view>p,
+body[data-theme="light"] .library-signed-view small{color:#706b7b!important}
+body[data-theme="light"] .library-close{background:#f0edf6!important;color:#24212d!important;border:1px solid #ded9e8!important}
+body[data-theme="light"] .library-signed-view #libraryChatList .account-secondary,
+body[data-theme="light"] .library-signed-view #libraryFileList .account-secondary{background:#f4f1f8!important;color:#393348!important;border-color:#ded9e8!important}
+body[data-theme="light"] .library-signed-view #libraryFileList>div{border-color:#e5e1eb!important}
+body[data-theme="light"] .library-note{color:#706b7b!important;border-color:#e5e1eb!important}
+
+body[data-theme="dark"] .library-panel{background:#171a2d!important;color:#f5f6ff!important;border:1px solid #343852!important}
+body[data-theme="dark"] .library-head h2,
+body[data-theme="dark"] .library-signed-view h3,
+body[data-theme="dark"] .library-guest-view p{color:#f5f6ff!important}
+body[data-theme="dark"] .library-head p,
+body[data-theme="dark"] .library-signed-view>p,
+body[data-theme="dark"] .library-signed-view small{color:#a7abc2!important}
+body[data-theme="dark"] .library-close{background:#29233b!important;color:#f5f1ff!important;border:1px solid #454052!important}
+body[data-theme="dark"] .library-signed-view #libraryChatList .account-secondary,
+body[data-theme="dark"] .library-signed-view #libraryFileList .account-secondary{background:#242130!important;color:#f5f1ff!important;border-color:#454052!important}
+body[data-theme="dark"] .library-signed-view #libraryFileList>div{border-color:#343852!important}
+body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#343852!important}
+</style>
 </head>
 <body data-theme="light">
 <div class="nexora-startup" id="nexoraStartup" aria-label="NEXORA AI starting" role="status">
