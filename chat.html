@@ -1183,6 +1183,37 @@ body[data-theme="dark"] .library-signed-view #libraryFileList .account-secondary
 body[data-theme="dark"] .library-signed-view #libraryFileList>div{border-color:#343852!important}
 body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#343852!important}
 </style>
+<style id="nexora-plus-header-fix">
+/* Keep the PLUS action crisp, readable and fully inside the chat header. */
+.topbar .plus-top-link{
+  box-sizing:border-box;flex:0 0 auto;min-height:40px;padding:9px 15px;
+  gap:7px;font-size:11px;letter-spacing:.35px;line-height:1;
+  color:#fff!important;background:linear-gradient(115deg,#5421bd 0%,#7136df 55%,#4c1ca8 100%)!important;
+  border:1px solid #a98aff!important;border-radius:999px;text-shadow:0 1px 1px rgba(0,0,0,.2);
+  box-shadow:0 3px 14px rgba(104,65,205,.28),inset 0 1px 0 rgba(255,255,255,.24);
+}
+.topbar .plus-top-icon{color:#fff!important;text-shadow:0 0 8px rgba(255,255,255,.5)}
+.topbar .plus-top-arrow{color:#fff!important}
+.topbar .plus-top-link:focus-visible{outline:3px solid #c4b5fd;outline-offset:3px}
+@media(max-width:680px){
+  .topbar{display:grid!important;grid-template-columns:36px minmax(0,1fr) auto!important;align-items:center;column-gap:7px;min-width:0;padding:9px 10px!important}
+  .topbar .menu-btn{grid-column:1;grid-row:1;justify-self:start}
+  .topbar .topbrand{grid-column:2;grid-row:1;min-width:0;width:auto!important;max-width:100%;margin:0!important;position:static!important;top:auto!important;overflow:hidden}
+  .topbar .topbrand h1{font-size:clamp(14px,4.3vw,18px)!important;line-height:1.1;white-space:nowrap}
+  .topbar .plus-top-link{grid-column:3;grid-row:1;justify-self:end;min-width:0;min-height:36px;padding:8px 10px;font-size:10px;letter-spacing:.1px;gap:5px}
+  .topbar .plus-top-icon{font-size:14px}
+  .topbar .plus-top-arrow{font-size:16px}
+  .topbar .status{display:none!important}
+}
+@media(max-width:360px){
+  .topbar{grid-template-columns:32px minmax(0,1fr) auto!important;column-gap:5px}
+  .topbar .menu-btn{padding:7px 8px}
+  .topbar .topbrand h1{font-size:14px!important}
+  .topbar .plus-top-link{padding:8px 8px;font-size:9px;gap:4px}
+  .topbar .plus-top-icon{font-size:13px}
+  .topbar .plus-top-arrow{font-size:14px}
+}
+</style>
 </head>
 <body data-theme="light">
 <div class="nexora-startup" id="nexoraStartup" aria-label="NEXORA AI starting" role="status">
