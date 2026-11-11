@@ -129,7 +129,7 @@ body[data-theme="light"] .notice,body[data-theme="light"] .callout{background:va
 
 
 /* NEXORA theme consistency pass: include page-specific cards and dialogs. */
-body[data-theme="light"] :is(main,.container,.wrap,.content,.hero-content,.section-inner,.article,.plan,.feature,.dialog,.modal-content,.account-panel,.account-info-panel,.nexora-panel,.nexora-stat,.nexora-panel-row,.workspace,.builder,.toolbar,.messages,.msg,.auth){
+body[data-theme="light"] :is(main,.container,.wrap,.content,.hero-content,.section-inner,.article,.plan,.feature,.dialog,.modal-content,.account-panel,.account-info-panel,.nexora-panel,.nexora-stat,.nexora-panel-row,.workspace,.builder,.toolbar){
   background-color:var(--surface)!important;
   color:var(--surface-text)!important;
   border-color:var(--surface-border)!important;
