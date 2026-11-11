@@ -1062,6 +1062,23 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){.nexora-startup{transition:none}}
 html.nexora-splash-seen .nexora-startup{display:none!important}
 .topbrand h1{translate:3px 0}
+/* Keep every primary sidebar item visually consistent; remove default button outlines. */
+.side-primary>.side-link{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  outline:none;
+}
+.side-primary>.side-link:hover{
+  background:rgba(120,91,220,.09)!important;
+  border:0!important;
+}
+.side-primary>.side-link:focus-visible{
+  outline:2px solid rgba(118,85,232,.65)!important;
+  outline-offset:2px;
+}
 </style>
 
 <style id="nexora-upgrade-styles">
