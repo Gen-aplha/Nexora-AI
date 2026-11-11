@@ -1055,11 +1055,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 .keyboard-open .footnote{display:none!important}
 
-/* Minimal NEXORA logo startup screen */
+/* Minimal NEXORA logo startup screen: shown once per app/browser session */
 .nexora-startup{position:fixed;inset:0;z-index:30000;display:grid;place-items:center;background:#fff;opacity:1;visibility:visible;transition:opacity .35s ease,visibility .35s ease}
 .nexora-startup.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
 .nexora-startup-logo{display:block;width:min(62vw,240px);height:min(62vw,240px);object-fit:contain}
 @media(prefers-reduced-motion:reduce){.nexora-startup{transition:none}}
+html.nexora-splash-seen .nexora-startup{display:none!important}
 </style>
 
 <style id="nexora-upgrade-styles">
@@ -1093,6 +1094,15 @@ body[data-chat-wall="midnight"] .chat{background:linear-gradient(160deg,rgba(20,
 (function(){
   const splash=document.getElementById("nexoraStartup");
   if(!splash)return;
+  const key="nexora_startup_seen_session_v1";
+  try{
+    if(sessionStorage.getItem(key)==="yes"){
+      document.documentElement.classList.add("nexora-splash-seen");
+      splash.remove();
+      return;
+    }
+    sessionStorage.setItem(key,"yes");
+  }catch(_){}
   const finish=()=>{splash.classList.add("is-leaving");window.setTimeout(()=>splash.remove(),400);};
   window.setTimeout(finish,2200);
 })();
