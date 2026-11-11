@@ -162,3 +162,84 @@ body[data-theme="light"] .close{background:#f0edf6!important;color:#24212d!impor
 body[data-theme="dark"] .close{background:#29233b!important;color:#f5f1ff!important;border-color:#454052!important}
 body[data-theme="light"] .plan .choose{background:#ece8f5;color:#24212d}
 body[data-theme="dark"] .plan .choose{background:#2a2440;color:#f5f1ff}
+
+
+/* NEXORA SITE-WIDE THEME REPAIR — final component layer.
+   Use the same saved theme on every public page and override legacy page-local colors. */
+html[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f7f7fb;--panel:#ffffff;--panel2:#f0edf6;--line:#ded9e8;
+  --text:#24212d;--muted:#706b7b;--accent:#7541c8;
+  --nx-bg:#f7f7fb;--nx-panel:#fff;--nx-panel2:#f0edf6;--nx-line:#ded9e8;
+  --nx-text:#24212d;--nx-muted:#706b7b;--nx-accent:#7541c8;
+}
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0c0e1d;--panel:#171a2d;--panel2:#20233a;--line:#343852;
+  --text:#f5f6ff;--muted:#a7abc2;--accent:#a78bfa;
+  --nx-bg:#0c0e1d;--nx-panel:#171a2d;--nx-panel2:#20233a;--nx-line:#343852;
+  --nx-text:#f5f6ff;--nx-muted:#a7abc2;--nx-accent:#a78bfa;
+}
+html[data-theme] body{background:var(--nx-bg)!important;color:var(--nx-text)!important}
+body[data-theme] :is(h1,h2,h3,h4,h5,h6,strong,label,legend){color:var(--nx-text)}
+body[data-theme] :is(p,li,small,.muted,.hint,.status,.updated,.footer,.foot,.fine,.lead,.description,.subtitle){color:var(--nx-muted)}
+body[data-theme] :is(input,textarea,select){color:var(--nx-text);border-color:var(--nx-line)}
+body[data-theme] :is(button,.btn,.button,.secondary,.tab,.action){border-color:var(--nx-line)}
+/* Main marketing website */
+body[data-theme="light"] :is(.nav,.navin,.footer,.card,.preview,.band,.eyebrow,.fakeinput,.bubble.ai,.step,.download-panel,.help-actions,.notice,.mission,.tag,.feature,.plan,.dialog,.feature-card,.feature-item,.faq-item,.step-card,.download-card,.help-card,.troubleshooting-card){
+  color:#24212d!important;border-color:#ded9e8!important;
+}
+body[data-theme="light"] .nav{background:rgba(255,255,255,.96)!important;box-shadow:0 4px 18px rgba(35,25,65,.06)}
+body[data-theme="light"] .links{color:#625b70}
+body[data-theme="light"] .links a:hover,body[data-theme="light"] .links a.active{color:#4e2b91}
+body[data-theme="light"] :is(.card,.step,.feature,.feature-card,.feature-item,.faq-item,.step-card,.download-card,.help-card,.troubleshooting-card,.plan,.dialog,.mission){background:#fff!important;box-shadow:0 8px 28px rgba(35,25,65,.06)}
+body[data-theme="light"] :is(.preview,.band,.download-panel){background:linear-gradient(145deg,#fff,#f3effa)!important}
+body[data-theme="light"] :is(.eyebrow,.fakeinput,.bubble.ai,.notice,.tag){background:#f1edf8!important}
+body[data-theme="light"] .bubble.user{color:#fff!important}
+body[data-theme="light"] :is(.ico,.stepnum){background:#eee8f8!important;color:#6541a7!important}
+body[data-theme="light"] .fine{color:#706b7b!important}
+body[data-theme="light"] .plan ul{color:#4c4658!important}
+body[data-theme="light"] .dialog p{color:#625b70!important}
+body[data-theme="light"] .close{background:#f0edf6!important;color:#24212d!important;border-color:#ded9e8!important}
+body[data-theme="dark"] :is(.nav,.navin,.footer,.card,.preview,.band,.eyebrow,.fakeinput,.bubble.ai,.step,.download-panel,.help-actions,.notice,.mission,.tag,.feature,.plan,.dialog,.feature-card,.feature-item,.faq-item,.step-card,.download-card,.help-card,.troubleshooting-card){
+  color:#f5f6ff!important;border-color:#343852!important;
+}
+body[data-theme="dark"] .nav{background:rgba(12,14,29,.96)!important}
+body[data-theme="dark"] .links{color:#a7abc2}
+body[data-theme="dark"] .links a:hover,body[data-theme="dark"] .links a.active{color:#fff}
+body[data-theme="dark"] :is(.card,.step,.feature,.feature-card,.feature-item,.faq-item,.step-card,.download-card,.help-card,.troubleshooting-card,.plan,.dialog,.mission){background:#171a2d!important;box-shadow:0 8px 28px rgba(0,0,0,.18)}
+body[data-theme="dark"] :is(.preview,.band,.download-panel){background:linear-gradient(145deg,#1c1b35,#121426)!important}
+body[data-theme="dark"] :is(.eyebrow,.fakeinput,.bubble.ai,.notice,.tag){background:#24213a!important}
+body[data-theme="dark"] .plan ul{color:#d8d5e5!important}
+body[data-theme="dark"] .dialog p{color:#b8b3c7!important}
+body[data-theme="dark"] .close{background:#29233b!important;color:#f5f1ff!important;border-color:#454052!important}
+/* PLUS page */
+body[data-theme="light"] .plan{background:#fff!important}
+body[data-theme="light"] .plan .choose{background:#eee8f7!important;color:#34264e!important}
+body[data-theme="dark"] .plan{background:#171a2d!important}
+body[data-theme="dark"] .plan .choose{background:#2a2440!important;color:#fff!important}
+body[data-theme] .modal{background:rgba(8,7,16,.72)!important}
+/* Mind Map page */
+body[data-theme="light"] :is(.builder,.workspace,.toolbar,.map-scroll){background:#fff!important;color:#24212d!important;border-color:#ded9e8!important}
+body[data-theme="light"] .builder{background:linear-gradient(145deg,#fff,#f7f3fc)!important}
+body[data-theme="light"] :is(.tab,.secondary,.action){background:#f3eff8!important;color:#342b45!important;border-color:#ded9e8!important}
+body[data-theme="light"] .tab.active{background:#7541c8!important;color:#fff!important}
+body[data-theme="light"] textarea,body[data-theme="light"] select{background:#fff!important;color:#24212d!important;border-color:#ded9e8!important}
+body[data-theme="dark"] :is(.builder,.workspace,.toolbar,.map-scroll){background:#171a2d!important;color:#f5f6ff!important;border-color:#343852!important}
+body[data-theme="dark"] :is(.tab,.secondary,.action){background:#24213a!important;color:#f5f6ff!important;border-color:#454052!important}
+body[data-theme="dark"] .tab.active{background:#7541c8!important;color:#fff!important}
+body[data-theme="dark"] :is(textarea,select){background:#111322!important;color:#f5f6ff!important;border-color:#454052!important}
+/* Team Space page */
+body[data-theme="light"] :is(.shell,.panel,.messages,.msg,.auth,.file,.workspace-item,.conversation-item,.field){background-color:#fff!important;color:#24212d!important;border-color:#ded9e8!important}
+body[data-theme="light"] body{background:#f7f7fb!important}
+body[data-theme="light"] .msg.mine{background:#eee5fa!important}
+body[data-theme="light"] :is(.btn,.workspace-item,.conversation-item){color:#342b45!important}
+body[data-theme="light"] .btn.primary{background:linear-gradient(110deg,#7048c9,#9849ca)!important;color:#fff!important}
+body[data-theme="light"] .file-item a{color:#6840b0!important}
+body[data-theme="dark"] :is(.shell,.panel,.messages,.msg,.auth,.file,.workspace-item,.conversation-item,.field){background-color:#171a2d!important;color:#f5f6ff!important;border-color:#343852!important}
+body[data-theme="dark"] .msg.mine{background:#34254d!important}
+body[data-theme="dark"] :is(.btn,.workspace-item,.conversation-item){background-color:#24213a!important;color:#f5f6ff!important;border-color:#454052!important}
+body[data-theme="dark"] .btn.primary{background:linear-gradient(110deg,#7048c9,#9849ca)!important;color:#fff!important}
+body[data-theme="dark"] .file-item a{color:#c5b5fd!important}
+/* Avoid dark-only inline logo tile on light pages. */
+body[data-theme="light"] .brand .mark{background:#f0edf8!important;box-shadow:0 0 18px rgba(91,65,180,.12)!important}
