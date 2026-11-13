@@ -1516,7 +1516,6 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
             <button type="button" class="studio-tab active" data-studio-tab="create" aria-selected="true">Create</button>
             <button type="button" class="studio-tab" data-studio-tab="edit" aria-selected="false">Edit</button>
             <button type="button" class="studio-tab" data-studio-tab="gallery" aria-selected="false">My gallery</button>
-            <button type="button" class="studio-tab" data-studio-tab="prompts" aria-selected="false">Saved Prompts</button>
           </div>
           <section class="studio-section" id="imageStudioCreate">
           <label class="image-enhance-toggle"><input type="checkbox" id="imagePromptEnhance" checked> Improve prompt for richer results</label>
@@ -1600,11 +1599,6 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
             <h2 class="my-images-heading">My images</h2>
             <p class="studio-help">Your generated and edited images are saved on this device.</p>
             <div class="my-images-grid" id="myImagesGrid"><p class="my-images-empty">Your generated images will appear here.</p></div>
-          </section>
-          <section class="studio-section" id="imageStudioPrompts" hidden>
-            <h2>Saved Prompts</h2>
-            <p class="studio-help">Save and reuse your favourite prompts.</p>
-            <button type="button" class="studio-primary-btn" id="openSavedPromptsBtn">✧ Open Saved Prompts</button>
           </section>
         </div>
       </section>
@@ -1969,7 +1963,7 @@ function moveStudioHistory(direction) {
 }
 function showImageStudioTab(tab) {
   document.body.classList.toggle("image-edit-tab-open",tab === "edit");
-  const sections = {create:document.getElementById("imageStudioCreate"),edit:document.getElementById("imageStudioEdit"),gallery:document.getElementById("imageStudioGallery"),prompts:document.getElementById("imageStudioPrompts")};
+  const sections = {create:document.getElementById("imageStudioCreate"),edit:document.getElementById("imageStudioEdit"),gallery:document.getElementById("imageStudioGallery")};
   Object.entries(sections).forEach(([name,section]) => { section.hidden = name !== tab; });
   document.querySelectorAll("[data-studio-tab]").forEach(button => {
     const active = button.dataset.studioTab === tab;
@@ -4258,7 +4252,6 @@ renderHistory();
  });
  // Export current chat in portable formats.
  // Presentation maker: generate slide content with AI, then export it as a self-contained HTML slide deck.
- document.getElementById("openSavedPromptsBtn")?.addEventListener("click",openPrompts);
  document.getElementById("nexoraPromptLibraryBtn")?.addEventListener("click",()=>{composerMenu.hidden=true;composerPlus.setAttribute("aria-expanded","false");openPrompts();});
  document.getElementById("nexoraPresentationBtn").addEventListener("click",()=>{
    openPanel("AI presentation maker","Generate a slide-by-slide outline, then export it as a browser-based presentation.",
