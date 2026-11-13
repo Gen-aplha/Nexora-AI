@@ -239,6 +239,16 @@ body[data-theme="light"] .attachment-note{color:#777987}
 .images-back{width:40px;height:40px;border:0;border-radius:50%;background:#f5f5f5;color:#222;font-size:27px;line-height:1;cursor:pointer}
 .images-page-scroll{overflow-y:auto;overscroll-behavior:contain;flex:1;padding:18px 16px 112px}
 .images-page-scroll h2{font-size:19px;font-weight:750;margin:4px 0 17px}
+.image-template-tools{display:grid;gap:11px;margin:0 0 15px}
+.image-template-search{height:44px;display:flex;align-items:center;gap:9px;padding:0 13px;border:1px solid #dedbe7;border-radius:13px;background:#fff;color:#777}
+.image-template-search>span{font-size:23px;line-height:1}
+.image-template-search input{min-width:0;flex:1;border:0;outline:0;background:transparent;color:#24212d;font:inherit;font-size:14px}
+.image-template-filters{display:flex;gap:7px;overflow-x:auto;padding:1px 1px 5px;scrollbar-width:none}
+.image-template-filters::-webkit-scrollbar{display:none}
+.image-template-filter{flex:0 0 auto;min-height:35px;padding:0 14px;border:1px solid #e3dfeb;border-radius:999px;background:#fff;color:#5e586b;font-size:12px;font-weight:700}
+.image-template-filter.active{background:#6846d9;border-color:#6846d9;color:#fff}
+.image-template-card[hidden]{display:none!important}
+.image-template-empty{grid-column:1/-1;padding:22px 12px;text-align:center;color:#888;font-size:13px}
 .image-template-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .image-template-card{position:relative;min-height:210px;aspect-ratio:0.82;border:0;border-radius:21px;overflow:hidden;padding:14px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:#fff;cursor:pointer;background:linear-gradient(145deg,#e8e8ee,#b9bac4)}
 .image-template-card:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.62) 100%)}
@@ -1461,19 +1471,37 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
           </div>
           <section class="studio-section" id="imageStudioCreate">
           <label class="image-enhance-toggle"><input type="checkbox" id="imagePromptEnhance" checked> Improve prompt for richer results</label>
+          <div class="image-template-tools">
+            <label class="image-template-search"><span aria-hidden="true">⌕</span><input id="imageTemplateSearch" type="search" placeholder="Search templates…" aria-label="Search image templates"></label>
+            <div class="image-template-filters" id="imageTemplateFilters" role="group" aria-label="Filter image templates">
+              <button type="button" class="image-template-filter active" data-template-filter="all" aria-pressed="true">All</button>
+              <button type="button" class="image-template-filter" data-template-filter="art" aria-pressed="false">Art</button>
+              <button type="button" class="image-template-filter" data-template-filter="study" aria-pressed="false">Study</button>
+              <button type="button" class="image-template-filter" data-template-filter="design" aria-pressed="false">Design</button>
+              <button type="button" class="image-template-filter" data-template-filter="social" aria-pressed="false">Social</button>
+            </div>
+          </div>
           <div class="image-template-grid" id="imageTemplateGrid">
-            <button class="image-template-card template-stickers" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Stickers</b></button>
-            <button class="image-template-card template-poster" data-prompt="A beautiful celebratory event poster with elegant typography, warm golden lighting and detailed festive artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Event poster</b></button>
-            <button class="image-template-card template-diagram" data-prompt="A clear educational infographic diagram about photosynthesis, labeled plant illustration, neat textbook layout"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Photosynthesis diagram</b></button>
-            <button class="image-template-card template-map" data-prompt="An illustrated antique parchment map of an ancient fantasy city, intricate streets and landmarks"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Map illustration</b></button>
-            <button class="image-template-card template-history" data-prompt="An elegant illustrated historical timeline infographic with dates, events and archival style artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>History timeline</b></button>
-            <button class="image-template-card template-science" data-prompt="A detailed colorful educational plant cell diagram with clearly labeled organelles, textbook illustration"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Science diagram</b></button>
-            <button class="image-template-card template-landscape" data-prompt="A breathtaking cinematic mountain landscape at sunrise, misty valleys and dramatic natural light"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Landscape</b></button>
-            <button class="image-template-card template-statue" data-prompt="A majestic classical marble statue in a beautiful museum gallery, dramatic soft lighting"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Statue</b></button>
-            <button class="image-template-card template-anime" data-prompt="A colorful anime comic illustration with expressive characters, dynamic panel composition"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Anime comic</b></button>
-            <button class="image-template-card template-3d" data-prompt="A polished cute 3D character avatar, soft studio lighting, colorful background"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>3D avatar</b></button>
-            <button class="image-template-card template-interior" data-prompt="A modern cozy interior design concept, warm natural materials, tasteful furniture and sunlight"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Interior design</b></button>
-            <button class="image-template-card template-infographic" data-prompt="A modern clean infographic poster with clear visual hierarchy, icons and concise educational labels"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Infographic poster</b></button>
+            <button class="image-template-card template-stickers" data-category="art" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Stickers</b></button>
+            <button class="image-template-card template-poster" data-category="social" data-prompt="A beautiful celebratory event poster with elegant typography, warm golden lighting and detailed festive artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Event poster</b></button>
+            <button class="image-template-card template-diagram" data-category="study" data-prompt="A clear educational infographic diagram about photosynthesis, labeled plant illustration, neat textbook layout"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Photosynthesis diagram</b></button>
+            <button class="image-template-card template-map" data-category="art" data-prompt="An illustrated antique parchment map of an ancient fantasy city, intricate streets and landmarks"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Map illustration</b></button>
+            <button class="image-template-card template-history" data-category="study" data-prompt="An elegant illustrated historical timeline infographic with dates, events and archival style artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>History timeline</b></button>
+            <button class="image-template-card template-science" data-category="study" data-prompt="A detailed colorful educational plant cell diagram with clearly labeled organelles, textbook illustration"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Science diagram</b></button>
+            <button class="image-template-card template-landscape" data-category="art" data-prompt="A breathtaking cinematic mountain landscape at sunrise, misty valleys and dramatic natural light"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Landscape</b></button>
+            <button class="image-template-card template-statue" data-category="art" data-prompt="A majestic classical marble statue in a beautiful museum gallery, dramatic soft lighting"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Statue</b></button>
+            <button class="image-template-card template-anime" data-category="art" data-prompt="A colorful anime comic illustration with expressive characters, dynamic panel composition"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Anime comic</b></button>
+            <button class="image-template-card template-3d" data-category="art" data-prompt="A polished cute 3D character avatar, soft studio lighting, colorful background"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>3D avatar</b></button>
+            <button class="image-template-card template-interior" data-category="design" data-prompt="A modern cozy interior design concept, warm natural materials, tasteful furniture and sunlight"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Interior design</b></button>
+            <button class="image-template-card template-infographic" data-category="study" data-prompt="A modern clean infographic poster with clear visual hierarchy, icons and concise educational labels"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Infographic poster</b></button>
+            <button class="image-template-card template-poster" data-category="social" data-prompt="A polished YouTube thumbnail composition with one clear focal subject, bold readable headline space, vibrant contrast and professional creator-style lighting"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>YouTube thumbnail</b></button>
+            <button class="image-template-card template-stickers" data-category="design" data-prompt="A memorable modern brand logo concept, clean vector-like symbol, balanced typography, simple geometry and a refined limited color palette"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Brand logo</b></button>
+            <button class="image-template-card template-landscape" data-category="art" data-prompt="A seamless high-resolution phone wallpaper, cinematic dreamy scenery, elegant composition with clear space around app icons, rich detail"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Phone wallpaper</b></button>
+            <button class="image-template-card template-interior" data-category="design" data-prompt="A premium product photography scene with a single hero product, clean studio set, softbox lighting, realistic materials and tasteful shadows"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Product showcase</b></button>
+            <button class="image-template-card template-history" data-category="social" data-prompt="A beautifully designed birthday invitation card with festive illustration, elegant decorative border and clear editable text area, no invented personal details"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Invitation card</b></button>
+            <button class="image-template-card template-3d" data-category="design" data-prompt="A polished mobile app icon concept, instantly recognizable central symbol, rounded-square composition, subtle depth and crisp professional finish"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>App icon</b></button>
+            <button class="image-template-card template-anime" data-category="art" data-prompt="A cinematic character portrait with expressive pose, detailed outfit design, atmospheric background, professional concept-art composition"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Character concept</b></button>
+            <button class="image-template-card template-science" data-category="study" data-prompt="A neat educational study notes poster with a clear title area, organized sections, simple explanatory diagrams and high-contrast readable layout"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Study notes poster</b></button>
           </div>
           </section>
           <section class="studio-section image-editor-section" id="imageStudioEdit" hidden>
@@ -1829,6 +1857,36 @@ document.getElementById("imageTemplateGrid").addEventListener("click", event => 
   input.value = card.dataset.prompt || "";
   input.dispatchEvent(new Event("input", {bubbles:true}));
   input.focus();
+});
+const imageTemplateSearch=document.getElementById("imageTemplateSearch");
+const imageTemplateFilters=document.getElementById("imageTemplateFilters");
+let activeImageTemplateFilter="all";
+function filterImageTemplates(){
+  const grid=document.getElementById("imageTemplateGrid");
+  if(!grid)return;
+  const query=(imageTemplateSearch?.value||"").trim().toLowerCase();
+  let visible=0;
+  grid.querySelectorAll(".image-template-card[data-prompt]").forEach(card=>{
+    const matchesCategory=activeImageTemplateFilter==="all"||card.dataset.category===activeImageTemplateFilter;
+    const matchesSearch=!query||(card.textContent+" "+card.dataset.prompt).toLowerCase().includes(query);
+    card.hidden=!(matchesCategory&&matchesSearch);
+    if(!card.hidden)visible++;
+  });
+  let empty=grid.querySelector(".image-template-empty");
+  if(!visible&&!empty){empty=document.createElement("p");empty.className="image-template-empty";empty.textContent="No matching templates. Try another search.";grid.appendChild(empty);}
+  if(empty)empty.hidden=visible>0;
+}
+imageTemplateSearch?.addEventListener("input",filterImageTemplates);
+imageTemplateFilters?.addEventListener("click",event=>{
+  const button=event.target.closest("[data-template-filter]");
+  if(!button)return;
+  activeImageTemplateFilter=button.dataset.templateFilter;
+  imageTemplateFilters.querySelectorAll("[data-template-filter]").forEach(item=>{
+    const active=item===button;
+    item.classList.toggle("active",active);
+    item.setAttribute("aria-pressed",String(active));
+  });
+  filterImageTemplates();
 });
 let studioEditImageData = "";
 let studioEditHistory = [];
