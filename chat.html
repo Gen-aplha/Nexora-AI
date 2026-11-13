@@ -1211,6 +1211,55 @@ body[data-theme="dark"] .library-signed-view #libraryChatList .account-secondary
 body[data-theme="dark"] .library-signed-view #libraryFileList .account-secondary{background:#242130!important;color:#f5f1ff!important;border-color:#454052!important}
 body[data-theme="dark"] .library-signed-view #libraryFileList>div{border-color:#343852!important}
 body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#343852!important}
+
+/* Premium preview artwork: richer layered scenes and polished depth */
+.image-template-card{isolation:isolate;box-shadow:0 9px 24px #17152b20;transition:transform .18s ease,box-shadow .18s ease}
+.image-template-card:active{transform:scale(.975)}
+.image-template-card:before{z-index:1;background:linear-gradient(180deg,transparent 43%,rgba(10,12,25,.82) 100%)}
+.image-template-card>.template-art{z-index:0;border-radius:15px;box-shadow:inset 0 0 0 1px #ffffff66,0 9px 22px #1113}
+.template-art:before,.template-art:after{content:"";position:absolute;display:block;pointer-events:none}
+.template-art:before{width:24%;aspect-ratio:1;right:9%;top:9%;border-radius:50%;background:#fff8;box-shadow:0 4px 15px #17223b22}
+.template-art:after{left:9%;right:9%;bottom:8%;height:2px;border-radius:8px;background:#ffffff70}
+.template-stickers .template-art{background:radial-gradient(circle at 18% 18%,#fff9 0 4%,transparent 5%),linear-gradient(135deg,#ffd38a,#ff8da5 55%,#85cdb0)}
+.template-stickers .template-art i:nth-child(1){width:34%;height:42%;left:12%;top:25%;border:3px solid white;border-radius:14px;background:linear-gradient(145deg,#fff8e8,#ffb9a6);transform:rotate(-12deg)}
+.template-stickers .template-art i:nth-child(2){width:30%;height:34%;left:57%;top:31%;border:3px solid white;border-radius:50%;background:radial-gradient(circle at 35% 30%,white 0 7%,transparent 8%),#f6d76d;transform:rotate(9deg)}
+.template-stickers .template-art i:nth-child(3){width:24%;height:24%;left:39%;top:12%;border:3px solid white;border-radius:10px;background:#9bd8b0;transform:rotate(12deg)}
+.template-poster .template-art{background:radial-gradient(circle at 50% 25%,#ffe3a6 0 4%,transparent 5%),linear-gradient(145deg,#142d53,#a65e42 62%,#f2c77e)}
+.template-poster .template-art i:nth-child(1){width:65%;height:80%;left:17%;top:8%;border:2px solid #f4dca5;border-radius:5px;background:linear-gradient(180deg,#173d65 0 45%,#d38d56 46% 68%,#263d4b 69%);transform:none}
+.template-poster .template-art i:nth-child(2){width:40%;height:30%;left:30%;top:21%;border-radius:50% 50% 18% 18%;background:radial-gradient(circle at 40% 25%,#fff7d4,#d18b4d 70%);transform:none}
+.template-poster .template-art i:nth-child(3){width:46%;height:4%;left:27%;bottom:17%;border-radius:4px;background:#fff0c9}
+.template-diagram .template-art{background:linear-gradient(135deg,#eff5d9,#a8cc91)}
+.template-diagram .template-art i:nth-child(1){width:12%;height:68%;left:44%;top:18%;border-radius:50% 50% 8px 8px;background:linear-gradient(90deg,#397b4c,#a9d58a);transform:none}
+.template-diagram .template-art i:nth-child(2){width:62%;height:35%;left:19%;top:20%;border-radius:75% 8% 75% 8%;background:linear-gradient(135deg,#65ad64,#d7ed9e);transform:rotate(-28deg)}
+.template-map .template-art{background:radial-gradient(circle at 75% 25%,#f8e5b6 0 3%,transparent 4%),linear-gradient(135deg,#d9c28e,#9a7956)}
+.template-map .template-art i:nth-child(1){width:75%;height:72%;left:12%;top:12%;border:2px dashed #735a3c;border-radius:48% 38% 50% 35%;background:repeating-linear-gradient(35deg,#ead9b1 0 9px,#dfc99a 10px 12px);transform:rotate(-12deg)}
+.template-map .template-art i:nth-child(2){width:52%;height:5%;left:23%;top:48%;border-radius:10px;background:#9b7750;transform:rotate(35deg)}
+.template-map .template-art i:nth-child(3){width:5%;height:50%;left:52%;top:23%;border-radius:10px;background:#9b7750;transform:rotate(28deg)}
+.template-history .template-art{background:linear-gradient(135deg,#d8c6a6,#90765c)}
+.template-history .template-art i:nth-child(1){width:76%;height:76%;left:12%;top:11%;border:1px solid #c3a77f;border-radius:4px;background:repeating-linear-gradient(0deg,#f6ecd7 0 13px,#e8dbc2 14px 15px);transform:none}
+.template-history .template-art i:nth-child(2){width:4px;height:61%;left:48%;top:19%;border-radius:5px;background:#9d7953;transform:none}
+.template-science .template-art{background:radial-gradient(circle at 20% 20%,#fff9 0 3%,transparent 4%),linear-gradient(135deg,#d7e8ed,#9484bf)}
+.template-science .template-art i:nth-child(1){width:59%;height:59%;left:20%;top:19%;border:7px dotted white;border-radius:50%;background:radial-gradient(circle,#e7b9c7 0 18%,#8cc5dc 19% 43%,#5c6f9f 44%);transform:none}
+.template-science .template-art i:nth-child(2){width:16%;height:16%;left:13%;top:17%;border-radius:50%;background:#f6d58c}
+.template-science .template-art i:nth-child(3){width:16%;height:16%;left:72%;top:66%;border-radius:50%;background:#b5e4bc}
+.template-landscape .template-art{background:linear-gradient(180deg,#82c5e3,#f5c99a 57%,#527f70)}
+.template-landscape .template-art i:nth-child(1){border-bottom-color:#476b72;border-left-width:75px;border-right-width:75px;border-bottom-width:112px}
+.template-landscape .template-art i:nth-child(2){border-bottom-color:#779887;border-left-width:65px;border-right-width:65px;border-bottom-width:94px}
+.template-landscape .template-art i:nth-child(3){width:100%;height:30%;left:0;bottom:0;border-radius:0;background:linear-gradient(180deg,#719c7c,#315d50)}
+.template-statue .template-art{background:linear-gradient(135deg,#d7d0c4,#8e8174)}
+.template-statue .template-art i:nth-child(1){background:linear-gradient(90deg,#a7a196,#f2eee4 50%,#bcb5a8)}
+.template-anime .template-art{background:radial-gradient(circle at 75% 20%,#fff8 0 5%,transparent 6%),linear-gradient(135deg,#f4a9c3,#7b8fd0)}
+.template-anime .template-art i:nth-child(1){background:linear-gradient(135deg,#f5d7c5,#fff0df)}
+.template-anime .template-art i:nth-child(2){background:linear-gradient(135deg,#252747,#55527d)}
+.template-3d .template-art{background:radial-gradient(circle at 50% 40%,#fff8,transparent 45%),linear-gradient(135deg,#b9a4ee,#78a8dc)}
+.template-3d .template-art i:nth-child(1){background:linear-gradient(135deg,#f4c8aa,#b87cba)}
+.template-3d .template-art i:nth-child(2){background:radial-gradient(circle at 32% 25%,white,#ffe1bd 42%,#df9d9e)}
+.template-interior .template-art{background:linear-gradient(135deg,#c8b89f,#81988a)}
+.template-interior .template-art i:nth-child(1){border:5px solid #eee4d4;border-bottom:9px solid #9c806a;background:linear-gradient(90deg,#eee4d4 0 48%,#b6c6b1 49%)}
+.template-interior .template-art i:nth-child(2){background:linear-gradient(#bd9b7f,#88634f)}
+.template-infographic .template-art{background:linear-gradient(135deg,#83bdc0,#477d9e)}
+.template-infographic .template-art i:nth-child(1){background:repeating-linear-gradient(0deg,#f7f4e9 0 13px,#e4e0d4 14px 15px)}
+@media(prefers-reduced-motion:reduce){.image-template-card{transition:none}}
 </style>
 <style id="nexora-plus-header-fix">
 /* Keep the PLUS action crisp, readable and fully inside the chat header. */
