@@ -1291,6 +1291,12 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
   .topbar .plus-top-icon{font-size:13px}
   .topbar .plus-top-arrow{font-size:14px}
 }
+
+/* Connect image-template cards to their uploaded artwork assets */
+.image-template-card>.template-art{position:relative;overflow:hidden!important;background:#202033!important}
+.image-template-card>.template-art img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:inherit;z-index:0}
+.image-template-card>.template-art:before,.image-template-card>.template-art:after{display:none!important}
+.image-template-card>.template-art i{display:none!important}
 </style>
 </head>
 <body data-theme="light">
@@ -1530,26 +1536,7 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
             </div>
           </div>
           <div class="image-template-grid" id="imageTemplateGrid">
-            <button class="image-template-card template-stickers" data-category="art" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Stickers</b></button>
-            <button class="image-template-card template-poster" data-category="social" data-prompt="A beautiful celebratory event poster with elegant typography, warm golden lighting and detailed festive artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Event poster</b></button>
-            <button class="image-template-card template-diagram" data-category="study" data-prompt="A clear educational infographic diagram about photosynthesis, labeled plant illustration, neat textbook layout"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Photosynthesis diagram</b></button>
-            <button class="image-template-card template-map" data-category="art" data-prompt="An illustrated antique parchment map of an ancient fantasy city, intricate streets and landmarks"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Map illustration</b></button>
-            <button class="image-template-card template-history" data-category="study" data-prompt="An elegant illustrated historical timeline infographic with dates, events and archival style artwork"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>History timeline</b></button>
-            <button class="image-template-card template-science" data-category="study" data-prompt="A detailed colorful educational plant cell diagram with clearly labeled organelles, textbook illustration"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Science diagram</b></button>
-            <button class="image-template-card template-landscape" data-category="art" data-prompt="A breathtaking cinematic mountain landscape at sunrise, misty valleys and dramatic natural light"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Landscape</b></button>
-            <button class="image-template-card template-statue" data-category="art" data-prompt="A majestic classical marble statue in a beautiful museum gallery, dramatic soft lighting"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Statue</b></button>
-            <button class="image-template-card template-anime" data-category="art" data-prompt="A colorful anime comic illustration with expressive characters, dynamic panel composition"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Anime comic</b></button>
-            <button class="image-template-card template-3d" data-category="art" data-prompt="A polished cute 3D character avatar, soft studio lighting, colorful background"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>3D avatar</b></button>
-            <button class="image-template-card template-interior" data-category="design" data-prompt="A modern cozy interior design concept, warm natural materials, tasteful furniture and sunlight"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Interior design</b></button>
-            <button class="image-template-card template-infographic" data-category="study" data-prompt="A modern clean infographic poster with clear visual hierarchy, icons and concise educational labels"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Infographic poster</b></button>
-            <button class="image-template-card template-poster" data-category="social" data-prompt="A polished YouTube thumbnail composition with one clear focal subject, bold readable headline space, vibrant contrast and professional creator-style lighting"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>YouTube thumbnail</b></button>
-            <button class="image-template-card template-stickers" data-category="design" data-prompt="A memorable modern brand logo concept, clean vector-like symbol, balanced typography, simple geometry and a refined limited color palette"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Brand logo</b></button>
-            <button class="image-template-card template-landscape" data-category="art" data-prompt="A seamless high-resolution phone wallpaper, cinematic dreamy scenery, elegant composition with clear space around app icons, rich detail"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Phone wallpaper</b></button>
-            <button class="image-template-card template-interior" data-category="design" data-prompt="A premium product photography scene with a single hero product, clean studio set, softbox lighting, realistic materials and tasteful shadows"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Product showcase</b></button>
-            <button class="image-template-card template-history" data-category="social" data-prompt="A beautifully designed birthday invitation card with festive illustration, elegant decorative border and clear editable text area, no invented personal details"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Invitation card</b></button>
-            <button class="image-template-card template-3d" data-category="design" data-prompt="A polished mobile app icon concept, instantly recognizable central symbol, rounded-square composition, subtle depth and crisp professional finish"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>App icon</b></button>
-            <button class="image-template-card template-anime" data-category="art" data-prompt="A cinematic character portrait with expressive pose, detailed outfit design, atmospheric background, professional concept-art composition"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Character concept</b></button>
-            <button class="image-template-card template-science" data-category="study" data-prompt="A neat educational study notes poster with a clear title area, organized sections, simple explanatory diagrams and high-contrast readable layout"><span class="template-art" aria-hidden="true"><i></i><i></i><i></i></span><b>Study notes poster</b></button>
+            <button class="image-template-card template-stickers" data-category="art" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/study-notes-poster.svg" alt="" loading="lazy"></span><b>Study notes poster</b></button>
           </div>
           </section>
           <section class="studio-section image-editor-section" id="imageStudioEdit" hidden>
