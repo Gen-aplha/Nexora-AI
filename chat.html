@@ -1477,14 +1477,17 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
       <header class="voice-wip-header"><button type="button" class="voice-wip-back" id="voiceWipBack" aria-label="Back to chat">‹</button><strong>NEXORA AI</strong></header>
       <div class="voice-wip-content">
         <div class="voice-wip-orb" aria-hidden="true"><span>🎙</span></div>
+        <p class="voice-wip-eyebrow">NEXORA AI · VOICE</p>
+        <h2>Voice Mode</h2>
+        <p>Talk naturally with NEXORA AI</p>
+        <p class="voice-wip-description">Start a voice conversation using your device microphone.</p>
         <button type="button" class="voice-wip-return" id="nexoraVoiceStart">Start</button>
         <p id="voiceConversationStatus" class="voice-conversation-status" role="status" aria-live="polite">Tap Start when you are ready to use your microphone.</p>
-        <p class="voice-wip-eyebrow">NEXORA AI · VOICE</p>
-        <div class="voice-browser-help">
-          <p>If you are not getting answers in voice conversation, tap the link below and open this link in Chrome browser to use this feature.</p>
-          <a href="https://gen-aplha.github.io/Nexora-AI/chat.html?openVoiceMode=1" data-voice-chrome-link target="_blank" rel="noopener noreferrer">Open NEXORA Voice Mode in Chrome</a>
-        </div>
       </div>
+      <aside class="voice-browser-help" aria-label="Open Voice Mode in Chrome">
+        <p>If voice conversation does not work in the app, open this page in Chrome.</p>
+        <a href="https://gen-aplha.github.io/Nexora-AI/chat.html?openVoiceMode=1" data-voice-chrome-link target="_blank" rel="noopener noreferrer">Open NEXORA Voice Mode in Chrome</a>
+      </aside>
     </section>
     <section class="chat" id="chat" aria-live="polite">
       <div class="welcome" id="welcome">
@@ -1536,7 +1539,26 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
             </div>
           </div>
           <div class="image-template-grid" id="imageTemplateGrid">
-            <button class="image-template-card template-stickers" data-category="art" data-prompt="A pack of cute colorful cartoon stickers with a friendly cat, a tiny potted plant and a cheerful character, clean sticker-sheet design"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/study-notes-poster.svg" alt="" loading="lazy"></span><b>Study notes poster</b></button>
+            <button type="button" class="image-template-card template-poster" data-category="art" data-prompt="Create an epic original fantasy artwork with a mythical landscape, dramatic lighting, rich atmosphere and detailed painterly textures." aria-label="Use Fantasy art template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/fantasy-art.svg" alt="" loading="lazy" decoding="async"></span><b>Fantasy art</b></button>
+            <button type="button" class="image-template-card template-animal" data-category="art" data-prompt="Create a beautiful, expressive close-up portrait of an animal with detailed fur, soft cinematic light and a refined background." aria-label="Use Animal portrait template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/animal-portrait.svg" alt="" loading="lazy" decoding="async"></span><b>Animal portrait</b></button>
+            <button type="button" class="image-template-card template-anime" data-category="art" data-prompt="Create an original anime-style character illustration with expressive eyes, detailed outfit, dynamic composition and polished cel shading." aria-label="Use Anime style template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/anime-style.svg" alt="" loading="lazy" decoding="async"></span><b>Anime style</b></button>
+            <button type="button" class="image-template-card template-landscape" data-category="art" data-prompt="Create a breathtaking photorealistic nature landscape with layered mountains, atmospheric depth, natural light and rich detail." aria-label="Use Nature landscape template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/nature-landscape.svg" alt="" loading="lazy" decoding="async"></span><b>Nature landscape</b></button>
+            <button type="button" class="image-template-card template-car" data-category="design" data-prompt="Create a premium cinematic automotive poster featuring a sleek sports car, dramatic studio lighting and bold editorial composition." aria-label="Use Car poster template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/car-poster.svg" alt="" loading="lazy" decoding="async"></span><b>Car poster</b></button>
+            <button type="button" class="image-template-card template-youtube" data-category="social" data-prompt="Create a high-impact YouTube thumbnail with a clear focal subject, bold readable title space, vivid contrast and professional composition." aria-label="Use YouTube thumbnail template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/youtube-thumbnail.svg" alt="" loading="lazy" decoding="async"></span><b>YouTube thumbnail</b></button>
+            <button type="button" class="image-template-card template-logo" data-category="design" data-prompt="Design a clean, memorable modern brand logo with a distinctive symbol, balanced typography and a polished vector identity." aria-label="Use Brand logo template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/brand-logo.svg" alt="" loading="lazy" decoding="async"></span><b>Brand logo</b></button>
+            <button type="button" class="image-template-card template-wallpaper" data-category="design" data-prompt="Create a premium vertical phone wallpaper with a striking central visual, elegant gradients and uncluttered negative space." aria-label="Use Phone wallpaper template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/phone-wallpaper.svg" alt="" loading="lazy" decoding="async"></span><b>Phone wallpaper</b></button>
+            <button type="button" class="image-template-card template-product" data-category="design" data-prompt="Create a luxury product advertising image with a hero product, elegant studio set, realistic materials and premium lighting." aria-label="Use Product showcase template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/product-showcase.svg" alt="" loading="lazy" decoding="async"></span><b>Product showcase</b></button>
+            <button type="button" class="image-template-card template-invitation" data-category="social" data-prompt="Design an elegant invitation card with tasteful decorative details, clear typography hierarchy and space for event information." aria-label="Use Invitation card template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/invitation-card.svg" alt="" loading="lazy" decoding="async"></span><b>Invitation card</b></button>
+            <button type="button" class="image-template-card template-icon" data-category="design" data-prompt="Design a distinctive polished app icon with a simple memorable symbol, rounded-square composition and subtle dimensional lighting." aria-label="Use App icon template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/app-icon.svg" alt="" loading="lazy" decoding="async"></span><b>App icon</b></button>
+            <button type="button" class="image-template-card template-character" data-category="art" data-prompt="Create an original character concept sheet with a full-body design, distinctive clothing, accessories and refined illustration detail." aria-label="Use Character concept template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/character-concept.svg" alt="" loading="lazy" decoding="async"></span><b>Character concept</b></button>
+            <button type="button" class="image-template-card template-study" data-category="study" data-prompt="Create a colorful, well-organized educational study poster with clear headings, concise labeled sections, simple diagrams and readable typography." aria-label="Use Study notes poster template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/study-notes-poster.svg" alt="" loading="lazy" decoding="async"></span><b>Study notes poster</b></button>
+            <button type="button" class="image-template-card template-travel" data-category="social" data-prompt="Create a beautiful vintage-inspired travel destination poster with iconic scenery, bold composition and tasteful destination lettering." aria-label="Use Travel poster template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/travel-poster.svg" alt="" loading="lazy" decoding="async"></span><b>Travel poster</b></button>
+            <button type="button" class="image-template-card template-motivation" data-category="social" data-prompt="Create a modern motivational poster with uplifting visual symbolism, strong typography and a clean editorial layout." aria-label="Use Motivational poster template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/motivational-poster.svg" alt="" loading="lazy" decoding="async"></span><b>Motivational poster</b></button>
+            <button type="button" class="image-template-card template-birthday" data-category="social" data-prompt="Design a cheerful premium birthday greeting card with festive illustrations, celebratory colors and a clear message area." aria-label="Use Birthday card template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/birthday-card.svg" alt="" loading="lazy" decoding="async"></span><b>Birthday card</b></button>
+            <button type="button" class="image-template-card template-festival" data-category="social" data-prompt="Create a vibrant festival greeting design with culturally respectful decorative motifs, warm lighting and elegant celebratory typography." aria-label="Use Festival design template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/festival-design.svg" alt="" loading="lazy" decoding="async"></span><b>Festival design</b></button>
+            <button type="button" class="image-template-card template-gaming" data-category="social" data-prompt="Create an energetic esports gaming banner with a dramatic original character, neon lighting and bold title space." aria-label="Use Gaming banner template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/gaming-banner.svg" alt="" loading="lazy" decoding="async"></span><b>Gaming banner</b></button>
+            <button type="button" class="image-template-card template-interior" data-category="design" data-prompt="Create a realistic modern interior design visualization with balanced furniture, natural materials, warm lighting and thoughtful decor." aria-label="Use Interior design template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/interior-design.svg" alt="" loading="lazy" decoding="async"></span><b>Interior design</b></button>
+            <button type="button" class="image-template-card template-map" data-category="study" data-prompt="Create a clean illustrated map with clear route lines, landmarks, labels and an attractive readable cartographic style." aria-label="Use Map view template"><span class="template-art" aria-hidden="true"><img src="assets/image-templates/map-view.svg" alt="" loading="lazy" decoding="async"></span><b>Map view</b></button>
           </div>
           </section>
           <section class="studio-section image-editor-section" id="imageStudioEdit" hidden>
@@ -4565,6 +4587,35 @@ renderHistory();
 @media(max-width:360px){
  .voice-browser-help{padding:13px}
  .voice-browser-help a{font-size:13px;padding:11px 12px}
+}
+
+
+/* Corrected template gallery: display the 20 matching uploaded preview artworks */
+.image-template-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+.image-template-card>.template-art{min-height:0}
+.image-template-card>.template-art img{object-fit:cover;object-position:center}
+.image-template-card>b{display:block;min-height:2.4em}
+.image-template-card:focus-visible{outline:3px solid #9b7cff;outline-offset:3px}
+@media(min-width:700px){.image-template-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Voice screen layout: keep the Chrome action as a separate, visible footer */
+.voice-wip-page{overflow-x:hidden!important;overflow-y:auto!important;justify-content:flex-start!important}
+.voice-wip-content{box-sizing:border-box;width:min(calc(100% - 36px),440px)!important;min-height:0;flex:1 0 auto;margin:0 auto!important;padding:clamp(22px,6vh,58px) 0 22px!important;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.voice-wip-content .voice-wip-orb{flex:0 0 auto}
+.voice-wip-content .voice-wip-return{width:100%;max-width:340px;min-height:50px;margin-top:22px}
+.voice-wip-content .voice-conversation-status{width:100%;max-width:360px}
+.voice-browser-help{position:static!important;inset:auto!important;display:block!important;box-sizing:border-box;width:min(calc(100% - 36px),440px)!important;max-width:440px;margin:0 auto max(18px,env(safe-area-inset-bottom))!important;padding:15px 16px!important;border:1px solid var(--line)!important;border-radius:16px!important;background:var(--panel2)!important;text-align:left!important}
+.voice-browser-help p{margin:0 0 12px!important;line-height:1.5!important;overflow-wrap:anywhere}
+.voice-browser-help a{display:flex!important;width:100%;min-height:50px;box-sizing:border-box;align-items:center;justify-content:center;padding:12px 15px!important;border-radius:12px!important;background:linear-gradient(115deg,#6034ce,#8a4de3)!important;color:#fff!important;text-align:center!important;text-decoration:none!important;font-size:14px!important;font-weight:800!important;line-height:1.35!important;white-space:normal!important;overflow-wrap:anywhere}
+.voice-browser-help[hidden]{display:none!important}
+@media(max-height:650px){
+ .voice-wip-content{padding:16px 0 18px!important}
+ .voice-wip-orb{width:82px;height:82px;margin-bottom:12px}
+ .voice-wip-content .voice-wip-return{margin-top:12px}
+ .voice-browser-help{margin-bottom:max(10px,env(safe-area-inset-bottom))!important}
+}
+@media(max-width:360px){
+ .voice-browser-help{padding:12px!important}
+ .voice-browser-help a{font-size:13px!important}
 }
 
 </style>
