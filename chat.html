@@ -2117,7 +2117,8 @@ document.getElementById("studioEditRun").addEventListener("click",async() => {
     });
     const result = await postBackend({action:"edit_image",image:resizedImage.data,prompt,width:resizedImage.width,height:resizedImage.height});
     if(!result.image) throw new Error(result.error || "The image editor returned no image.");
-    const editedImage = result.image.startsWith("data:image/") ? result.image : "data:image/png;base64," + result.image;
+    const rawEditedImage = result.image.startsWith("data:image/") ? result.image : "data:image/png;base64," + result.image;
+    const editedImage = await addNexoraWatermark(rawEditedImage);
     const imageId = await saveGeneratedImage(editedImage);
     studioEditHistory = studioEditHistory.slice(0,studioEditHistoryIndex + 1);
     studioEditHistory.push(editedImage);
@@ -3395,6 +3396,52 @@ async function streamBackend(payload, onChunk) {
   if (!fullText.trim()) throw new Error("The streaming service returned an empty response. Please try again.");
   return fullText;
 }
+// Add the NEXORA N-only brand watermark to AI-created image outputs.
+async function addNexoraWatermark(imageData) {
+  const source = new Image();
+  source.src = imageData.startsWith("data:image/") ? imageData : "data:image/png;base64," + imageData;
+  await new Promise((resolve,reject) => {
+    source.onload = resolve;
+    source.onerror = () => reject(new Error("The generated image could not be prepared for watermarking."));
+  });
+  const width = source.naturalWidth || source.width;
+  const height = source.naturalHeight || source.height;
+  if (!width || !height) throw new Error("The generated image has invalid dimensions.");
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Watermarking is unavailable in this browser.");
+  context.drawImage(source,0,0,width,height);
+
+  const markSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <defs>
+      <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00eaff"/><stop offset=".48" stop-color="#075bff"/><stop offset="1" stop-color="#a000ff"/></linearGradient>
+      <linearGradient id="face" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#006dff"/><stop offset=".52" stop-color="#071c86"/><stop offset="1" stop-color="#3b00a8"/></linearGradient>
+      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <g stroke="url(#edge)" stroke-width="5" stroke-linejoin="round" filter="url(#glow)"><path fill="url(#face)" d="M78 70H178L350 246V70H438V440L336 440 164 265V440H78Z"/><path fill="none" stroke="#fff" stroke-width="8" d="M95 87H170L367 286V87H420V423H344L147 224V423H95Z"/><path fill="none" stroke="#00eaff" stroke-width="4" d="M110 105H160L382 327M95 245V410H130M386 105H404V400"/></g>
+    <g fill="none" stroke="#39f5ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"><path d="M120 155V205L151 236M151 236V284L178 311M178 311V377"/><path d="M175 104L218 148H250L290 188"/><path d="M245 210L279 245H310L345 281"/><path d="M352 350V305L380 278V205"/><circle cx="120" cy="155" r="7" fill="#fff"/><circle cx="178" cy="377" r="7" fill="#fff"/><circle cx="245" cy="210" r="7" fill="#fff"/><circle cx="380" cy="205" r="7" fill="#fff"/></g>
+    <g fill="none" stroke="#b64bff" stroke-width="4" stroke-linecap="round" filter="url(#glow)"><path d="M402 132V178L384 196M402 360V390"/><circle cx="402" cy="132" r="7" fill="#fff"/><circle cx="402" cy="390" r="7" fill="#fff"/></g>
+  </svg>`;
+  const markUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(markSvg);
+  const mark = new Image();
+  mark.src = markUrl;
+  await new Promise((resolve,reject) => {
+    mark.onload = resolve;
+    mark.onerror = () => reject(new Error("The NEXORA watermark could not be loaded."));
+  });
+  const markSize = Math.max(42,Math.round(width * 0.075));
+  const margin = Math.max(16,Math.round(width * 0.022));
+  context.save();
+  context.globalAlpha = 0.82;
+  context.shadowColor = "rgba(0,0,0,.42)";
+  context.shadowBlur = Math.max(5,Math.round(markSize * 0.12));
+  context.drawImage(mark,width - markSize - margin,height - markSize - margin,markSize,markSize);
+  context.restore();
+  return canvas.toDataURL("image/png");
+}
+
 async function generateImage() {
   const prompt = input.value.trim();
   const enhancePrompt = document.getElementById("imagePromptEnhance")?.checked;
@@ -3417,17 +3464,18 @@ async function generateImage() {
   try {
     const data = await postBackend({action:"generate_image",prompt:generationPrompt});
     if (!data.image) throw new Error(data.error || "The image service returned no image.");
+    const watermarkedImage = await addNexoraWatermark(data.image);
     typing.bubble.innerHTML = "";
     const captionText = data.reply || "Your image is ready!";
     const caption = document.createElement("p"); caption.textContent = captionText;
     const img = document.createElement("img");
-    img.className = "generated-image"; img.alt = "Image generated by NEXORA AI"; img.src = data.image;
+    img.className = "generated-image"; img.alt = "Image generated by NEXORA AI"; img.src = watermarkedImage;
     const download = document.createElement("button");
     download.type = "button"; download.className = "download-image"; download.textContent = "⬇ Download image";
-    download.addEventListener("click", () => downloadImage(data.image, "nexora-ai-image.jpg"));
+    download.addEventListener("click", () => downloadImage(watermarkedImage, "nexora-ai-image.png"));
     typing.bubble.append(caption,img,download);
     try {
-      const imageId = await saveGeneratedImage(data.image);
+      const imageId = await saveGeneratedImage(watermarkedImage);
       session.messages.push({role:"bot",text:captionText,imageId});
       renderMyImages();
     } catch (storageError) {
