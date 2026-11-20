@@ -1740,11 +1740,15 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
 const API_URL = "https://nexora-ai-backend-v2.mayankhindubro.workers.dev";
 const STREAM_API_URL = "https://nexora-ai-stream.mayankhindubro.workers.dev";
 const CREATOR_IMAGE_URL = "https://gen-aplha.github.io/Nexora-AI/mayank-gupta.jpg";
+const NEXORA_OFFICIAL_WEBSITE = "https://gen-aplha.github.io/Nexora-AI/";
 const CREATOR_REPLY = `NEXORA AI was created by **Mayank Gupta**, a 14-year-old school student and developer from India. He is the founder and creator of this independent AI project. He built NEXORA AI to explore technology and make AI more accessible.
 
 Here is the creator of NEXORA AI:
 
 ![Mayank Gupta](${CREATOR_IMAGE_URL})`;
+function isNexoraWebsiteQuestion(text) {
+  return /\b(?:nexora(?:\s+ai)?(?:\s+(?:official\s+)?)?(?:website|site|homepage|web\s+address)|(?:your|nexora(?:\s+ai)?(?:\s+official)?)\s+(?:website|site|homepage)(?:\s+(?:url|link|address))?|(?:website|site|homepage)\s+(?:link|url|address)\s+(?:of|for)\s+nexora)\b|\b(?:give|share|send|show|tell\s+me)\b.{0,35}\b(?:nexora|your)\b.{0,25}\b(?:website|site|homepage|link|url)\b/i.test(text);
+}
 function isCreatorQuestion(text) {
   return /\b(who\s+(made|created|invented|developed|built|founded)\s+(you|nexora)|who\s+is\s+(your|the)\s+(creator|inventor|founder|developer)|who\s+is\s+behind\s+nexora|tell\s+me\s+about\s+(your\s+creator|mayank)|who\s+owns\s+nexora)\b/i.test(text);
 }
@@ -3590,6 +3594,11 @@ async function sendMessage(text, options = {}) {
       typing.bubble.innerHTML = renderMarkdown(pdfGuidance);
       session.messages.push({role:"bot",text:pdfGuidance});
       voiceReplyToSpeak = pdfGuidance;
+    } else if (isNexoraWebsiteQuestion(message) && !files.length) {
+      const websiteReply = "Here is the official NEXORA AI website: " + NEXORA_OFFICIAL_WEBSITE;
+      typing.bubble.innerHTML = renderMarkdown(websiteReply);
+      session.messages.push({role:"bot",text:websiteReply});
+      voiceReplyToSpeak = websiteReply;
     } else if (isCreatorQuestion(message) && !files.length) {
       typing.bubble.innerHTML = renderMarkdown(CREATOR_REPLY);
       session.messages.push({role:"bot",text:CREATOR_REPLY});
