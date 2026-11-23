@@ -1767,7 +1767,7 @@ const sidebar = document.getElementById("sidebar");
 const LOCAL_CHAT_STORAGE_KEY="nexora_chat_sessions_local_v1";
 function loadLocalChatSessions(){try{const value=JSON.parse(localStorage.getItem(LOCAL_CHAT_STORAGE_KEY)||"[]");return Array.isArray(value)?value.filter(item=>item&&typeof item.id==="string"&&Array.isArray(item.messages)):[];}catch(_){return [];}}
 function persistLocalChatSessions(){try{localStorage.setItem(LOCAL_CHAT_STORAGE_KEY,JSON.stringify(sessions));}catch(error){console.warn("NEXORA could not save local chat history:",error);}}
-let busy=false, sessions=loadLocalChatSessions(), activeSessionId=sessions[0]?.id||null;
+let busy=false, sessions=loadLocalChatSessions(), activeSessionId=null;
 const historySearch=document.getElementById("historySearch");
 const historyList=document.getElementById("historyList");
 const chatSyncStatus=document.getElementById("chatSyncStatus");
@@ -2568,7 +2568,7 @@ async function syncNexoraCloudData(forcePull=false) {
       }
       cloudSyncApplying=true;
       sessions=[...merged.values()].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
-      if(!sessions.some(item=>item.id===activeSessionId))activeSessionId=sessions[0]?.id||null;
+      if(activeSessionId&&!sessions.some(item=>item.id===activeSessionId))activeSessionId=null;
       const ids=imageIdsInSessions(sessions);
       for(const id of ids){
         try{
@@ -4145,8 +4145,9 @@ document.getElementById("themeBtn").addEventListener("click", () => {
 // Always start in the requested light theme.
 setTheme(window.NEXORA_THEME?.get() || "light");
 
-// Restore the latest locally saved conversation on page reload.
-if(activeSessionId){renderSession(currentSession());}else{showWelcome();}
+// Always open a fresh blank chat on a new app/page launch. Previous conversations remain in Chat history.
+activeSessionId=null;
+showWelcome();
 renderHistory();
 
 /* NEXORA AI workspace upgrade: web search, projects, personalities, prompts,
