@@ -1749,6 +1749,13 @@ Here is the creator of NEXORA AI:
 function isNexoraWebsiteQuestion(text) {
   return /\b(?:nexora(?:\s+ai)?(?:\s+(?:official\s+)?)?(?:website|site|homepage|web\s+address)|(?:your|nexora(?:\s+ai)?(?:\s+official)?)\s+(?:website|site|homepage)(?:\s+(?:url|link|address))?|(?:website|site|homepage)\s+(?:link|url|address)\s+(?:of|for)\s+nexora)\b|\b(?:give|share|send|show|tell\s+me)\b.{0,35}\b(?:nexora|your)\b.{0,25}\b(?:website|site|homepage|link|url)\b/i.test(text);
 }
+function isImageHowToQuestion(text) {
+  const mentionsImage = /\b(images?|pictures?|photos?|artwork|illustrations?)\b/i.test(text);
+  const asksHow = /\b(how|where|which|can\s+you\s+tell\s+me|help\s+me|how\s+do\s+i)\b/i.test(text);
+  const imageAction = /\b(create|make|generate|edit|modify|change|draw|design|paint|remove\s+background|background\s+removal)\b/i.test(text);
+  const asksForFeature = /\b(option|feature|tool|button|studio|use|start|find|access)\b/i.test(text);
+  return mentionsImage && imageAction && (asksHow || asksForFeature);
+}
 function isCreatorQuestion(text) {
   return /\b(who\s+(made|created|invented|developed|built|founded)\s+(you|nexora)|who\s+is\s+(your|the)\s+(creator|inventor|founder|developer)|who\s+is\s+behind\s+nexora|tell\s+me\s+about\s+(your\s+creator|mayank)|who\s+owns\s+nexora)\b/i.test(text);
 }
@@ -3599,6 +3606,11 @@ async function sendMessage(text, options = {}) {
       typing.bubble.innerHTML = renderMarkdown(websiteReply);
       session.messages.push({role:"bot",text:websiteReply});
       voiceReplyToSpeak = websiteReply;
+    } else if (isImageHowToQuestion(message) && !files.length) {
+      const imageHelpReply = "To create or edit an image in NEXORA AI, tap the **+** icon beside the message box and choose **Create an image**.\n\nTo edit a picture, tap **+ → Photos and videos**, select your picture, and describe the changes you want. You can also use the **Create**, **Edit**, and **My gallery** sections in Image Studio.";
+      typing.bubble.innerHTML = renderMarkdown(imageHelpReply);
+      session.messages.push({role:"bot",text:imageHelpReply});
+      voiceReplyToSpeak = imageHelpReply;
     } else if (isCreatorQuestion(message) && !files.length) {
       typing.bubble.innerHTML = renderMarkdown(CREATOR_REPLY);
       session.messages.push({role:"bot",text:CREATOR_REPLY});
