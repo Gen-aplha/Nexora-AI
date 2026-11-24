@@ -3478,8 +3478,8 @@ async function addNexoraWatermark(imageData) {
   return canvas.toDataURL("image/png");
 }
 
-async function generateImage() {
-  const prompt = input.value.trim();
+async function generateImage(options = {}) {
+  const prompt = String(options.prompt || input.value || "").trim();
   const enhancePrompt = document.getElementById("imagePromptEnhance")?.checked;
   const generationPrompt = enhancePrompt ? prompt + ", excellent visual quality, thoughtful composition, refined lighting, crisp details, rich but balanced colors" : prompt;
   if (!prompt || busy) {
@@ -3493,7 +3493,7 @@ async function generateImage() {
   const session = ensureSession("Image: " + prompt);
   session.messages.push({role:"user",text:"Generate an image: " + prompt});
   saveSessions();
-  addMessage("user", "🎨 Generate image: " + prompt);
+  addMessage("user", options.displayText || ("🎨 Generate image: " + prompt));
   input.value = "";
   input.style.height = "auto";
   const typing = addMessage("bot", "", {typing:true});
@@ -3531,6 +3531,13 @@ async function generateImage() {
   }
 }
 // Image generation is started from the dedicated image-mode composer.
+
+function isImageEditFollowUp(message) {
+  const value = String(message || "").trim();
+  if (!value || value.length > 500) return false;
+  return /\\b(?:add|remove|erase|delete|replace|change|edit|make|turn|convert|transform|redraw|recreate|include|put|place|change|switch)\\b/i.test(value)
+    || /\\b(?:anime|animated|animation|cartoon|comic|watercolor|oil\\s+painting|sketch|3d|realistic|cinematic|pixel\\s+art|illustration)\\b/i.test(value);
+}
 
 function getImageGenerationPrompt(message) {
   const value = String(message || "").trim();
@@ -3586,6 +3593,36 @@ async function sendMessage(text, options = {}) {
   // Route clear image-generation requests to the image model instead of chat.
   // Users can type naturally and press Send, or use the Generate image button.
   if (!files.length) {
+    const active = currentSession();
+    const history = active && Array.isArray(active.messages) ? active.messages : [];
+    const latestMessage = history[history.length - 1];
+    if (latestMessage && latestMessage.role === "bot" && latestMessage.imageId && isImageEditFollowUp(message)) {
+      const priorUserMessage = [...history.slice(0, -1)].reverse().find(item => item && item.role === "user");
+      const originalPrompt = String(priorUserMessage?.text || "")
+        .replace(/^🎨 Generate image:\\s*/i, "")
+        .replace(/^Generate an image:\\s*/i, "")
+        .trim();
+      let visualDescription = "";
+      try {
+        const previousImage = await getGeneratedImage(latestMessage.imageId);
+        if (previousImage) {
+          const analysis = await postBackend({
+            action: "analyze_image",
+            message: "Describe the image's composition, subject, setting, colors, lighting, style and important visual details so a revised version can be recreated accurately.",
+            image: previousImage
+          });
+          visualDescription = String(analysis.reply || "").trim();
+        }
+      } catch (error) {
+        console.warn("Could not inspect the previous generated image; using its original prompt instead.", error);
+      }
+      const reference = visualDescription || originalPrompt || "the previous generated image";
+      const revisedPrompt = "Create a revised image based on this existing image. Preserve its main subject, composition, setting, color palette and overall visual identity wherever possible. Existing image description: " + reference + ". Apply the user's requested changes: " + message + ". Make the requested changes clearly visible and keep all unrelated details consistent. Return only the image.";
+      return generateImage({
+        prompt: revisedPrompt,
+        displayText: "🎨 Update previous image: " + message
+      });
+    }
     const imagePrompt = getImageGenerationPrompt(message);
     if (imagePrompt) {
       input.value = imagePrompt;
