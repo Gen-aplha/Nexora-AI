@@ -3538,6 +3538,76 @@ function isImageEditFollowUp(message) {
   return /\b(?:add|remove|erase|delete|replace|change|edit|make|turn|convert|transform|redraw|recreate|include|put|place|switch|animate|stylize|restyle)\b/i.test(value)
     || /\b(?:anime|animetic|animated|animation|cartoon|comic|watercolor|oil\s+painting|sketch|3d|realistic|cinematic|pixel\s+art|illustration|manga)\b/i.test(value);
 }
+async function editPreviousGeneratedImage(message, history, imageMessage) {
+  let previousImage = null;
+  try {
+    if (imageMessage?.imageId) previousImage = await getGeneratedImage(imageMessage.imageId);
+    if (!previousImage) {
+      const visibleImage = document.querySelector("#chat img.generated-image");
+      if (visibleImage) previousImage = visibleImage.currentSrc || visibleImage.src;
+    }
+  } catch (error) {
+    console.warn("Could not load the previous image:", error);
+  }
+  if (!previousImage) return false;
+
+  const session = ensureSession("Update image: " + message);
+  busy = true;
+  sendBtn.disabled = true;
+  generateImageBtn.disabled = true;
+  const shownText = "🎨 Update previous image: " + message;
+  session.messages.push({role:"user",text:shownText});
+  session.updatedAt = Date.now();
+  saveSessions();
+  addMessage("user", shownText);
+  const typing = addMessage("bot", "", {typing:true});
+  try {
+    const edited = await postBackend({
+      action:"edit_image",
+      image:previousImage,
+      prompt:"Edit the supplied image. Preserve the original subject, composition, camera angle, setting and all details not mentioned by the user. Apply this requested change clearly and naturally: " + message
+    });
+    if (!edited.image) throw new Error(edited.error || "The image editor returned no image.");
+    const rawImage = edited.image.startsWith("data:image/") ? edited.image : "data:image/png;base64," + edited.image;
+    const updatedImage = await addNexoraWatermark(rawImage);
+    typing.bubble.replaceChildren();
+    const caption = document.createElement("p");
+    caption.textContent = "Here is your updated image.";
+    const img = document.createElement("img");
+    img.className = "generated-image";
+    img.alt = "Image updated by NEXORA AI";
+    img.src = updatedImage;
+    prepareGeneratedImagePreview(img);
+    const download = document.createElement("button");
+    download.type = "button";
+    download.className = "download-image";
+    download.textContent = "⬇ Download image";
+    download.addEventListener("click",() => downloadImage(updatedImage,"nexora-ai-edited-image.png"));
+    typing.bubble.append(caption,img,download);
+    try {
+      const imageId = await saveGeneratedImage(updatedImage);
+      session.messages.push({role:"bot",text:"Here is your updated image.",imageId});
+      renderMyImages();
+    } catch (storageError) {
+      session.messages.push({role:"bot",text:"Here is your updated image. [It could not be saved in chat history on this browser.]"});
+    }
+  } catch (error) {
+    const failure = "I couldn't update that image: " + (error.message || "Please try again.");
+    typing.bubble.textContent = failure;
+    session.messages.push({role:"bot",text:failure});
+  } finally {
+    session.updatedAt = Date.now();
+    saveSessions();
+    renderHistory();
+    busy = false;
+    sendBtn.disabled = false;
+    generateImageBtn.disabled = false;
+    chat.scrollTop = chat.scrollHeight;
+    input.focus();
+  }
+  return true;
+}
+
 function getImageGenerationPrompt(message) {
   const value = String(message || "").trim();
   const patterns = [
@@ -3589,38 +3659,14 @@ async function sendMessage(text, options = {}) {
   let voiceReplyToSpeak = "";
   const files = pendingAttachments.slice();
   if ((!message && !files.length) || busy) return;
-  // Route clear image-generation requests to the image model instead of chat.
-  // Users can type naturally and press Send, or use the Generate image button.
+  // Route follow-up instructions to the image editor before normal chat handling.
   if (!files.length) {
     const active = currentSession();
     const history = active && Array.isArray(active.messages) ? active.messages : [];
-    const latestMessage = history[history.length - 1];
-    if (latestMessage && latestMessage.role === "bot" && latestMessage.imageId && isImageEditFollowUp(message)) {
-      const priorUserMessage = [...history.slice(0, -1)].reverse().find(item => item && item.role === "user");
-      const originalPrompt = String(priorUserMessage?.text || "")
-        .replace(/^🎨 Generate image:\\s*/i, "")
-        .replace(/^Generate an image:\\s*/i, "")
-        .trim();
-      let visualDescription = "";
-      try {
-        const previousImage = await getGeneratedImage(latestMessage.imageId);
-        if (previousImage) {
-          const analysis = await postBackend({
-            action: "analyze_image",
-            message: "Describe the image's composition, subject, setting, colors, lighting, style and important visual details so a revised version can be recreated accurately.",
-            image: previousImage
-          });
-          visualDescription = String(analysis.reply || "").trim();
-        }
-      } catch (error) {
-        console.warn("Could not inspect the previous generated image; using its original prompt instead.", error);
-      }
-      const reference = visualDescription || originalPrompt || "the previous generated image";
-      const revisedPrompt = "Create a revised image based on this existing image. Preserve its main subject, composition, setting, color palette and overall visual identity wherever possible. Existing image description: " + reference + ". Apply the user's requested changes: " + message + ". Make the requested changes clearly visible and keep all unrelated details consistent. Return only the image.";
-      return generateImage({
-        prompt: revisedPrompt,
-        displayText: "🎨 Update previous image: " + message
-      });
+    if (isImageEditFollowUp(message)) {
+      const imageMessage = [...history].reverse().find(item => item && item.role === "bot" && item.imageId);
+      const handled = await editPreviousGeneratedImage(message, history, imageMessage);
+      if (handled) return;
     }
     const imagePrompt = getImageGenerationPrompt(message);
     if (imagePrompt) {
