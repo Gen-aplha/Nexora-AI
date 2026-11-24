@@ -3484,7 +3484,16 @@ async function addNexoraWatermark(imageData) {
 async function generateImage() {
   const prompt = input.value.trim();
   const enhancePrompt = document.getElementById("imagePromptEnhance")?.checked;
-  const generationPrompt = enhancePrompt ? prompt + ", excellent visual quality, thoughtful composition, refined lighting, crisp details, rich but balanced colors" : prompt;
+  const qualitySuffix = ", excellent visual quality, thoughtful composition, refined lighting, crisp details, rich but balanced colors";
+  // The backend accepts at most 2,000 characters. Never let optional prompt
+  // enhancement push an otherwise valid pasted prompt over that limit.
+  if (prompt.length > 2000) {
+    alert("Your image prompt is " + prompt.length + " characters. Please shorten it to 2,000 characters or fewer, then try again.");
+    return;
+  }
+  const generationPrompt = enhancePrompt && prompt.length + qualitySuffix.length <= 2000
+    ? prompt + qualitySuffix
+    : prompt;
   if (!prompt || busy) {
     if (!prompt) alert("Type a description of the image you want, then tap Generate image.");
     return;
