@@ -3535,10 +3535,9 @@ async function generateImage(options = {}) {
 function isImageEditFollowUp(message) {
   const value = String(message || "").trim();
   if (!value || value.length > 500) return false;
-  return /\\b(?:add|remove|erase|delete|replace|change|edit|make|turn|convert|transform|redraw|recreate|include|put|place|change|switch)\\b/i.test(value)
-    || /\\b(?:anime|animated|animation|cartoon|comic|watercolor|oil\\s+painting|sketch|3d|realistic|cinematic|pixel\\s+art|illustration)\\b/i.test(value);
+  return /\b(?:add|remove|erase|delete|replace|change|edit|make|turn|convert|transform|redraw|recreate|include|put|place|switch|animate|stylize|restyle)\b/i.test(value)
+    || /\b(?:anime|animetic|animated|animation|cartoon|comic|watercolor|oil\s+painting|sketch|3d|realistic|cinematic|pixel\s+art|illustration|manga)\b/i.test(value);
 }
-
 function getImageGenerationPrompt(message) {
   const value = String(message || "").trim();
   const patterns = [
