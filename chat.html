@@ -3543,7 +3543,8 @@ async function editPreviousGeneratedImage(message, history, imageMessage) {
   try {
     if (imageMessage?.imageId) previousImage = await getGeneratedImage(imageMessage.imageId);
     if (!previousImage) {
-      const visibleImage = document.querySelector("#chat img.generated-image");
+      const visibleImages = chat.querySelectorAll("img.generated-image");
+      const visibleImage = visibleImages.length ? visibleImages[visibleImages.length - 1] : null;
       if (visibleImage) previousImage = visibleImage.currentSrc || visibleImage.src;
     }
   } catch (error) {
@@ -3664,9 +3665,14 @@ async function sendMessage(text, options = {}) {
     const active = currentSession();
     const history = active && Array.isArray(active.messages) ? active.messages : [];
     if (isImageEditFollowUp(message)) {
-      const imageMessage = [...history].reverse().find(item => item && item.role === "bot" && item.imageId);
-      const handled = await editPreviousGeneratedImage(message, history, imageMessage);
-      if (handled) return;
+      const imageMessage = [...history].reverse().find(item => item && item.role === "bot" && item.imageId) || null;
+      const visibleGeneratedImage = chat.querySelector("img.generated-image");
+      // Do not require an imageId: older chats or a failed local save can still
+      // have the generated image visible in the conversation.
+      if (imageMessage || visibleGeneratedImage) {
+        const handled = await editPreviousGeneratedImage(message, history, imageMessage);
+        if (handled) return;
+      }
     }
     const imagePrompt = getImageGenerationPrompt(message);
     if (imagePrompt) {
