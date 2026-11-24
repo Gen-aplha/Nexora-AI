@@ -3483,33 +3483,63 @@ async function addNexoraWatermark(imageData) {
 
 async function generateImage() {
   const prompt = input.value.trim();
+  const attached = pendingAttachments.slice();
+  const referenceImages = attached.filter(item => item.kind === "image");
+  const unsupportedAttachments = attached.filter(item => item.kind !== "image");
   const enhancePrompt = document.getElementById("imagePromptEnhance")?.checked;
   const qualitySuffix = ", excellent visual quality, thoughtful composition, refined lighting, crisp details, rich but balanced colors";
-  // The backend accepts at most 2,000 characters. Never let optional prompt
-  // enhancement push an otherwise valid pasted prompt over that limit.
+  if (!prompt) {
+    alert("Type a description of the image you want, then tap Generate image.");
+    return;
+  }
+  if (busy) return;
   if (prompt.length > 2000) {
     alert("Your image prompt is " + prompt.length + " characters. Please shorten it to 2,000 characters or fewer, then try again.");
     return;
   }
-  const generationPrompt = enhancePrompt && prompt.length + qualitySuffix.length <= 2000
-    ? prompt + qualitySuffix
-    : prompt;
-  if (!prompt || busy) {
-    if (!prompt) alert("Type a description of the image you want, then tap Generate image.");
+  if (referenceImages.length > 1) {
+    alert("Please attach one reference image at a time when creating an image.");
     return;
   }
+  if (unsupportedAttachments.length) {
+    alert("Image creation supports one reference photo at a time. Remove any video or document attachments, then try again.");
+    return;
+  }
+  const basePrompt = enhancePrompt && prompt.length + qualitySuffix.length <= 2000
+    ? prompt + qualitySuffix
+    : prompt;
   busy = true;
   setImageMode(false);
   sendBtn.disabled = true;
   generateImageBtn.disabled = true;
+  const reference = referenceImages[0] || null;
   const session = ensureSession("Image: " + prompt);
-  session.messages.push({role:"user",text:"Generate an image: " + prompt});
+  session.messages.push({role:"user",text:"Generate an image: " + prompt + (reference ? "\\n[Reference image: " + reference.name + "]" : "")});
   saveSessions();
-  addMessage("user", "🎨 Generate image: " + prompt);
+  const userMessage = addMessage("user", "🎨 Generate image: " + prompt + (reference ? "\\n📎 Reference image: " + reference.name : ""));
+  if (reference) appendAttachmentPreviews(userMessage.bubble, [reference]);
+  pendingAttachments = [];
+  renderAttachmentList();
   input.value = "";
   input.style.height = "auto";
   const typing = addMessage("bot", "", {typing:true});
   try {
+    let generationPrompt = basePrompt;
+    if (reference) {
+      typing.bubble.textContent = "Analyzing your reference image…";
+      const analysis = await postBackend({
+        action:"analyze_image",
+        message:"Describe the visible subject, appearance, colors, composition, style and important details of this image. Provide a concise visual reference description for an image-generation task.",
+        image:reference.data
+      });
+      if (!analysis.reply) throw new Error("The reference image could not be analyzed. Please try another image.");
+      const referenceContext = "\\n\\nREFERENCE IMAGE DETAILS (use as visual guidance):\\n" + analysis.reply;
+      generationPrompt = basePrompt + referenceContext;
+      if (generationPrompt.length > 2000) {
+        generationPrompt = basePrompt.slice(0, Math.max(0, 2000 - referenceContext.length)) + referenceContext;
+      }
+      if (generationPrompt.length > 2000) throw new Error("The reference image description is too long. Please use a shorter prompt or another image.");
+    }
     const data = await postBackend({action:"generate_image",prompt:generationPrompt});
     if (!data.image) throw new Error(data.error || "The image service returned no image.");
     const watermarkedImage = await addNexoraWatermark(data.image);
