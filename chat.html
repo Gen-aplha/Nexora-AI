@@ -3514,9 +3514,9 @@ async function generateImage() {
   generateImageBtn.disabled = true;
   const reference = referenceImages[0] || null;
   const session = ensureSession("Image: " + prompt);
-  session.messages.push({role:"user",text:"Generate an image: " + prompt + (reference ? "\\n[Reference image: " + reference.name + "]" : "")});
+  session.messages.push({role:"user",text:"Generate an image: " + prompt + (reference ? "\n[Reference image: " + reference.name + "]" : "")});
   saveSessions();
-  const userMessage = addMessage("user", "🎨 Generate image: " + prompt + (reference ? "\\n📎 Reference image: " + reference.name : ""));
+  const userMessage = addMessage("user", "🎨 Generate image: " + prompt + (reference ? "\n📎 Reference image: " + reference.name : ""));
   if (reference) appendAttachmentPreviews(userMessage.bubble, [reference]);
   pendingAttachments = [];
   renderAttachmentList();
@@ -3533,7 +3533,7 @@ async function generateImage() {
         image:reference.data
       });
       if (!analysis.reply) throw new Error("The reference image could not be analyzed. Please try another image.");
-      const referenceHeader = "\\n\\nREFERENCE IMAGE DETAILS (use as visual guidance):\\n";
+      const referenceHeader = "\n\nREFERENCE IMAGE DETAILS (use as visual guidance):\n";
       const availableContextLength = 2000 - basePrompt.length - referenceHeader.length;
       if (availableContextLength < 80) {
         throw new Error("Your prompt is too long to include the reference image details. Please shorten the prompt and try again.");
