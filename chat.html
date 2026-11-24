@@ -1756,6 +1756,9 @@ function isImageHowToQuestion(text) {
   const asksForFeature = /\b(option|feature|tool|button|studio|use|start|find|access)\b/i.test(text);
   return mentionsImage && imageAction && (asksHow || asksForFeature);
 }
+function isGeneratedImageChangeRequest(text) {
+  return /\b(update|change|edit|modify|adjust|replace|remove|erase|add|insert|include|make|turn|convert|transform|restyle|redesign|improve|fix|alter)\b/i.test(String(text || ""));
+}
 function isCreatorQuestion(text) {
   return /\b(who\s+(made|created|invented|developed|built|founded)\s+(you|nexora)|who\s+is\s+(your|the)\s+(creator|inventor|founder|developer)|who\s+is\s+behind\s+nexora|tell\s+me\s+about\s+(your\s+creator|mayank)|who\s+owns\s+nexora)\b/i.test(text);
 }
@@ -3632,6 +3635,11 @@ async function sendMessage(text, options = {}) {
       typing.bubble.innerHTML = renderMarkdown(websiteReply);
       session.messages.push({role:"bot",text:websiteReply});
       voiceReplyToSpeak = websiteReply;
+    } else if (!files.length && isGeneratedImageChangeRequest(message) && session.messages.slice(0, -1).some(item => item && item.role === "bot" && item.imageId)) {
+      const imageEditGuidance = "To make changes to the image you just generated, open **Images** using the **＋** button, then choose the **Edit** tab. Select the image from **My gallery** (or upload it), describe the changes you want, and tap **Edit image**. This chat can't apply changes directly to the generated image.";
+      typing.bubble.innerHTML = renderMarkdown(imageEditGuidance);
+      session.messages.push({role:"bot",text:imageEditGuidance});
+      voiceReplyToSpeak = imageEditGuidance;
     } else if (isImageHowToQuestion(message) && !files.length) {
       const imageHelpReply = "To create or edit an image in NEXORA AI, tap the **+** icon beside the message box and choose **Create an image**.\n\nTo edit a picture, tap **+ → Photos and videos**, select your picture, and describe the changes you want. You can also use the **Create**, **Edit**, and **My gallery** sections in Image Studio.";
       typing.bubble.innerHTML = renderMarkdown(imageHelpReply);
