@@ -4321,7 +4321,7 @@ setTheme(window.NEXORA_THEME?.get() || "light");
  close.addEventListener("click",shut);overlay.addEventListener("click",e=>{if(e.target===overlay)shut();});launch.addEventListener("click",open);
  form.addEventListener("submit",async e=>{e.preventDefault();const q=field.value.trim();if(!q||send.disabled)return;field.value="";messages.push({role:"user",content:q});add("user",q);send.disabled=true;status.textContent="NEXORA is responding…";try{const transcript=messages.slice(-12).map(m=>(m.role==="user"?"User: ":"NEXORA: ")+m.content).join("\n\n");const reply=await streamBackend({action:"chat",plusFeature:true,message:"Continue this temporary private conversation. It is not saved to chat history.\n\n"+transcript},()=>{});messages.push({role:"assistant",content:reply});add("assistant",reply);status.textContent="Temporary chat only — not saved."; }catch(err){status.textContent=err.message||"Could not send message.";}finally{send.disabled=false;}});
  window.addEventListener("keydown",e=>{if(e.key==="Escape"&&overlay.classList.contains("open"))shut();});
- window.nexoraSetTempPrivateVisible=visible=>{launch.hidden=!visible;};
+ window.nexoraSetTempPrivateVisible=visible=>{launch.hidden=!visible;};window.nexoraSetTempPrivateVisible(nexoraPlusAdmin);
 })();
 
 // Always open a fresh blank chat on a new app/page launch. Previous conversations remain in Chat history.
