@@ -3222,7 +3222,7 @@ codingAssistantSubmitBtn.addEventListener("click",()=>{
 });
 
 document.getElementById("pdfAssistantMenuBtn").addEventListener("click",()=>{composerMenu.hidden=true;composerPlus.setAttribute("aria-expanded","false");openPdfAssistant();});
-document.getElementById("codingAssistantMenuBtn").addEventListener("click",()=>{composerMenu.hidden=true;composerPlus.setAttribute("aria-expanded","false");openCodingAssistant();});
+// Advanced Coding is launched from the horizontal composer toolbar, not the old plus-menu button.
 document.getElementById("closePdfAssistantBtn").addEventListener("click",closePdfAssistant);
 pdfAssistantOverlay.addEventListener("click",event=>{if(event.target===pdfAssistantOverlay)closePdfAssistant();});
 document.getElementById("pdfAssistantChooseBtn").addEventListener("click",()=>pdfAssistantFileInput.click());
