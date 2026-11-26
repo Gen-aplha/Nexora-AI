@@ -9,11 +9,11 @@
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://gen-aplha.github.io/Nexora-AI/chat.html">
   <!-- NEXORA AI Favicon and App Icons -->
-  <link rel="icon" type="image/svg+xml" href="nexora-logo.svg?v=20261110">
-  <link rel="icon" type="image/svg+xml" href="nexora-logo.svg?v=20261110">
-  <link rel="icon" type="image/svg+xml" href="nexora-logo.svg?v=20261110">
-  <link rel="icon" type="image/svg+xml" href="nexora-logo.svg?v=20261110">
-  <link rel="apple-touch-icon" href="nexora-logo.svg?v=20261110">
+  <link rel="icon" type="image/svg+xml" href="nexora-logo-light.png?v=20261110">
+  <link rel="icon" type="image/svg+xml" href="nexora-logo-light.png?v=20261110">
+  <link rel="icon" type="image/svg+xml" href="nexora-logo-light.png?v=20261110">
+  <link rel="icon" type="image/svg+xml" href="nexora-logo-light.png?v=20261110">
+  <link rel="apple-touch-icon" href="nexora-logo-light.png?v=20261110">
   <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
 <style>
@@ -100,6 +100,33 @@ textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;bord
 .footnote{text-align:center;color:#717aa9;font-size:11px;margin-top:9px}
 .typing{display:inline-flex;gap:5px;padding:6px 2px}.typing i{width:6px;height:6px;background:#a79aff;border-radius:50%;animation:pulse 1s infinite alternate}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}@keyframes pulse{to{opacity:.25;transform:translateY(-3px)}}
 @media(max-width:680px){.sidebar{position:fixed;z-index:5;inset:0 auto 0 0;width:270px;transform:translateX(-105%);transition:transform .2s;box-shadow:20px 0 60px #0008}.sidebar.open{transform:translateX(0)}.menu-btn{display:block;border:1px solid var(--line);background:var(--panel2);color:white;border-radius:10px;padding:8px 11px}.topbar{height:70px;padding:10px 13px}.topbrand .logo-mark{width:42px;height:42px}.topbrand h1{font-size:16px}.topbrand p{font-size:11px}.status{font-size:11px}.chat{padding:22px 13px}.welcome{margin-top:9vh}.bubble-wrap{max-width:86%}.composer-wrap{padding:8px 10px 12px}.composer{border-radius:18px}.footnote{font-size:10px}}
+
+/* Temporary private chat launcher sits beside Voice Mode, matching the marked header area. */
+.nexora-utility-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px clamp(16px,4vw,50px)}
+.temp-private-launch{min-height:42px;padding:0 15px;border:1px solid #d8c8f4;border-radius:14px;background:#f5efff;color:#51318e;font-weight:750;box-shadow:0 5px 18px #6d3cff18}
+.temp-private-launch[hidden]{display:none!important}
+.temp-private-overlay{display:none;position:fixed;z-index:10020;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}
+.temp-private-overlay.open{display:flex}
+.temp-private-dialog{width:min(100%,560px);max-height:82dvh;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:var(--panel);color:var(--text);box-shadow:0 22px 70px #0005;padding:14px}
+.temp-private-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 12px;border-bottom:1px solid var(--line)}
+.temp-private-dialog>header strong,.temp-private-dialog>header small{display:block}.temp-private-dialog>header small{color:var(--muted);font-size:11px;margin-top:3px}
+.temp-private-dialog>header button{width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--panel2);color:var(--text);font-size:23px}
+.temp-private-log{min-height:180px;max-height:48dvh;overflow:auto;padding:10px 2px}
+.temp-private-message{max-width:88%;margin:7px 0;padding:9px 12px;border-radius:12px;background:var(--panel2);white-space:pre-wrap;overflow-wrap:anywhere}
+.temp-private-message.user{margin-left:auto;background:#6d3cff;color:#fff}
+#tempPrivateForm{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--line);border-radius:14px;padding:7px 9px}
+#tempPrivateForm textarea{min-height:40px;max-height:110px;padding:8px;background:transparent;color:var(--text)}
+#tempPrivateForm button{width:40px;height:40px;border:0;border-radius:50%;background:#25232e;color:#fff;font-size:20px}
+#tempPrivateStatus{min-height:16px;margin:8px 2px 0;color:var(--muted);font-size:11px}
+body[data-theme="light"] .topbar{background:#fff!important;color:#20212a!important;border-bottom-color:#e8e5ed!important}
+body[data-theme="light"] .topbrand h1{color:#20212a!important}
+body[data-theme="light"] .voice-mode-bar{background:#fff!important}
+body[data-theme="light"] .composer{background:#f5f5f7!important;border-color:#e3e1e8!important}
+body[data-theme="light"] .composer textarea{color:#20212a!important}
+body[data-theme="dark"] .topbar{background:#11101a!important;color:#f5f1ff!important;border-bottom-color:#343047!important}
+body[data-theme="dark"] .voice-mode-bar{background:#0c0e1d!important}
+body[data-theme="dark"] .temp-private-launch{background:#251b3d;color:#e7d9ff;border-color:#554078}
+body[data-theme="light"] .logo-mark{mix-blend-mode:normal!important;filter:drop-shadow(0 0 8px #7448e522)}
 
 /* Attachments and image generation */
 body.video-mode-open .composer,body.video-mode-open .voice-status,body.video-mode-open .footnote,body.video-mode-open .voice-mode-bar{display:none!important}.video-mode-panel .video-studio-scroll{color:#24212d}.video-studio-intro{color:#706b79;font-size:14px;line-height:1.6}.video-mode-panel label{display:block;margin:14px 0 6px;font-size:13px;font-weight:700;color:#393342}.video-mode-panel textarea,.video-mode-panel input,.video-mode-panel select{width:100%;min-height:46px;padding:12px;border:1px solid #dedbe7;border-radius:12px;background:#fff;color:#24212d;font:inherit}.video-mode-panel textarea{min-height:115px;resize:vertical}.video-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.video-controls label{min-width:0}.video-cost-note{margin:14px 0;padding:12px;border-radius:12px;background:#f3efff;color:#4d3d75;font-size:13px;line-height:1.5}.video-result{margin-top:16px;padding:12px;border:1px solid #dedbe7;border-radius:14px;background:#faf9fc}.video-result video{width:100%;max-height:420px;border-radius:10px;background:#111}.video-studio-status{min-height:24px;margin-top:10px;color:#5c4a83;font-size:13px}.video-edit-notice{margin:14px 0;padding:12px;border-radius:12px;background:#fff6e5;color:#664a14;font-size:13px;line-height:1.5}@media(max-width:600px){.video-controls{grid-template-columns:1fr}.video-controls label{margin:6px 0}}
@@ -711,8 +738,7 @@ body[data-theme="light"] .personalization-control{background:#f7f7fb;color:#2021
 @media(max-width:520px){.personalization-panel{padding:18px;border-radius:16px}.personalization-actions button{flex:1}}
 
 
-/* Keep the supplied logo readable on the light theme. */
-body[data-theme="light"] .logo-mark{mix-blend-mode:screen}
+/* Logo assets are selected before first paint by theme.js; no blend filter is needed. */
 
 /* AI Image Studio upgrade */
 .studio-tabs{display:flex;gap:7px;padding:5px;margin:0 0 18px;border-radius:14px;background:#f0edf8}
@@ -1304,7 +1330,7 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
 </head>
 <body data-theme="light">
 <div class="nexora-startup" id="nexoraStartup" aria-label="NEXORA AI starting" role="status">
-  <img class="nexora-startup-logo" src="nexora-logo.svg?v=20261110" alt="NEXORA logo">
+  <img class="nexora-startup-logo" src="nexora-logo-light.png?v=20261110" alt="NEXORA logo">
 </div>
 <script>
 (function(){
@@ -1325,7 +1351,7 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
 </script>
 <div class="first-launch-overlay" id="firstLaunchOverlay" aria-hidden="true">
   <section class="first-launch-panel" role="dialog" aria-modal="true" aria-labelledby="firstLaunchTitle">
-    <img class="first-launch-logo" src="nexora-logo.svg?v=20261110" alt="NEXORA logo">
+    <img class="first-launch-logo" src="nexora-logo-light.png?v=20261110" alt="NEXORA logo">
     <h2 id="firstLaunchTitle">Welcome to NEXORA AI</h2>
     <p>Choose how you'd like to get started.</p>
     <div class="first-launch-actions">
@@ -1478,7 +1504,8 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
       <a class="plus-top-link" href="plus.html" aria-label="Explore NEXORA PLUS"><span class="plus-top-icon" aria-hidden="true">✦</span><span>NEXORA PLUS</span><span class="plus-top-arrow" aria-hidden="true">›</span></a>
       <div class="status"><span class="dot"></span> Online</div>
     </header>
-    <div class="voice-mode-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-haspopup="dialog" aria-controls="voiceWipPage"><span class="voice-mode-label">🎙 Voice mode</span></button></div>
+    <div class="voice-mode-bar nexora-utility-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-haspopup="dialog" aria-controls="voiceWipPage"><span class="voice-mode-label">🎙 Voice mode</span></button><button class="temp-private-launch" id="tempPrivateLaunch" type="button" hidden>◉ Temporary Private Chat</button></div>
+<section class="temp-private-overlay" id="tempPrivateOverlay" aria-hidden="true"><div class="temp-private-dialog" role="dialog" aria-modal="true" aria-labelledby="tempPrivateTitle"><header><div><strong id="tempPrivateTitle">Temporary Private Chat</strong><small>Not saved to chat history</small></div><button type="button" id="tempPrivateClose" aria-label="Close temporary chat">×</button></header><div class="temp-private-log" id="tempPrivateLog" aria-live="polite"></div><form id="tempPrivateForm"><textarea id="tempPrivateInput" rows="1" maxlength="8000" placeholder="Message NEXORA AI" aria-label="Temporary private message"></textarea><button type="submit" id="tempPrivateSend">↑</button></form><p id="tempPrivateStatus" role="status">Messages stay in this page session only.</p></div></section>
     <section class="voice-wip-page" id="voiceWipPage" role="dialog" aria-modal="true" aria-label="NEXORA AI voice mode" hidden>
       <header class="voice-wip-header"><button type="button" class="voice-wip-back" id="voiceWipBack" aria-label="Back to chat">‹</button><strong>NEXORA AI</strong></header>
       <div class="voice-wip-content">
@@ -1497,7 +1524,7 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
     </section>
     <section class="chat" id="chat" aria-live="polite">
       <div class="welcome" id="welcome">
-        <img class="logo-mark" src="nexora-logo.svg?v=20261110" alt="NEXORA logo">
+        <img class="logo-mark" src="nexora-logo-light.png?v=20261110" alt="NEXORA logo">
         <h2>What can I help with?</h2>
         <p>Ask anything, explore ideas, learn something new, or create something useful.</p>
         <div class="suggestions">
@@ -2422,7 +2449,7 @@ if (!SpeechRecognition) {
 }
 
 
-const logoSVG = `<img class="logo-mark" src="nexora-logo.svg?v=20261110" alt="NEXORA logo">`;
+const logoSVG = `<img class="logo-mark" src="nexora-logo-light.png?v=20261110" alt="NEXORA logo">`;
 
 function showWelcome() {
   chat.classList.remove("has-messages");
@@ -3352,7 +3379,7 @@ async function refreshNexoraPlusStatus(){
   if(!session?.access_token){nexoraPlusAdmin=false;document.getElementById("accountMenuName")?.classList.remove("nexora-admin");return false;}
   const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:"plus_status"})});
   const data=await response.json().catch(()=>({}));
-  nexoraPlusAdmin=response.ok&&data.admin===true&&data.lifetime===true;
+  nexoraPlusAdmin=response.ok&&data.admin===true&&data.lifetime===true;window.nexoraSetTempPrivateVisible?.(nexoraPlusAdmin);
   document.getElementById("accountMenuName")?.classList.toggle("nexora-admin",nexoraPlusAdmin);
   return nexoraPlusAdmin;
  }catch(_){nexoraPlusAdmin=false;document.getElementById("accountMenuName")?.classList.remove("nexora-admin");return false;}
@@ -4281,6 +4308,19 @@ document.getElementById("themeBtn").addEventListener("click", () => {
 });
 // Always start in the requested light theme.
 setTheme(window.NEXORA_THEME?.get() || "light");
+
+// Temporary private chat is an admin-only, in-memory conversation.
+(function(){
+ const launch=document.getElementById("tempPrivateLaunch"),overlay=document.getElementById("tempPrivateOverlay"),close=document.getElementById("tempPrivateClose"),form=document.getElementById("tempPrivateForm"),field=document.getElementById("tempPrivateInput"),log=document.getElementById("tempPrivateLog"),status=document.getElementById("tempPrivateStatus"),send=document.getElementById("tempPrivateSend");
+ const messages=[];
+ function open(){overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");field.focus();}
+ function shut(){overlay.classList.remove("open");overlay.setAttribute("aria-hidden","true");}
+ function add(role,value){const node=document.createElement("div");node.className="temp-private-message "+role;node.textContent=value;log.append(node);log.scrollTop=log.scrollHeight;}
+ close.addEventListener("click",shut);overlay.addEventListener("click",e=>{if(e.target===overlay)shut();});launch.addEventListener("click",open);
+ form.addEventListener("submit",async e=>{e.preventDefault();const q=field.value.trim();if(!q||send.disabled)return;field.value="";messages.push({role:"user",content:q});add("user",q);send.disabled=true;status.textContent="NEXORA is responding…";try{const transcript=messages.slice(-12).map(m=>(m.role==="user"?"User: ":"NEXORA: ")+m.content).join("\n\n");const reply=await streamBackend({action:"chat",plusFeature:true,message:"Continue this temporary private conversation. It is not saved to chat history.\n\n"+transcript},()=>{});messages.push({role:"assistant",content:reply});add("assistant",reply);status.textContent="Temporary chat only — not saved."; }catch(err){status.textContent=err.message||"Could not send message.";}finally{send.disabled=false;}});
+ window.addEventListener("keydown",e=>{if(e.key==="Escape"&&overlay.classList.contains("open"))shut();});
+ window.nexoraSetTempPrivateVisible=visible=>{launch.hidden=!visible;};
+})();
 
 // Always open a fresh blank chat on a new app/page launch. Previous conversations remain in Chat history.
 activeSessionId=null;
