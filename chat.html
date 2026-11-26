@@ -1672,12 +1672,12 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
 
 <section class="image-mode-panel video-mode-panel" id="videoModePanel" hidden aria-label="Video studio">
 <header class="images-page-header"><button type="button" class="images-back" id="videoModeClose" aria-label="Back to chat">←</button><strong>Video</strong><span class="images-header-spacer"></span></header>
-<div class="images-page-scroll video-studio-scroll"><h2>Create and edit videos</h2><p class="video-studio-intro">Generate a short AI video from a text prompt. Video uploads for analysis can still be added directly to a normal chat using + → Photos and videos.</p>
+<div class="images-page-scroll video-studio-scroll"><h2>Create and edit videos</h2><p class="video-studio-intro">Video uploads for analysis are supported in normal chat using + → Photos and videos. AI video generation and editing are not active yet because no verified free provider is connected.</p>
 <div class="studio-tabs" role="tablist" aria-label="Video Studio sections"><button type="button" class="studio-tab active" data-video-tab="create" aria-selected="true">Create</button><button type="button" class="studio-tab" data-video-tab="edit" aria-selected="false">Edit</button></div>
 <section class="studio-section" id="videoStudioCreate"><label for="videoCreatePrompt">Describe your video</label><textarea id="videoCreatePrompt" maxlength="1800" placeholder="A cinematic 5-second aerial shot of a futuristic city at sunset…"></textarea>
 <div class="video-controls"><label>Duration<select id="videoDuration"><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="10">10 seconds</option></select></label><label>Aspect ratio<select id="videoAspect"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:3</option><option>3:4</option><option>3:2</option><option>2:3</option></select></label><label>Quality<select id="videoResolution"><option value="480p">480p · Lower cost</option><option value="720p">720p · Higher detail</option></select></label></div>
-<div class="video-cost-note" id="videoCostNote">Estimated model cost: $0.25 for 5 seconds at 480p. Actual billing may vary.</div><button type="button" class="image-generate-btn" id="generateVideoBtn" disabled>Generate video · Awaiting billing approval</button><p class="video-studio-status">Video generation is connected but locked until the adult responsible for Cloudflare billing approves paid usage.</p><div class="video-studio-status" id="videoCreateStatus" role="status" aria-live="polite"></div><div class="video-result" id="videoCreateResult" hidden></div></section>
-<section class="studio-section" id="videoStudioEdit" hidden><label for="videoEditSource">Source video URL</label><input id="videoEditSource" type="url" inputmode="url" placeholder="https://example.com/your-video.mp4"><label for="videoEditPrompt">Describe the changes you want</label><textarea id="videoEditPrompt" maxlength="1800" placeholder="Give it a cinematic teal look, slower camera movement and vertical framing…"></textarea><div class="notice video-edit-notice">Paste a publicly accessible HTTPS video URL. The model uses the source clip and your edit instructions to create an edited result.</div><button type="button" class="image-generate-btn" id="editVideoBtn" disabled>Generate edited video · Awaiting billing approval</button><button type="button" class="tool-btn" id="useVideoEditPrompt">Use edit prompt in Create instead</button></section>
+<div class="video-cost-note" id="videoCostNote">No generation provider is active. No video-generation charges will be made.</div><button type="button" class="image-generate-btn" id="generateVideoBtn" disabled>Video generation unavailable</button><p class="video-studio-status">This page is a placeholder until a genuinely free provider is verified and connected.</p><div class="video-studio-status" id="videoCreateStatus" role="status" aria-live="polite"></div><div class="video-result" id="videoCreateResult" hidden></div></section>
+<section class="studio-section" id="videoStudioEdit" hidden><label for="videoEditSource">Source video URL</label><input id="videoEditSource" type="url" inputmode="url" placeholder="https://example.com/your-video.mp4"><label for="videoEditPrompt">Describe the changes you want</label><textarea id="videoEditPrompt" maxlength="1800" placeholder="Give it a cinematic teal look, slower camera movement and vertical framing…"></textarea><div class="notice video-edit-notice">Paste a publicly accessible HTTPS video URL. The model uses the source clip and your edit instructions to create an edited result.</div><button type="button" class="image-generate-btn" id="editVideoBtn" disabled>Video editing unavailable</button><button type="button" class="tool-btn" id="useVideoEditPrompt">Use edit prompt in Create instead</button></section>
 </div></section>
       <form class="composer" id="chatForm">
         <button class="plus-btn" id="composerPlus" type="button" aria-label="Add photos, files or create an image" aria-expanded="false">＋</button>
@@ -3378,13 +3378,13 @@ let nexoraPlusAdmin=false;
 async function refreshNexoraPlusStatus(){
  try{
   const session=supabaseSession || (await supabaseClient?.auth.getSession())?.data?.session;
-  if(!session?.access_token){nexoraPlusAdmin=false;document.getElementById("accountMenuName")?.classList.remove("nexora-admin");return false;}
+  if(!session?.access_token){nexoraPlusAdmin=false;window.nexoraSetTempPrivateVisible?.(false);document.getElementById("accountMenuName")?.classList.remove("nexora-admin");return false;}
   const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:"plus_status"})});
   const data=await response.json().catch(()=>({}));
   nexoraPlusAdmin=response.ok&&data.admin===true&&data.lifetime===true;window.nexoraSetTempPrivateVisible?.(nexoraPlusAdmin);
   document.getElementById("accountMenuName")?.classList.toggle("nexora-admin",nexoraPlusAdmin);
   return nexoraPlusAdmin;
- }catch(_){nexoraPlusAdmin=false;document.getElementById("accountMenuName")?.classList.remove("nexora-admin");return false;}
+ }catch(_){nexoraPlusAdmin=false;window.nexoraSetTempPrivateVisible?.(false);document.getElementById("accountMenuName")?.classList.remove("nexora-admin");return false;}
 }
 let supabaseSession=null;
 let pendingVerificationEmail="";
@@ -4203,6 +4203,7 @@ renderAccountButton();
 if(supabaseClient){
  supabaseClient.auth.onAuthStateChange((_event,session)=>{
    supabaseSession=session;
+   refreshNexoraPlusStatus();
    if(session?.user){
      accountProfile={name:session.user.user_metadata?.name||session.user.email?.split("@")[0]||"NEXORA user",email:session.user.email,picture:localStorage.getItem(PROFILE_PICTURE_KEY)||""};
      closeFirstLaunch();closeAccount();
@@ -4211,7 +4212,7 @@ if(supabaseClient){
      renderAccountButton();
      if (_event === "SIGNED_IN" || _event === "TOKEN_REFRESHED") queueNexoraCloudSync(true);
    } else if (_event === "SIGNED_OUT") {
-     supabaseSession=null;sessions=[];activeSessionId=null;showWelcome();renderHistory();updateChatSyncStatus("Sign in with Google to sync chats");
+     supabaseSession=null;nexoraPlusAdmin=false;window.nexoraSetTempPrivateVisible?.(false);document.getElementById("accountMenuName")?.classList.remove("nexora-admin");sessions=[];activeSessionId=null;showWelcome();renderHistory();updateChatSyncStatus("Sign in with Google to sync chats");
    }
  });
 }
@@ -4222,6 +4223,7 @@ async function initializeNexoraAuth(){
      const {data,error}=await supabaseClient.auth.getSession();
      if(error)throw error;
      supabaseSession=data.session;
+     await refreshNexoraPlusStatus();
      if(supabaseSession?.user){
        hasSupabaseSession=true;
        accountProfile={name:supabaseSession.user.user_metadata?.name||supabaseSession.user.email?.split("@")[0]||"NEXORA user",email:supabaseSession.user.email,picture:localStorage.getItem(PROFILE_PICTURE_KEY)||""};
