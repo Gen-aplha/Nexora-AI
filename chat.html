@@ -106,11 +106,7 @@ textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;bord
 .nexora-upgrade-bar{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 #advancedCodingToolbarBtn{flex:0 0 auto;min-height:40px;white-space:nowrap}
 .nexora-utility-bar{justify-content:space-between!important;padding-right:clamp(16px,5vw,70px)!important}
-.nexora-utility-bar .voice-mode-btn,.nexora-utility-bar .temp-private-launch{height:44px;min-height:44px;flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;white-space:nowrap;font-size:13px;font-weight:800;letter-spacing:.15px}
-.nexora-utility-bar .temp-private-launch{padding:0 12px;border:1px solid #6d28d9;background:linear-gradient(110deg,#19004f 0%,#4b16a6 52%,#24006d 100%);color:#fff;box-shadow:0 5px 22px rgba(91,33,182,.32),inset 0 1px 0 rgba(255,255,255,.18);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
-.nexora-utility-bar .temp-private-launch:active{transform:scale(.98)}
-.temp-private-icon{width:19px;height:19px;display:block;flex:0 0 19px}
-@media(max-width:560px){.nexora-utility-bar{gap:10px!important;padding:8px 14px 12px!important}.nexora-utility-bar .voice-mode-btn,.nexora-utility-bar .temp-private-launch{height:42px;min-height:42px;font-size:11px;gap:5px;padding:0 8px;letter-spacing:0}.temp-private-icon{width:17px;height:17px;flex-basis:17px}}
+.temp-private-launch{cursor:pointer}
 .temp-private-launch[hidden]{display:none!important}
 .temp-private-overlay{display:none;position:fixed;z-index:10020;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}
 .temp-private-overlay.open{display:flex}
@@ -132,7 +128,7 @@ body[data-theme="light"] .composer{background:#f5f5f7!important;border-color:#e3
 body[data-theme="light"] .composer textarea{color:#20212a!important}
 body[data-theme="dark"] .topbar{background:#11101a!important;color:#f5f1ff!important;border-bottom-color:#343047!important}
 body[data-theme="dark"] .voice-mode-bar{background:#0c0e1d!important}
-body[data-theme="dark"] .temp-private-launch{background:#251b3d;color:#e7d9ff;border-color:#554078}
+body[data-theme="dark"] .temp-private-launch{background:rgba(109,60,255,.12);color:var(--text);border-color:rgba(139,111,255,.35)}
 body[data-theme="light"] .logo-mark{mix-blend-mode:normal!important;filter:drop-shadow(0 0 8px #7448e522)}
 
 /* Attachments and image generation */
@@ -1511,7 +1507,7 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
       <a class="plus-top-link" href="plus.html" aria-label="Explore NEXORA PLUS"><span class="plus-top-icon" aria-hidden="true">✦</span><span>NEXORA PLUS</span><span class="plus-top-arrow" aria-hidden="true">›</span></a>
       <div class="status"><span class="dot"></span> Online</div>
     </header>
-    <div class="voice-mode-bar nexora-utility-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-haspopup="dialog" aria-controls="voiceWipPage"><span class="voice-mode-label">🎙 Voice mode</span></button><button class="temp-private-launch" id="tempPrivateLaunch" type="button" hidden><svg class="temp-private-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.5c1.8-2.7 4.8-4.2 9-4.2s7.2 1.5 9 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4.2 12.2h5.1c.2 2.1-.8 3.5-2.5 3.5-1.5 0-2.5-1.3-2.6-3.5Zm10.5 0h5.1c-.1 2.2-1.1 3.5-2.6 3.5-1.7 0-2.7-1.4-2.5-3.5Z" fill="currentColor"/><path d="M9.3 13.1h5.4M2.5 18.8h19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Temporary chat</span></button></div>
+    <div class="voice-mode-bar nexora-utility-bar"><button class="voice-mode-btn" id="voiceModeBtn" type="button" aria-haspopup="dialog" aria-controls="voiceWipPage"><span class="voice-mode-label">🎙 Voice mode</span></button><button class="voice-mode-btn temp-private-launch" id="tempPrivateLaunch" type="button" hidden><span class="voice-mode-label">Temperory chat</span></button></div>
 <section class="temp-private-overlay" id="tempPrivateOverlay" aria-hidden="true"><div class="temp-private-dialog" role="dialog" aria-modal="true" aria-labelledby="tempPrivateTitle"><header><div><strong id="tempPrivateTitle">Temporary Private Chat</strong><small>Not saved to chat history</small></div><button type="button" id="tempPrivateClose" aria-label="Close temporary chat">×</button></header><div class="temp-private-log" id="tempPrivateLog" aria-live="polite"></div><form id="tempPrivateForm"><textarea id="tempPrivateInput" rows="1" maxlength="8000" placeholder="Message NEXORA AI" aria-label="Temporary private message"></textarea><button type="submit" id="tempPrivateSend">↑</button></form><p id="tempPrivateStatus" role="status">Messages stay in this page session only.</p></div></section>
     <section class="voice-wip-page" id="voiceWipPage" role="dialog" aria-modal="true" aria-label="NEXORA AI voice mode" hidden>
       <header class="voice-wip-header"><button type="button" class="voice-wip-back" id="voiceWipBack" aria-label="Back to chat">‹</button><strong>NEXORA AI</strong></header>
