@@ -9,10 +9,7 @@
 <section class="hero"><div class="pill">PRIVATE ADMIN WORKSPACE</div><h1>NEXORA PLUS</h1><p class="muted">Owner tools and early premium features. Your assistants and chat backups are stored in this browser unless you export them.</p><div id="authStatus" class="status">Verifying your account…</div></section>
 <div id="workspace" hidden>
 <div class="grid">
-<section class="card"><h2>◈ Custom assistants</h2><p>Create assistants with their own instructions. Saved in this browser and launched inside NEXORA Chat.</p>
-<label for="assistantName">Assistant name</label><input id="assistantName" maxlength="50" placeholder="e.g. Study Coach">
-<label for="assistantInstructions">Instructions</label><textarea id="assistantInstructions" maxlength="5000" placeholder="Describe its role, tone, rules and what it should help with."></textarea>
-<div class="actions"><button id="saveAssistant">Save assistant</button></div><div id="assistantList" class="list"></div><div id="assistantStatus" class="status"></div></section>
+
 <section class="card"><h2>↻ Chat backup & management</h2><p>Export or restore your locally saved NEXORA conversations. Import merges valid chats without replacing the existing history.</p>
 <div class="actions"><button id="exportBackup">Export backup JSON</button><button class="secondary" id="chooseBackup">Import backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden></div><div id="backupStatus" class="status"></div></section>
 <section class="card"><h2>◌ Temporary private chat</h2><p>This workspace chat exists only in memory. It is not added to NEXORA chat history by this page.</p>
