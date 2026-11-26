@@ -20,36 +20,66 @@ a{color:inherit}.wrap{width:min(1080px,calc(100% - 32px));margin:auto}.top{heigh
 <body>
 <header class="top wrap"><a class="brand" href="index.html"><img src="nexora-logo.svg?v=20261110" alt="NEXORA AI logo">NEXORA <span>AI</span></a><a class="back" href="chat.html">← Back to chat</a></header>
 <main class="wrap">
-<section class="hero"><div class="eyebrow">MORE POSSIBILITIES. ONE MEMBERSHIP.</div><h1>Meet <span style="color:var(--gold)">NEXORA PLUS</span></h1><p>Unlock advanced creative and productivity tools as they become available. Keep using NEXORA AI Free without a subscription.</p></section>
-<section class="plans" aria-label="NEXORA PLUS plans">
-<article class="plan"><h2>Weekly</h2><div class="price">₹15 <small>/ 7 days</small></div><p class="muted">A short way to try PLUS.</p><ul><li>PLUS features while active</li><li>Premium account badge</li><li>Manual renewal</li></ul><button class="choose" data-plan="Weekly — ₹15">Choose weekly</button></article>
-<article class="plan featured"><span class="tag">POPULAR</span><h2>Monthly</h2><div class="price">₹49 <small>/ month</small></div><p class="muted">More time to explore premium tools.</p><ul><li>PLUS features while active</li><li>Premium themes and customization</li><li>Higher eligible usage limits</li></ul><button class="choose" data-plan="Monthly — ₹49">Choose monthly</button></article>
-<article class="plan"><h2>Yearly</h2><div class="price">₹499 <small>/ year</small></div><p class="muted">Long-term access at the yearly price.</p><ul><li>PLUS features while active</li><li>Early access to selected features</li><li>Manual renewal</li></ul><button class="choose" data-plan="Yearly — ₹499">Choose yearly</button></article>
+<section class="hero"><div class="eyebrow">PRIVATE OWNER PREVIEW</div><h1>NEXORA <span style="color:var(--gold)">PLUS</span></h1><p id="accessMessage">Checking account access…</p></section>
+<section id="adminPreview" hidden>
+  <div class="notice"><b>ADMIN PREVIEW ONLY — NEXORA PLUS IS NOT LIVE.</b><br>These planned features are visible only to the two authorized owner accounts. No subscription, payment, membership activation or public PLUS access is enabled.</div>
+  <section class="section"><h2>Planned PLUS features</h2><div class="features">
+    <div class="feature"><b>✧ High-resolution images</b><p>Higher-resolution AI image output, subject to available generation capacity.</p></div>
+    <div class="feature"><b>⌘ Advanced coding</b><p>Code generation, debugging, explanations, multiple languages, website creation and project help.</p></div>
+    <div class="feature"><b>▣ Video AI</b><p>Video understanding and AI video generation when supported services are integrated.</p></div>
+    <div class="feature"><b>◈ Custom assistants</b><p>Create custom AI assistants, add instructions and use premium themes.</p></div>
+    <div class="feature"><b>♛ Premium benefits</b><p>Early feature access, a PLUS badge and higher file upload limits.</p></div>
+    <div class="feature"><b>▤ Advanced File Assistant</b><p>Deeper document analysis, file-based questions and working across supported uploads.</p></div>
+    <div class="feature"><b>↻ Subscription controls</b><p>View membership status, expiry and renewal information after launch.</p></div>
+    <div class="feature"><b>◌ Private &amp; temporary chats</b><p>Temporary conversations separate from regular chat history, with final privacy details to be confirmed before launch.</p></div>
+    <div class="feature"><b>▤ Chat backup &amp; management</b><p>Export and import chat backups, and manage saved conversations.</p></div>
+  </div></section>
 </section>
-<div class="notice"><b>Payments are not enabled yet.</b> These plans are being prepared. Choosing a plan will not charge you, create an order, or activate PLUS. We'll connect an approved merchant payment provider before accepting payments.</div>
-<section class="section"><h2>What PLUS is planned to include</h2><div class="features">
-<div class="feature"><b>✧ High-resolution images</b><p>Higher-resolution AI image output, subject to available generation capacity.</p></div>
-<div class="feature"><b>⌘ Advanced coding</b><p>Code generation, debugging, explanations, multiple languages, website creation and project help.</p></div>
-<div class="feature"><b>▣ Video AI</b><p>Video understanding and AI video generation when supported services are integrated.</p></div>
-<div class="feature"><b>◈ Custom assistants</b><p>Create custom AI assistants, add instructions and use premium themes.</p></div>
-<div class="feature"><b>♛ Premium benefits</b><p>Early feature access, a PLUS badge and higher file upload limits.</p></div>
-<div class="feature"><b>▤ Advanced File Assistant</b><p>Planned NEXORA PLUS feature for deeper document analysis, file-based questions and working across supported uploads. Regular file attachments remain available in NEXORA AI.</p></div>
-<div class="feature"><b>↻ Subscription controls</b><p>View membership status, expiry and renewal information.</p></div>
-<div class="feature"><b>◌ Private &amp; temporary chats</b><p>Start temporary conversations that stay separate from your regular chat history. Final privacy and data-handling details will be provided when this feature launches.</p></div>
- <div class="feature"><b>▤ Chat backup &amp; management</b><p>Export and import chat backups, and clear saved conversations when you choose. Planned as a NEXORA PLUS feature; availability will be confirmed when PLUS launches.</p></div>
-</div></section>
+<section id="restrictedNotice" class="notice" hidden>
+  <b>PLUS owner preview is restricted.</b><br>Sign in to NEXORA AI using an authorized owner Google account, then return to this page. NEXORA PLUS is not available to the public and is not live yet.
+  <p><a href="chat.html">Go to NEXORA AI sign in</a></p>
+</section>
 </main>
 <footer class="foot">NEXORA PLUS · Manual renewal planned · <a href="privacy.html">Privacy</a></footer>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div class="dialog"><button class="close" id="close" type="button">Close</button><h2 id="dialogTitle">Plan not available yet</h2><p id="dialogText">Payments are not connected yet. No payment has been requested and your account has not been upgraded.</p><p class="muted">Please check back after the official payment system is ready.</p></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const modal=document.getElementById('modal');
-document.querySelectorAll('[data-plan]').forEach(button=>button.addEventListener('click',()=>{
- document.getElementById('dialogTitle').textContent=button.dataset.plan+' — coming soon';
- modal.classList.add('show');
-}));
-document.getElementById('close').addEventListener('click',()=>modal.classList.remove('show'));
-modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('show')});
+(() => {
+  const OWNER_EMAILS = new Set([
+    "mayankhindubro@gmail.com",
+    "nexora.ai.by.mrg@gmail.com"
+  ]);
+  const message = document.getElementById("accessMessage");
+  const preview = document.getElementById("adminPreview");
+  const restricted = document.getElementById("restrictedNotice");
+  const client = window.supabase?.createClient(
+    "https://jtwzxboewbzyuhlrfwnf.supabase.co",
+    "sb_publishable_EXZz3Lkvb9bB1I9huTQTeQ_rd6IMX2C"
+  );
+  function showForSession(session) {
+    const email = String(session?.user?.email || "").trim().toLowerCase();
+    const isOwner = Boolean(session?.user?.id && OWNER_EMAILS.has(email));
+    preview.hidden = !isOwner;
+    restricted.hidden = isOwner;
+    message.textContent = isOwner
+      ? "Owner access confirmed. This is a private feature preview; PLUS remains disabled."
+      : "NEXORA PLUS is being prepared and is not publicly available.";
+  }
+  if (!client) {
+    message.textContent = "Account verification is temporarily unavailable. Please open this page again later.";
+    restricted.hidden = false;
+    return;
+  }
+  client.auth.getSession().then(({data,error}) => {
+    if (error) throw error;
+    showForSession(data.session);
+  }).catch(() => {
+    preview.hidden = true;
+    restricted.hidden = false;
+    message.textContent = "Could not verify your owner account. Please sign in again through NEXORA AI.";
+  });
+  client.auth.onAuthStateChange((_event,session) => showForSession(session));
+})();
 </script>
 </body>
 </html>
