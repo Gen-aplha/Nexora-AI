@@ -1,92 +1,13 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#17151f"><title>NEXORA PLUS Workspace</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="theme.js"></script><link rel="stylesheet" href="theme.css">
-<style>
-:root{color-scheme:dark;--bg:#17151f;--panel:#211e2c;--line:#3d354e;--text:#f7f4ff;--muted:#b8afc8;--accent:#9c79ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#3b2867 0,transparent 45%),var(--bg);color:var(--text);font:15px/1.55 Inter,system-ui,sans-serif}.wrap{width:min(1040px,calc(100% - 28px));margin:auto}.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid var(--line)}a{color:#c8b7ff}.top a{text-decoration:none}.hero{padding:30px 0 16px}.hero h1{font-size:clamp(30px,6vw,44px);margin:0}.muted{color:var(--muted)}.admin{display:inline-flex;align-items:center;gap:7px;color:#9ecbff;font-weight:800;font-size:12px}.check{display:inline-flex;width:17px;height:17px;border-radius:50%;align-items:center;justify-content:center;background:#2388f5;color:white;font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:18px 0 40px}.card{background:rgba(33,30,44,.94);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}.card h2{font-size:18px;margin:0 0 5px}.card p{color:var(--muted);font-size:13px;margin:5px 0 13px}label{display:block;font-size:12px;font-weight:700;margin:10px 0 5px}input,textarea,select{width:100%;padding:11px;border:1px solid #514761;border-radius:10px;background:#17141e;color:var(--text);font:inherit}textarea{min-height:88px;resize:vertical}button,.button{min-height:43px;border:0;border-radius:10px;padding:10px 14px;background:linear-gradient(110deg,#7049d5,#a33de2);color:#fff;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}button.secondary{background:#302a3d;border:1px solid #514761;color:var(--text)}button:disabled{opacity:.5;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.status{font-size:12px;min-height:18px;color:#c9baff;margin-top:8px}.list{display:grid;gap:8px;margin-top:12px}.item{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px}.item small{display:block;color:var(--muted)}.chatlog{height:240px;overflow:auto;background:#15121c;border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px 0}.bubble{padding:9px 11px;margin:7px 0;border-radius:10px;background:#2b2637;white-space:pre-wrap;overflow-wrap:anywhere}.bubble.user{background:#45306f}.row{display:flex;gap:8px}.row>*{min-width:0}.row input{flex:1}.notice{border:1px solid #6a5730;background:#302719;color:#f1dca7;border-radius:12px;padding:12px;font-size:13px}.pill{display:inline-block;font-size:10px;color:#b5a0ff;border:1px solid #59468a;border-radius:30px;padding:3px 8px;margin-bottom:8px}@media(max-width:700px){.grid{grid-template-columns:1fr}.top{gap:8px}.row{flex-direction:column}}
-</style></head><body><div class="wrap">
-<header class="top"><a href="chat.html">← NEXORA AI</a><span class="admin"><span class="check">✓</span> VERIFIED OWNER · LIFETIME PLUS</span></header>
-<section class="hero"><div class="pill">PRIVATE ADMIN WORKSPACE</div><h1>NEXORA PLUS</h1><p class="muted">Owner tools and early premium features. Your assistants and chat backups are stored in this browser unless you export them.</p><div id="authStatus" class="status">Verifying your account…</div></section>
-<div id="workspace" hidden>
-<div class="grid">
-
-
-<section class="card"><h2>◌ Temporary private chat</h2><p>This workspace chat exists only in memory. It is not added to NEXORA chat history by this page.</p>
-<div id="tempLog" class="chatlog" aria-live="polite"></div><div class="row"><input id="tempInput" maxlength="8000" placeholder="Ask NEXORA…"><button id="tempSend">Send</button></div><div id="tempStatus" class="status"></div></section>
-
-
-
-
-
-</div></div></div>
-<script>
-const API="https://nexora-ai-backend-v2.mayankhindubro.workers.dev",STREAM="https://nexora-ai-stream.mayankhindubro.workers.dev";
-const SB_URL="https://jtwzxboewbzyuhlrfwnf.supabase.co",SB_KEY="sb_publishable_EXZz3Lkvb9bB1I9huTQTeQ_rd6IMX2C";
-const client=window.supabase?.createClient(SB_URL,SB_KEY);let accessToken="",tempMessages=[];
-const $=id=>document.getElementById(id),status=(id,msg)=>$(id).textContent=msg;
-async function verify(){
- try{
-  const session=(await client?.auth.getSession())?.data?.session;
-  accessToken=session?.access_token||"";
-  if(!accessToken)throw new Error("Sign in with one of the NEXORA owner Google accounts first.");
-  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken},body:JSON.stringify({action:"plus_status"})});
-  const d=await r.json();if(!r.ok||d.admin!==true||d.lifetime!==true)throw new Error("This PLUS workspace is available only to verified owner accounts.");
-  $("workspace").hidden=false;status("authStatus","Lifetime PLUS verified for "+(d.displayName||"owner")+".");renderAssistants();
- }catch(e){status("authStatus",e.message||"Could not verify your account.");}
-}
-async function stream(payload,onChunk=()=>{}){
- const r=await fetch(STREAM,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken},body:JSON.stringify({...payload,plusFeature:true})});
- if(!r.ok){const t=await r.text();let d={};try{d=JSON.parse(t)}catch{}throw new Error(d.error||"AI request failed ("+r.status+").");}
- const reader=r.body.getReader(),decoder=new TextDecoder();let buf="",full="";
- const consume=chunk=>{for(const line of chunk.split(/\r?\n/)){if(!line.startsWith("data:"))continue;const raw=line.slice(5).trim();if(!raw||raw==="[DONE]")continue;try{const x=JSON.parse(raw),part=x.response||x.generated_text||x.text||x.choices?.[0]?.delta?.content||"";if(part){full+=part;onChunk(full)}}catch{}}};
- while(true){const {value,done}=await reader.read();if(done)break;buf+=decoder.decode(value,{stream:true});const events=buf.split(/\r?\n\r?\n/);buf=events.pop();events.forEach(consume)}
- if(buf)consume(buf);return full;
-}
-const ASSISTANTS="nexora_plus_assistants_v1",CHATS="nexora_chat_sessions_local_v1";
-function readAssistants(){try{const a=JSON.parse(localStorage.getItem(ASSISTANTS)||"[]");return Array.isArray(a)?a:[]}catch{return []}}
-function renderAssistants(){
- const list=$("assistantList");list.replaceChildren();
- readAssistants().forEach(a=>{const row=document.createElement("div");row.className="item";const label=document.createElement("span");label.textContent=a.name;const actions=document.createElement("span");const use=document.createElement("button");use.textContent="Use";use.onclick=()=>location.href="chat.html?assistant="+encodeURIComponent(a.id);const del=document.createElement("button");del.className="secondary";del.textContent="Delete";del.onclick=()=>{localStorage.setItem(ASSISTANTS,JSON.stringify(readAssistants().filter(x=>x.id!==a.id)));renderAssistants()};actions.append(use,del);row.append(label,actions);list.append(row)});
-}
-$("saveAssistant").onclick=()=>{
- const name=$("assistantName").value.trim(),instructions=$("assistantInstructions").value.trim();
- if(!name||!instructions){status("assistantStatus","Enter a name and instructions.");return;}
- const items=readAssistants();items.push({id:"asst_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7),name,instructions,createdAt:new Date().toISOString()});
- localStorage.setItem(ASSISTANTS,JSON.stringify(items));$("assistantName").value="";$("assistantInstructions").value="";status("assistantStatus","Assistant saved in this browser.");renderAssistants();
-};
-function safeDownload(data,name,type){const url=URL.createObjectURL(new Blob([data],{type})),a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
-$("exportBackup").onclick=()=>{try{const chats=JSON.parse(localStorage.getItem(CHATS)||"[]");safeDownload(JSON.stringify({format:"nexora-chat-backup",version:1,exportedAt:new Date().toISOString(),chats},null,2),"nexora-chat-backup.json","application/json");status("backupStatus","Backup exported from this browser.");}catch(e){status("backupStatus","Could not read local chat history.");}};
-$("chooseBackup").onclick=()=>$("backupFile").click();
-$("backupFile").onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{if(f.size>5_000_000)throw new Error("Backup must be smaller than 5 MB.");const data=JSON.parse(await f.text()),incoming=Array.isArray(data)?data:data.chats;if(!Array.isArray(incoming))throw new Error("This file is not a NEXORA chat backup.");const valid=incoming.filter(x=>x&&typeof x.id==="string"&&Array.isArray(x.messages)&&x.messages.length<10000);const existing=JSON.parse(localStorage.getItem(CHATS)||"[]");const map=new Map(existing.map(x=>[x.id,x]));valid.forEach(x=>{if(!map.has(x.id))map.set(x.id,x)});localStorage.setItem(CHATS,JSON.stringify([...map.values()].slice(-1000)));status("backupStatus","Imported "+valid.length+" valid conversations. Existing chats were preserved.");}catch(err){status("backupStatus",err.message||"Import failed.");}finally{e.target.value=""}};
-function addTemp(role,text){const b=document.createElement("div");b.className="bubble "+role;b.textContent=text;$("tempLog").append(b);$("tempLog").scrollTop=$("tempLog").scrollHeight;}
-$("tempSend").onclick=async()=>{const q=$("tempInput").value.trim();if(!q)return;$("tempInput").value="";addTemp("user",q);tempMessages.push({role:"user",content:q});$("tempSend").disabled=true;status("tempStatus","NEXORA is responding…");try{const history=tempMessages.slice(-12).map(m=>(m.role==="user"?"User: ":"NEXORA: ")+m.content).join("\n\n");let reply=await stream({action:"chat",message:"Continue this temporary conversation. Do not assume earlier context outside this transcript.\n\n"+history});tempMessages.push({role:"assistant",content:reply});addTemp("assistant",reply);status("tempStatus","Temporary chat remains in memory only.");}catch(e){status("tempStatus",e.message)}finally{$("tempSend").disabled=false}};
-$("tempInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("tempSend").click()});
-async function extractPdf(file){
- const lib=await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs");lib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
- const pdf=await lib.getDocument({data:await file.arrayBuffer()}).promise;let text="";for(let n=1;n<=Math.min(pdf.numPages,30);n++){const page=await pdf.getPage(n),content=await page.getTextContent();text+="\n[Page "+n+"] "+content.items.map(x=>x.str).join(" ");}return text;
-}
-$("askFile").onclick=async()=>{const f=$("fileAssistantUpload").files?.[0],question=$("fileQuestion").value.trim();if(!f||!question){status("fileStatus","Choose a file and enter a question.");return;}if(f.size>12_000_000){status("fileStatus","Choose a file smaller than 12 MB.");return;}status("fileStatus","Reading file…");$("fileAnswer").hidden=true;try{const ext=f.name.split(".").pop().toLowerCase();let text;if(ext==="pdf")text=await extractPdf(f);else if(["txt","md","csv","json"].includes(ext))text=await f.text();else throw new Error("Supported formats: PDF, TXT, Markdown, CSV and JSON.");if(text.length>55000)text=text.slice(0,55000);status("fileStatus","Analyzing document…");const answer=await stream({action:"attachment",message:"You are NEXORA PLUS Advanced File Assistant. Answer using the supplied document only when it contains relevant information. Cite page labels or sections where possible. User question: "+question,fileText:"Filename: "+f.name+"\n\n"+text});$("fileAnswer").textContent=answer;$("fileAnswer").hidden=false;status("fileStatus","Analysis complete.");}catch(e){status("fileStatus",e.message||"Could not analyze file.")}};
-$("analyzeVideo").onclick=async()=>{
- const f=$("videoUpload").files?.[0],question=$("videoQuestion").value.trim()||"Describe what is visible in this video frame.";
- if(!f){status("videoStatus","Choose a video first.");return;}if(f.size>100_000_000){status("videoStatus","Choose a video smaller than 100 MB.");return;}
- status("videoStatus","Preparing video frames…");$("videoAnswer").replaceChildren();
- const url=URL.createObjectURL(f),video=document.createElement("video");video.preload="metadata";video.muted=true;video.src=url;
- try{
-  await new Promise((res,rej)=>{video.onloadedmetadata=res;video.onerror=()=>rej(new Error("Could not read this video format."))});
-  if(!Number.isFinite(video.duration)||video.duration<=0)throw new Error("Video duration could not be read.");
-  const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");canvas.width=Math.min(768,video.videoWidth);canvas.height=Math.round(video.videoHeight*(canvas.width/video.videoWidth));
-  const times=[0,video.duration*.5,Math.max(0,video.duration-.15)].filter((t,i,a)=>a.indexOf(t)===i);
-  for(let i=0;i<times.length;i++){
-   await new Promise((res,rej)=>{video.onseeked=res;video.onerror=()=>rej(new Error("Could not sample a video frame."));video.currentTime=times[i]});
-   ctx.drawImage(video,0,0,canvas.width,canvas.height);const image=canvas.toDataURL("image/jpeg",.72);
-   status("videoStatus","Analyzing frame "+(i+1)+" of "+times.length+"…");
-   const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken},body:JSON.stringify({action:"analyze_image",plusFeature:true,image,message:question+" This is frame "+(i+1)+" at approximately "+times[i].toFixed(1)+" seconds. Describe only visible evidence."})});
-   const d=await r.json();if(!r.ok)throw new Error(d.error||"Video frame analysis failed.");
-   const p=document.createElement("p");p.textContent="Frame "+(i+1)+" ("+times[i].toFixed(1)+"s): "+d.reply;$("videoAnswer").append(p);
-  }
-  status("videoStatus","Frame-based video analysis complete.");
- }catch(e){status("videoStatus",e.message||"Video analysis failed.")}finally{URL.revokeObjectURL(url);video.remove()}
-};
-$("makeStoryboard").onclick=async()=>{const idea=$("videoIdea").value.trim();if(!idea)return;$("makeStoryboard").disabled=true;$("storyboard").hidden=false;$("storyboard").textContent="Building storyboard…";try{$("storyboard").textContent=await stream({action:"chat",message:"Create a practical AI-video production package for this idea: "+idea+". Include a concise concept, 5–8 sequential shots with camera/motion/lighting, a consistent visual style guide, and one polished text-to-video prompt. Do not claim a video has been rendered."});}catch(e){$("storyboard").textContent=e.message}finally{$("makeStoryboard").disabled=false}};
-verify();
-</script></body></html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f7fb"><title>NEXORA PLUS Workspace moved</title>
+<script src="theme.js?v=20261126-workspace-move"></script>
+<link rel="stylesheet" href="theme.css?v=20261126-workspace-move">
+<meta http-equiv="refresh" content="0;url=chat.html">
+<style>body{min-height:100vh;display:grid;place-items:center;padding:24px;font:15px/1.6 Inter,system-ui,sans-serif}.notice{max-width:460px;padding:24px;border:1px solid var(--nx-line);border-radius:18px;background:var(--nx-panel);text-align:center}.notice a{color:var(--nx-accent);font-weight:700}</style>
+</head>
+<body><main class="notice"><h1>NEXORA PLUS tools moved</h1><p>Custom Assistants are now under Explore, chat backup is in Account, and Temporary Private Chat is beside Voice Mode.</p><p><a href="chat.html">Open NEXORA AI</a></p></main>
+<script>location.replace("chat.html");</script>
+</body></html>
