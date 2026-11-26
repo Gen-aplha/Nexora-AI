@@ -1090,6 +1090,8 @@ html.nexora-splash-seen .nexora-startup{display:none!important}
   outline-offset:2px;
 }
 .side-primary>.side-link[hidden]{display:none!important}
+/* nexora-admin-badge-style */
+#accountMenuName.nexora-admin::after{content:"✓";display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:7px;border-radius:50%;background:#2388f5;color:#fff;font:800 12px/1 system-ui;vertical-align:middle;box-shadow:0 0 0 2px rgba(35,136,245,.16)}
 </style>
 
 <style id="nexora-upgrade-styles">
@@ -3326,6 +3328,18 @@ const SUPABASE_URL="https://jtwzxboewbzyuhlrfwnf.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_EXZz3Lkvb9bB1I9huTQTeQ_rd6IMX2C";
 const SUPABASE_REDIRECT_URL="https://gen-aplha.github.io/Nexora-AI/chat.html";
 const supabaseClient=window.supabase?.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let nexoraPlusAdmin=false;
+async function refreshNexoraPlusStatus(){
+ try{
+  const session=supabaseSession || (await supabaseClient?.auth.getSession())?.data?.session;
+  if(!session?.access_token){nexoraPlusAdmin=false;document.getElementById("accountMenuName")?.classList.remove("nexora-admin");return false;}
+  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:"plus_status"})});
+  const data=await response.json().catch(()=>({}));
+  nexoraPlusAdmin=response.ok&&data.admin===true&&data.lifetime===true;
+  document.getElementById("accountMenuName")?.classList.toggle("nexora-admin",nexoraPlusAdmin);
+  return nexoraPlusAdmin;
+ }catch(_){nexoraPlusAdmin=false;document.getElementById("accountMenuName")?.classList.remove("nexora-admin");return false;}
+}
 let supabaseSession=null;
 let pendingVerificationEmail="";
 renderHistory();
@@ -3361,7 +3375,7 @@ async function postBackend(payload) {
   try {
     response = await fetch(API_URL, {
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json",...(supabaseSession?.access_token?{"Authorization":"Bearer "+supabaseSession.access_token}:{})},
       body:JSON.stringify(payload)
     });
   } catch (networkError) {
@@ -3383,7 +3397,7 @@ async function streamBackend(payload, onChunk) {
   try {
     response = await fetch(STREAM_API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...(supabaseSession?.access_token ? {"Authorization":"Bearer "+supabaseSession.access_token} : {}) },
       body: JSON.stringify(payload)
     });
   } catch (error) {
@@ -3947,7 +3961,7 @@ function openAuthPage(mode){
  document.getElementById("accountStatus").textContent=mode==="login"?"Sign in with your email and password.":"Choose your details to create an account.";
  overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");closeFirstLaunch();
 }
-function openAccount(){const accountOverlay=document.getElementById("accountOverlay");accountOverlay.classList.remove("auth-only");accountOverlay.classList.add("open");accountOverlay.setAttribute("aria-hidden","false");document.getElementById("accountSocialActions").hidden=false;document.getElementById("accountModeToggle").hidden=false;const p=accountProfile||{};const signedIn=!!((supabaseSession||authToken)&&accountProfile);const form=document.getElementById("accountForm");const summary=document.getElementById("accountSignedSummary");const avatar=document.getElementById("accountMenuAvatar");document.getElementById("accountName").value=p.name||"";document.getElementById("accountAge").value=p.age||"";document.getElementById("accountEmail").value=p.email||"";document.getElementById("accountPassword").value="";pendingAccountPicture=p.picture||"";document.getElementById("accountPicture").value="";renderAccountPreview();document.getElementById("accountStatus").textContent="";form.classList.toggle("account-signed-in",signedIn);summary.hidden=!signedIn;const centreMenu=document.getElementById("accountCentreMenu");centreMenu.hidden=false;centreMenu.querySelector('a[href="plus.html"]').hidden=!signedIn;centreMenu.querySelector('[data-account-action="personalization"]').hidden=!signedIn;document.getElementById("accountTitle").textContent=signedIn?"Account centre":"Your account";document.getElementById("accountSubtitle").textContent=signedIn?"Manage your NEXORA account":"Create an account or sign in from any device";if(signedIn){accountMode="profile";setAccountMode("login");document.getElementById("accountEmail").value=accountProfile.email||"";document.getElementById("accountPassword").hidden=true;document.querySelector("label[for=accountPassword]").hidden=true;document.getElementById("accountSubmitBtn").hidden=true;document.getElementById("accountModeToggle").hidden=true;document.getElementById("accountSignOut").hidden=false;document.getElementById("rateNexoraBtn").hidden=false;document.getElementById("deleteAccountProfile").hidden=true;document.getElementById("accountMenuName").textContent=accountProfile.name||"NEXORA user";document.getElementById("accountMenuEmail").textContent=accountProfile.email||"";avatar.textContent=(accountProfile.name||"N").trim().charAt(0).toUpperCase();const savedPicture=accountProfile.picture||localStorage.getItem(PROFILE_PICTURE_KEY)||"";avatar.style.backgroundImage=savedPicture?"url("+JSON.stringify(savedPicture)+")":"";document.getElementById("accountStatus").textContent="";}else{accountMode="register";setAccountMode("register");document.getElementById("accountPassword").hidden=false;document.querySelector("label[for=accountPassword]").hidden=false;document.getElementById("accountSubmitBtn").hidden=false;document.getElementById("accountModeToggle").hidden=false;document.getElementById("accountSignOut").hidden=true;document.getElementById("rateNexoraBtn").hidden=true;document.getElementById("deleteAccountProfile").hidden=false;avatar.style.backgroundImage="";}sidebar?.classList.remove("open");}
+function openAccount(){const accountOverlay=document.getElementById("accountOverlay");accountOverlay.classList.remove("auth-only");accountOverlay.classList.add("open");accountOverlay.setAttribute("aria-hidden","false");document.getElementById("accountSocialActions").hidden=false;document.getElementById("accountModeToggle").hidden=false;const p=accountProfile||{};const signedIn=!!((supabaseSession||authToken)&&accountProfile);const form=document.getElementById("accountForm");const summary=document.getElementById("accountSignedSummary");const avatar=document.getElementById("accountMenuAvatar");document.getElementById("accountName").value=p.name||"";document.getElementById("accountAge").value=p.age||"";document.getElementById("accountEmail").value=p.email||"";document.getElementById("accountPassword").value="";pendingAccountPicture=p.picture||"";document.getElementById("accountPicture").value="";renderAccountPreview();document.getElementById("accountStatus").textContent="";form.classList.toggle("account-signed-in",signedIn);summary.hidden=!signedIn;const centreMenu=document.getElementById("accountCentreMenu");centreMenu.hidden=false;centreMenu.querySelector('a[href="plus.html"]').hidden=!signedIn;centreMenu.querySelector('[data-account-action="personalization"]').hidden=!signedIn;document.getElementById("accountTitle").textContent=signedIn?"Account centre":"Your account";document.getElementById("accountSubtitle").textContent=signedIn?"Manage your NEXORA account":"Create an account or sign in from any device";if(signedIn){accountMode="profile";setAccountMode("login");document.getElementById("accountEmail").value=accountProfile.email||"";document.getElementById("accountPassword").hidden=true;document.querySelector("label[for=accountPassword]").hidden=true;document.getElementById("accountSubmitBtn").hidden=true;document.getElementById("accountModeToggle").hidden=true;document.getElementById("accountSignOut").hidden=false;document.getElementById("rateNexoraBtn").hidden=false;document.getElementById("deleteAccountProfile").hidden=true;document.getElementById("accountMenuName").textContent=accountProfile.name||"NEXORA user";refreshNexoraPlusStatus();document.getElementById("accountMenuEmail").textContent=accountProfile.email||"";avatar.textContent=(accountProfile.name||"N").trim().charAt(0).toUpperCase();const savedPicture=accountProfile.picture||localStorage.getItem(PROFILE_PICTURE_KEY)||"";avatar.style.backgroundImage=savedPicture?"url("+JSON.stringify(savedPicture)+")":"";document.getElementById("accountStatus").textContent="";}else{accountMode="register";setAccountMode("register");document.getElementById("accountPassword").hidden=false;document.querySelector("label[for=accountPassword]").hidden=false;document.getElementById("accountSubmitBtn").hidden=false;document.getElementById("accountModeToggle").hidden=false;document.getElementById("accountSignOut").hidden=true;document.getElementById("rateNexoraBtn").hidden=true;document.getElementById("deleteAccountProfile").hidden=false;avatar.style.backgroundImage="";}sidebar?.classList.remove("open");}
 function openAccountInfo(title,html){const overlay=document.getElementById("accountInfoOverlay");document.getElementById("accountInfoTitle").textContent=title;document.getElementById("accountInfoContent").innerHTML=html;overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");document.getElementById("closeAccountInfo").onclick=closeAccountInfo;document.getElementById("accountThemeToggle")?.addEventListener("click",()=>setTheme(document.body.dataset.theme==="light"?"dark":"light"));document.getElementById("accountVoicePrefs")?.addEventListener("click",()=>{closeAccountInfo();openPersonalization();});document.getElementById("accountManageProfile")?.addEventListener("click",()=>{closeAccountInfo();openAccount();});document.getElementById("accountHelp")?.addEventListener("click",()=>openAccountInfo("Help",'<p><strong>Start a chat:</strong> Type a message and tap Send.</p><p><strong>Create an image:</strong> Tap + beside the message box and choose Create an image.</p><p><strong>Find options:</strong> Open your profile menu and choose Settings.</p><p><strong>Account help:</strong> Use Account centre and check your email for verification messages.</p>'));document.getElementById("accountAbout")?.addEventListener("click",()=>openAccountInfo("About NEXORA AI",'<p>NEXORA AI is an independent AI assistant project.</p><p>Explore AI chat, Coding Assistant, PDF Assistant, Image Studio and personalization tools.</p><p><a href="https://gen-aplha.github.io/Nexora-AI/" target="_blank" rel="noopener noreferrer">Open the NEXORA AI website</a></p><p><a href="https://github.com/Gen-aplha/Nexora-AI/releases" target="_blank" rel="noopener noreferrer">View release versions</a></p>'));}
 
 async function loadNexoraPublicFeedbackDashboard(){
@@ -4820,5 +4834,25 @@ renderHistory();
 })();
 </script>
 
+<script>
+/* NEXORA PLUS custom assistants: the Worker independently verifies owner entitlement. */
+(()=>{
+ const params=new URLSearchParams(location.search),assistantId=params.get("assistant");
+ if(!assistantId)return;
+ let assistants=[];try{assistants=JSON.parse(localStorage.getItem("nexora_plus_assistants_v1")||"[]");}catch(_){}
+ const assistant=Array.isArray(assistants)?assistants.find(x=>x&&x.id===assistantId):null;
+ if(!assistant||!assistant.instructions)return;
+ window.__NEXORA_PLUS_REQUEST__=true;
+ const priorSend=sendMessage;
+ sendMessage=function(text,options={}){
+  if(options.__nexoraAssistantApplied)return priorSend(text,options);
+  const prompt="NEXORA custom assistant context — "+String(assistant.name||"Custom assistant")+"\\n"+String(assistant.instructions).slice(0,5000)+"\\n\\nUser request: "+String(text||"");
+  return priorSend(prompt,{...options,__nexoraAssistantApplied:true,displayText:options.displayText||String(text||"")});
+ };
+})();
+</script>
+<script>
+(()=>{if(!window.__NEXORA_PLUS_REQUEST__)return;const prior=streamBackend;streamBackend=function(payload,onChunk){return prior({...payload,plusFeature:true},onChunk);};})();
+</script>
 </body>
 </html>
