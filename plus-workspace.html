@@ -17,20 +17,11 @@
 <div class="actions"><button id="exportBackup">Export backup JSON</button><button class="secondary" id="chooseBackup">Import backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden></div><div id="backupStatus" class="status"></div></section>
 <section class="card"><h2>◌ Temporary private chat</h2><p>This workspace chat exists only in memory. It is not added to NEXORA chat history by this page.</p>
 <div id="tempLog" class="chatlog" aria-live="polite"></div><div class="row"><input id="tempInput" maxlength="8000" placeholder="Ask NEXORA…"><button id="tempSend">Send</button></div><div id="tempStatus" class="status"></div></section>
-<section class="card"><h2>▤ Advanced file assistant</h2><p>Ask questions about a supported text, Markdown, CSV, JSON or PDF document. Text extraction happens in your browser before the question is sent.</p>
-<label for="fileAssistantUpload">Choose a file</label><input id="fileAssistantUpload" type="file" accept=".txt,.md,.csv,.json,.pdf">
-<label for="fileQuestion">What should NEXORA do with it?</label><textarea id="fileQuestion" maxlength="3000" placeholder="Summarize, explain, compare, extract key points…"></textarea>
-<div class="actions"><button id="askFile">Analyze file</button></div><div id="fileStatus" class="status"></div><div id="fileAnswer" class="bubble" hidden></div></section>
-<section class="card"><h2>▣ Video understanding</h2><p>Upload a short clip. NEXORA samples up to three frames and analyzes the visible content. This is frame-based analysis, not full audio transcription.</p>
-<label for="videoUpload">Video file</label><input id="videoUpload" type="file" accept="video/*">
-<label for="videoQuestion">Question about the clip</label><textarea id="videoQuestion" maxlength="1200" placeholder="Describe the main events, objects, or sequence…"></textarea>
-<div class="actions"><button id="analyzeVideo">Analyze video frames</button></div><div id="videoStatus" class="status"></div><div id="videoAnswer"></div></section>
-<section class="card"><h2>✧ Video creation studio</h2><p>Prepare a video concept, shot list and generation prompt. Actual AI video rendering requires a compatible provider and secure API credential.</p>
-<label for="videoIdea">Video idea</label><textarea id="videoIdea" maxlength="1800" placeholder="Describe the video you want to create…"></textarea>
-<div class="actions"><button id="makeStoryboard">Create storyboard & prompt</button></div><div id="storyboard" class="bubble" hidden></div>
-<div class="notice">Rendering is not enabled yet: no video-generation provider is connected to this project. This tool creates production-ready prompts and storyboards only.</div></section>
-<section class="card"><h2>⌘ Advanced coding</h2><p>Open NEXORA's existing Coding Assistant for code generation, debugging and project help.</p><a class="button" href="chat.html">Open Coding Assistant →</a></section>
-<section class="card"><h2>◉ Image tools</h2><p>Use the existing NEXORA Image Studio and image generation tools. Higher-resolution generation is not yet available on the current model.</p><a class="button" href="chat.html">Open Image Studio →</a></section>
+
+
+
+
+
 </div></div></div>
 <script>
 const API="https://nexora-ai-backend-v2.mayankhindubro.workers.dev",STREAM="https://nexora-ai-stream.mayankhindubro.workers.dev";
