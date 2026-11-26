@@ -31,12 +31,12 @@ a{color:inherit}.wrap{width:min(1080px,calc(100% - 32px));margin:auto}.top{heigh
 
 <div class="notice"><b>Payments are not enabled yet.</b> These plans are being prepared. Choosing a plan will not charge you, create an order, or activate PLUS. We'll connect an approved merchant payment provider before accepting payments.</div>
 <section class="section"><h2>What PLUS is planned to include</h2><div class="features">
-<div class="feature"><b>✧ High-resolution images</b><p>Higher-resolution AI image output, subject to available generation capacity.</p></div>
+
 <div class="feature"><b>⌘ Advanced coding</b><p>Code generation, debugging, explanations, multiple languages, website creation and project help.</p></div>
 <div class="feature"><b>▣ Video AI</b><p>Video understanding and AI video generation when supported services are integrated.</p></div>
 <div class="feature"><b>◈ Custom assistants</b><p>Create custom AI assistants, add instructions and use premium themes.</p></div>
 <div class="feature"><b>♛ Premium benefits</b><p>Early feature access, a PLUS badge and higher file upload limits.</p></div>
-<div class="feature"><b>▤ Advanced File Assistant</b><p>Planned NEXORA PLUS feature for deeper document analysis, file-based questions and working across supported uploads. Regular file attachments remain available in NEXORA AI.</p></div>
+
 <div class="feature"><b>↻ Subscription controls</b><p>View membership status, expiry and renewal information.</p></div>
 <div class="feature"><b>◌ Private &amp; temporary chats</b><p>Start temporary conversations that stay separate from your regular chat history. Final privacy and data-handling details will be provided when this feature launches.</p></div>
  <div class="feature"><b>▤ Chat backup &amp; management</b><p>Export and import chat backups, and clear saved conversations when you choose. Planned as a NEXORA PLUS feature; availability will be confirmed when PLUS launches.</p></div>
@@ -54,23 +54,6 @@ document.getElementById('close').addEventListener('click',()=>modal.classList.re
 modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('show')});
 </script>
-<script>
-(async()=>{
- try{
-  const client=window.supabase?.createClient("https://jtwzxboewbzyuhlrfwnf.supabase.co","sb_publishable_EXZz3Lkvb9bB1I9huTQTeQ_rd6IMX2C");
-  const session=(await client?.auth.getSession())?.data?.session;
-  if(!session?.access_token)return;
-  const r=await fetch("https://nexora-ai-backend-v2.mayankhindubro.workers.dev",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:"plus_status"})});
-  const d=await r.json();
-  if(d.admin===true&&d.lifetime===true){
-   document.getElementById("nexoraAdminWorkspaceEntry").style.display="block";
-   document.querySelector(".plans").hidden=true;
-   document.querySelector(".notice").hidden=true;
-   document.querySelector(".section").hidden=true;
-   document.querySelector(".hero p").textContent="Lifetime owner access is active for this verified administrator account.";
-  }
- }catch(_){}
-})();
-</script>
+
 </body>
 </html>
