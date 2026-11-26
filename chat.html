@@ -103,6 +103,8 @@ textarea{flex:1;resize:none;max-height:150px;min-height:42px;padding:10px 0;bord
 
 /* Temporary private chat launcher sits beside Voice Mode, matching the marked header area. */
 .nexora-utility-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px clamp(16px,4vw,50px)}
+.nexora-upgrade-bar{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+#advancedCodingToolbarBtn{flex:0 0 auto;min-height:40px;white-space:nowrap}
 .temp-private-launch{min-height:42px;padding:0 15px;border:1px solid #d8c8f4;border-radius:14px;background:#f5efff;color:#51318e;font-weight:750;box-shadow:0 5px 18px #6d3cff18}
 .temp-private-launch[hidden]{display:none!important}
 .temp-private-overlay{display:none;position:fixed;z-index:10020;inset:0;background:#0008;align-items:center;justify-content:center;padding:16px}
@@ -1656,9 +1658,9 @@ body[data-theme="dark"] .library-note{color:#a7abc2!important;border-color:#3438
   <select id="nexoraModel" aria-label="AI model selector" title="Only the currently connected model is available">
     <option value="default">Model: NEXORA default</option>
   </select>
+  <button type="button" id="advancedCodingToolbarBtn" class="tool-btn">⌘ Advanced Coding</button>
   <button type="button" id="nexoraStudyBtn">🎓 Study mode</button>
   <button type="button" id="nexoraTranslatorBtn" class="tool-btn" aria-haspopup="dialog">🌐 Translator</button>
-  <button type="button" id="advancedCodingToolbarBtn" class="tool-btn">⌘ Advanced Coding</button>
   
 </div>
 <div class="nexora-panel-overlay" id="nexoraPanelOverlay" aria-hidden="true">
