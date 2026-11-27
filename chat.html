@@ -4211,7 +4211,7 @@ if(supabaseClient){
    supabaseSession=session;
    refreshNexoraPlusStatus();
    if(session?.user){
-     accountProfile={name:session.user.user_metadata?.name||session.user.email?.split("@")[0]||"NEXORA user",email:session.user.email,picture:getProfilePictureForUser(session.user.email)};
+     accountProfile={name:session.user.user_metadata?.name||session.user.email?.split("@")[0]||"NEXORA user",email:session.user.email,picture:getProfilePictureForUser(session.user.email)||session.user.user_metadata?.picture||""};
      closeFirstLaunch();closeAccount();
      localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
      localStorage.removeItem("nexora_google_auth_pending");
@@ -4232,7 +4232,7 @@ async function initializeNexoraAuth(){
      await refreshNexoraPlusStatus();
      if(supabaseSession?.user){
        hasSupabaseSession=true;
-       accountProfile={name:supabaseSession.user.user_metadata?.name||supabaseSession.user.email?.split("@")[0]||"NEXORA user",email:supabaseSession.user.email,picture:getProfilePictureForUser(supabaseSession.user.email)};
+       accountProfile={name:supabaseSession.user.user_metadata?.name||supabaseSession.user.email?.split("@")[0]||"NEXORA user",email:supabaseSession.user.email,picture:getProfilePictureForUser(supabaseSession.user.email)||supabaseSession.user.user_metadata?.picture||""};
        closeFirstLaunch();closeAccount();
        localStorage.setItem(ONBOARDING_STORAGE_KEY,"account");
        const googleOnboardingCheck=localStorage.getItem("nexora_google_onboarding_check")==="yes";
