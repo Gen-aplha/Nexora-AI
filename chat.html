@@ -3413,7 +3413,7 @@ async function signInWithGoogle(){
  if(!supabaseClient){if(status)status.textContent="The account service could not load. Refresh the page and try again.";return;}
  if(!button||!status){console.error("NEXORA Google sign-in controls are unavailable.");return;}
  button.disabled=true;status.textContent="Redirecting to Google…";
- try{localStorage.setItem("nexora_google_auth_pending","1");localStorage.setItem("nexora_google_onboarding_check","yes");localStorage.removeItem(ONBOARDING_STORAGE_KEY);const {error}=await supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:SUPABASE_REDIRECT_URL}});if(error)throw error;}
+ try{localStorage.setItem("nexora_google_auth_pending","1");localStorage.setItem("nexora_google_onboarding_check","yes");localStorage.removeItem(ONBOARDING_STORAGE_KEY);const {error}=await supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:SUPABASE_REDIRECT_URL,queryParams:{prompt:"select_account"}}});if(error)throw error;}
  catch(error){status.textContent=error.message||"Google sign-in could not start. Check the provider setup and try again.";button.disabled=false;}
 }
 document.getElementById("googleSignInBtn").addEventListener("click",signInWithGoogle);
